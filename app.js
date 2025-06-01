@@ -2,50 +2,31 @@
 console.log("DEBUG: app.js - Script iniciado.");
 
 // 1. Configuración e Inicialización de Supabase
-// -----------------------------------------------------------------------------
 const SUPABASE_URL = 'https://srqdgsgxkxfiveynxkwt.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNycWRnc2d4a3hmaXZleW54a3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Mjg2MjUsImV4cCI6MjA2NDEwNDYyNX0.xenXPUm17l0LvbvUk0fsbVik3y5uKP3ADwaVN5BcKGY';
-
 let supabaseClientInstance = null;
 console.log("DEBUG: app.js - Verificando SDK global 'supabase'. typeof window.supabase:", typeof window.supabase);
-
 if (typeof window.supabase !== 'undefined' && typeof window.supabase.createClient === 'function' && SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_URL !== 'TU_SUPABASE_URL') {
     try {
         supabaseClientInstance = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         console.log('DEBUG: app.js - Instancia del cliente Supabase creada exitosamente.');
-    } catch (e) {
-        console.error('DEBUG: app.js - Error al inicializar Supabase con createClient:', e);
-        alert('Error crítico al conectar con Supabase. Revisa la consola.');
-    }
-} else {
-    console.error('DEBUG: app.js - Error: Supabase no pudo inicializarse. SDK no cargado, credenciales faltantes/incorrectas, o createClient no es una función.');
-    if (typeof window.supabase === 'undefined') {
-        alert('Error crítico: El SDK de Supabase (objeto global supabase) no se cargó. Revisa el archivo HTML (asegúrate que carga supabase.js local) y tu conexión a internet.');
-    } else if (typeof window.supabase.createClient !== 'function') {
-        alert('Error crítico: El SDK de Supabase está cargado pero createClient no es una función. Revisa el archivo supabase.js.');
-    } else {
-        alert('Error de configuración de Supabase. Contacta al administrador o revisa las credenciales en app.js.');
-    }
-}
+    } catch (e) { console.error('DEBUG: app.js - Error al inicializar Supabase:', e); alert('Error crítico al conectar con Supabase.'); }
+} else { console.error('DEBUG: app.js - Error: Supabase no pudo inicializarse.'); alert('Error crítico de configuración de Supabase.'); }
 
-// 2. Estado Global de la Aplicación y Variables
+// 2. Estado Global y Constantes
 let currentUser = null;
-const AVATARES_DISPONIBLES = [
-    { id: 'avatar_robot', nombre: 'Robot', emoji: '🤖' },
-    { id: 'avatar_pelota', nombre: 'Pelota', emoji: '⚽️' }, // o 🏀, 🏈, 🎾 según prefieras
-    { id: 'avatar_perro', nombre: 'Perro', emoji: '🐶' },
-    { id: 'avatar_gato', nombre: 'Gato', emoji: '🐱' },
-    { id: 'avatar_cohete', nombre: 'Cohete', emoji: '🚀' },
-    { id: 'avatar_mago', nombre: 'Mago', emoji: '🧙' }, // Puedes usar 🧙‍♀️ para Maga o 🧙‍♂️ para Mago (con modificador de género)
-    { id: 'avatar_unicornio', nombre: 'Unicornio', emoji: '🦄' },
-    { id: 'avatar_panda', nombre: 'Panda', emoji: '🐼' }
+const AVATARES_DISPONIBLES = [ // TU LISTA ACTUALIZADA
+    { id: 'avatar_robot', nombre: 'Robot', emoji: '🤖' }, { id: 'avatar_pelota', nombre: 'Pelota', emoji: '⚽️' },
+    { id: 'avatar_perro', nombre: 'Perro', emoji: '🐶' }, { id: 'avatar_gato', nombre: 'Gato', emoji: '🐱' },
+    { id: 'avatar_cohete', nombre: 'Cohete', emoji: '🚀' }, { id: 'avatar_mago', nombre: 'Mago', emoji: '🧙' },
+    { id: 'avatar_unicornio', nombre: 'Unicornio', emoji: '🦄' }, { id: 'avatar_panda', nombre: 'Panda', emoji: '🐼' }
 ];
 
 // 3. Selectores del DOM
 const contenedorPrincipal = document.getElementById('contenedor-principal');
 const menuPrincipal = document.getElementById('menu-principal');
 
-// 4. Sistema de Navegación y Renderizado de Vistas
+// 4. Navegación
 function cambiarVista(idVistaActual, idVistaNueva) {
     console.log(`DEBUG: app.js - Intentando cambiar de vista: ${idVistaActual || 'ninguna'} a ${idVistaNueva}`);
     if (idVistaActual) {
@@ -64,7 +45,6 @@ function cambiarVista(idVistaActual, idVistaNueva) {
         if(contenedorPrincipal) contenedorPrincipal.innerHTML = `<p>Error: Vista ${idVistaNueva} no encontrada.</p>`;
     }
 }
-
 function actualizarMenuPrincipal() {
     console.log("DEBUG: app.js - Actualizando menú principal. Usuario actual:", currentUser);
     if (!menuPrincipal) { console.error("DEBUG: app.js - Elemento menuPrincipal no encontrado."); return; }
@@ -74,7 +54,6 @@ function actualizarMenuPrincipal() {
         const infoUsuario = document.createElement('span');
         const reputacionMostrar = (currentUser.reputacion !== undefined && currentUser.reputacion !== null) ? currentUser.reputacion : 0;
         infoUsuario.textContent = `Hola, ${nombreMostrar}! (Rep: ${reputacionMostrar}) `;
-        infoUsuario.style.marginRight = '20px';
         menuPrincipal.appendChild(infoUsuario);
         const btnDashboard = document.createElement('button');
         btnDashboard.textContent = 'Dashboard';
@@ -87,7 +66,15 @@ function actualizarMenuPrincipal() {
     }
 }
 
-// 5. Lógica de Autenticación y Operaciones de Libros
+// 5. Lógica de Autenticación y Operaciones de Libros (Sin cambios en estas funciones internas por ahora)
+async function cerrarSesion() { /* ... (código igual que tu última versión funcional) ... */ }
+async function loginAdmin(email, password) { /* ... (código igual) ... */ }
+async function registrarAlumno(nickname, idAvatarSeleccionado, pin) { /* ... (código igual) ... */ }
+async function loginAlumno(nombreAvatarSeleccionado, pin) { /* ... (código igual, usa nombre_avatar) ... */ }
+async function pedirLibroPrestado(libroId, propietarioIdLibro) { /* ... (código igual) ... */ }
+async function marcarLibroComoDevuelto(libroId) { /* ... (código igual) ... */ }
+async function handleAnadirLibroSubmit(event) { /* ... (código igual) ... */ }
+// Pegando cuerpos para asegurar:
 async function cerrarSesion() {
     console.log("DEBUG: app.js - Cerrando sesión...");
     if (currentUser && currentUser.rol === 'admin' && supabaseClientInstance) {
@@ -127,7 +114,7 @@ async function registrarAlumno(nickname, idAvatarSeleccionado, pin) {
     console.log('DEBUG: app.js - Alumno registrado:', data);
     currentUser = data; localStorage.setItem('libroVaUser', JSON.stringify(currentUser)); return currentUser;
 }
-async function loginAlumno(nombreAvatarSeleccionado, pin) {
+async function loginAlumno(nombreAvatarSeleccionado, pin) { // Usa nombre_avatar para login
     console.log("DEBUG: app.js - Intentando login alumno con nombre_avatar:", nombreAvatarSeleccionado);
     if (!supabaseClientInstance) { alert('Error: Supabase no está inicializado.'); return null; }
     const { data, error } = await supabaseClientInstance.from('usuarios').select('*').eq('nombre_avatar', nombreAvatarSeleccionado).eq('pin', pin).single();
@@ -144,7 +131,6 @@ async function pedirLibroPrestado(libroId, propietarioIdLibro) {
     if (!currentUser || !currentUser.id) { /* No alert */ console.error("Error de sesión."); return; }
     if (!supabaseClientInstance) { /* No alert */ console.error("Error de conexión."); return; }
     if (currentUser.reputacion <= -3) { /* No alert */ console.warn("Límite de préstamos alcanzado."); return; }
-
     const fechaDevolucion = new Date(); fechaDevolucion.setDate(fechaDevolucion.getDate() + 14);
     const botonesLibro = document.querySelectorAll(`.libro-card[data-libro-id="${libroId}"] button`);
     botonesLibro.forEach(b => b.disabled = true);
@@ -161,8 +147,8 @@ async function pedirLibroPrestado(libroId, propietarioIdLibro) {
         currentUser.reputacion = nRS;
         const { data: dP } = await supabaseClientInstance.from('usuarios').select('reputacion').eq('id', propietarioIdLibro).single();
         if (dP) { const nRP = (dP.reputacion || 0) + 1; await supabaseClientInstance.from('usuarios').update({ reputacion: nRP }).eq('id', propietarioIdLibro); }
-        console.log(`Libro "${tituloLibroPrestado}" prestado.`); // Mensaje de éxito en consola en vez de alert
-    } catch (error) { console.error("DEBUG: app.js - Error al pedir libro:", error); /* No alert */
+        console.log(`Libro "${tituloLibroPrestado}" prestado.`);
+    } catch (error) { console.error("DEBUG: app.js - Error al pedir libro:", error);
     } finally { if (libroFuePrestadoExitosamente) actualizarMenuPrincipal(); cargarYMostrarLibros(); botonesLibro.forEach(b => b.disabled = false); }
 }
 async function marcarLibroComoDevuelto(libroId) {
@@ -178,24 +164,35 @@ async function marcarLibroComoDevuelto(libroId) {
     } catch (error) { console.error("DEBUG: app.js - Error al marcar devuelto:", error); /* No alert */ }
     finally { cargarYMostrarLibros(); }
 }
+async function handleAnadirLibroSubmit(event) {
+    event.preventDefault(); console.log("DEBUG: app.js - Guardando nuevo libro...");
+    if (!supabaseClientInstance) { alert('Error: Supabase no está inicializado.'); return; }
+    const titulo = document.getElementById('libro-titulo').value; const fotoInput = document.getElementById('libro-foto'); const fotoFile = fotoInput.files[0];
+    if (!titulo || !fotoFile) { alert("Por favor, completa el título y selecciona una foto."); return; }
+    if (!currentUser || !currentUser.id) { alert("Error: No se pudo identificar al usuario."); renderizarVistaBienvenida(); return; }
+    const submitButton = event.target.querySelector('button[type="submit"]'); submitButton.disabled = true; submitButton.textContent = 'Guardando...';
+    try {
+        const nombreArchivoFoto = `${currentUser.id}_${Date.now()}_${fotoFile.name}`;
+        const { error: errorSubida } = await supabaseClientInstance.storage.from('portadas-libros').upload(nombreArchivoFoto, fotoFile, { cacheControl: '3600', upsert: false });
+        if (errorSubida) { throw errorSubida; }
+        const { data: dataUrlPublica } = supabaseClientInstance.storage.from('portadas-libros').getPublicUrl(nombreArchivoFoto);
+        const urlFotoPublica = dataUrlPublica.publicUrl; console.log("DEBUG: app.js - Foto subida, URL pública:", urlFotoPublica);
+        const { error: errorLibro } = await supabaseClientInstance.from('libros').insert([{ titulo: titulo, foto_url: urlFotoPublica, google_link: `https://www.google.com/search?q=${encodeURIComponent(titulo)}`, propietario_id: currentUser.id, propietario_avatar: currentUser.nombre_avatar, estado: 'disponible' }]).select();
+        if (errorLibro) { throw errorLibro; }
+        console.log("Libro añadido exitosamente."); document.getElementById('form-anadir-libro').reset();
+        const previewFoto = document.getElementById('libro-foto-preview'); if(previewFoto) { previewFoto.src = '#'; previewFoto.style.display = 'none'; }
+        renderizarDashboard();
+    } catch (error) { console.error("DEBUG: app.js - Error al guardar el libro:", error);
+    } finally { submitButton.disabled = false; submitButton.textContent = 'Guardar Libro'; }
+}
 
 // 6. Renderizado de Vistas Específicas
 function renderizarVistaBienvenida() {
     console.log("DEBUG: app.js - Renderizando HTML de todas las vistas principales.");
-    if (!contenedorPrincipal) {
-        console.error("DEBUG: app.js - Elemento contenedorPrincipal no encontrado.");
-        return;
-    }
-
+    if (!contenedorPrincipal) { console.error("DEBUG: app.js - Elemento contenedorPrincipal no encontrado."); return; }
     const parrafoCargando = document.getElementById('parrafo-carga-inicial');
-    if (parrafoCargando) {
-        parrafoCargando.remove();
-    }
-    // Ocultar todas las vistas existentes antes de re-escribir el innerHTML de contenedorPrincipal
-    document.querySelectorAll('.vista').forEach(v => {
-        v.style.display = 'none';
-        v.classList.remove('activa');
-    });
+    if (parrafoCargando) { parrafoCargando.remove(); }
+    document.querySelectorAll('.vista').forEach(v => { v.style.display = 'none'; v.classList.remove('activa'); });
 
     let avataresLoginHTML = '';
     AVATARES_DISPONIBLES.forEach(avatar => {
@@ -211,7 +208,7 @@ function renderizarVistaBienvenida() {
         <div id="vista-bienvenida" class="vista">
             <div class="texto-bienvenida">
                 <p>¡Hola, explorador de historias! 👋</p>
-                <p>Bienvenido a LibroVa, ¡nuestra biblioteca mágica ! Acá vas a poder compartir cuentos y libros que ya leíste y descubrir nuevas aventuras que tus compañeros tienen para vos. Sumate agregando tus libros y pidiendo prestamos e intercambialos en tu clase!</p>
+                <p>Bienvenido a LibroVa, ¡nuestra biblioteca mágica! Acá vas a poder compartir cuentos y libros que ya leíste y descubrir nuevas aventuras que tus compañeros tienen para vos. Sumate agregando tus libros y pidiendo prestamos e intercambialos en tu clase!</p>
                 <p>¿Listo para empezar a compartir y leer?</p>
             </div>
             <button id="btn-ingresar-crear-usuario" class="boton-grande">Ingresar o Crear Usuario</button>
@@ -229,18 +226,24 @@ function renderizarVistaBienvenida() {
         </div>
 
         <div id="vista-login-alumno" class="vista">
-            <h3>Elige tu Avatar para Ingresar</h3>
-            <div id="selector-avatares-login" class="contenedor-avatares">${avataresLoginHTML}</div>
-            <form id="form-login-alumno-pin" style="display:none;">
-                <h4 id="avatar-seleccionado-nombre"></h4>
-                <label for="alumno-pin-login">Tu PIN (4 dígitos):</label>
-                <input type="password" id="alumno-pin-login" maxlength="4" pattern="\\d{4}" required inputmode="numeric" autocomplete="current-password"><br><br>
-                <button type="submit">Ingresar</button>
-                <button type="button" id="btn-cambiar-avatar">Cambiar Avatar</button>
-            </form>
+            <h3>Acceso Alumnos</h3>
+            <div id="seleccion-login-registro-alumno" style="text-align:center; margin-bottom:20px;">
+                <button id="btn-mostrar-form-login-avatar" class="boton-grande-secundario">Ya tengo Usuario (Ingresar)</button>
+                <button id="btn-mostrar-form-registro-alumno" class="boton-grande-secundario">Soy Nuevo (Registrarme)</button>
+            </div>
+            <div id="contenedor-login-avatar" style="display:none;">
+                <h4>Elige tu Avatar para Ingresar</h4>
+                <div id="selector-avatares-login" class="contenedor-avatares">${avataresLoginHTML}</div>
+                <form id="form-login-alumno-pin" style="display:none;">
+                    <h4 id="avatar-seleccionado-nombre"></h4>
+                    <label for="alumno-pin-login">Tu PIN (4 dígitos):</label>
+                    <input type="password" id="alumno-pin-login" maxlength="4" pattern="\\d{4}" required inputmode="numeric" autocomplete="current-password"><br><br>
+                    <button type="submit">Ingresar</button>
+                    <button type="button" id="btn-cambiar-avatar">Cambiar Avatar</button>
+                </form>
+            </div>
             <div style="text-align:center; margin-top: 20px;">
-                <button type="button" id="btn-ir-a-registro" class="link-button">No tengo cuenta / Registrarme</button><br>
-                <button type="button" id="btn-volver-bienvenida-alumno" class="link-button" style="margin-top:10px;">Volver a Inicio</button>
+                 <button type="button" id="btn-volver-bienvenida-alumno" class="link-button" style="margin-top:10px;">Volver a Inicio</button>
             </div>
         </div>
 
@@ -256,50 +259,23 @@ function renderizarVistaBienvenida() {
                 <label for="alumno-pin-confirmar">Confirma tu PIN:</label>
                 <input type="password" id="alumno-pin-confirmar" maxlength="4" pattern="\\d{4}" required inputmode="numeric"><br><br>
                 <button type="submit">Registrarme</button>
-                <button type="button" id="btn-volver-login-alumno-desde-registro">Ya tengo cuenta / Volver a Login</button>
+                <button type="button" id="btn-volver-a-seleccion-login-registro" class="link-button">Ya tengo cuenta / Volver</button>
             </form>
         </div>
 
-        <div id="vista-dashboard" class="vista">
-            </div>
-
-        <div id="vista-anadir-libro" class="vista">
-            <h3>Añadir Nuevo Libro</h3>
-            <form id="form-anadir-libro">
-                <label for="libro-titulo">Título del Libro:</label><input type="text" id="libro-titulo" required><br><br>
-                <label for="libro-foto">Foto de la Portada:</label>
-                <input type="file" id="libro-foto" accept="image/*" capture="environment" required><br><br>
-                <img id="libro-foto-preview" src="#" alt="Vista previa de la portada" style="max-width: 200px; max-height: 200px; display: none; margin-bottom:15px;"><br>
-                <button type="submit">Guardar Libro</button>
-                <button type="button" id="btn-volver-dashboard-desde-anadir">Cancelar y Volver al Dashboard</button>
-            </form>
-        </div>
-        
-        <div id="vista-gestionar-libro-propio" class="vista">
-            <h3>Gestionar Mi Libro</h3>
-            <p>Aquí podrás editar o eliminar tu libro.</p>
-            <div id="detalles-libro-gestion"></div>
-            <button type="button" id="btn-volver-dashboard-desde-gestion">Volver al Dashboard</button>
-        </div>
-    `;
-    console.log("DEBUG: app.js - HTML de todas las vistas principales inyectado (con texto bienvenida).");
-
+        <div id="vista-dashboard" class="vista"></div>
+        <div id="vista-anadir-libro" class="vista"><h3>Añadir Nuevo Libro</h3><form id="form-anadir-libro"><label for="libro-titulo">Título del Libro:</label><input type="text" id="libro-titulo" required><br><br><label for="libro-foto">Foto de la Portada:</label><input type="file" id="libro-foto" accept="image/*" capture="environment" required><br><br><img id="libro-foto-preview" src="#" alt="Vista previa de la portada" style="max-width: 200px; max-height: 200px; display: none; margin-bottom:15px;"><br><button type="submit">Guardar Libro</button><button type="button" id="btn-volver-dashboard-desde-anadir">Cancelar y Volver al Dashboard</button></form></div>
+        <div id="vista-gestionar-libro-propio" class="vista"><h3>Gestionar Mi Libro</h3><p>Aquí podrás editar o eliminar tu libro que esté disponible.</p><div id="detalles-libro-gestion"></div><button type="button" id="btn-volver-dashboard-desde-gestion">Volver al Dashboard</button></div>`;
+    console.log("DEBUG: app.js - HTML de todas las vistas principales inyectado.");
     const selectAvatarRegistro = document.getElementById('alumno-avatar-registro');
     if (selectAvatarRegistro) {
-        selectAvatarRegistro.innerHTML = '';
-        AVATARES_DISPONIBLES.forEach(avatar => {
-            const optionValue = avatar.id;
-            const optionText = `${avatar.emoji} ${avatar.nombre}`;
+        selectAvatarRegistro.innerHTML = ''; AVATARES_DISPONIBLES.forEach(avatar => {
+            const optionValue = avatar.id; const optionText = `${avatar.emoji} ${avatar.nombre}`;
             const optionHTML = `<option value="${optionValue}">${optionText}</option>`;
-            selectAvatarRegistro.innerHTML += optionHTML;
-        });
+            selectAvatarRegistro.innerHTML += optionHTML;});
         console.log("DEBUG: app.js - Select de avatares para registro poblado.");
-    } else {
-        console.warn("DEBUG: app.js - No se encontró el select 'alumno-avatar-registro' (normal si no se accedió a esa vista aún).");
-    }
-
+    } else { console.warn("DEBUG: app.js - No se encontró el select 'alumno-avatar-registro'."); }
     asignarEventListenersGlobales();
-
     cambiarVista(null, 'vista-bienvenida');
 }
 
@@ -309,15 +285,35 @@ function asignarEventListenersGlobales() {
         document.getElementById('btn-ingresar-crear-usuario').onclick = () => cambiarVista('vista-bienvenida', 'vista-login-alumno');
         document.getElementById('btn-acceso-admin').onclick = () => cambiarVista('vista-bienvenida', 'vista-login-admin');
         document.getElementById('btn-volver-bienvenida-admin').onclick = () => cambiarVista('vista-login-admin', 'vista-bienvenida');
-        document.getElementById('btn-volver-bienvenida-alumno').onclick = () => { document.getElementById('selector-avatares-login').style.display = 'flex'; document.getElementById('form-login-alumno-pin').style.display = 'none'; document.getElementById('btn-ir-a-registro').style.display = 'inline-block'; document.getElementById('btn-volver-bienvenida-alumno').style.display = 'inline-block'; cambiarVista('vista-login-alumno', 'vista-bienvenida'); };
-        document.getElementById('btn-ir-a-registro').onclick = () => cambiarVista('vista-login-alumno', 'vista-registro-alumno');
-        document.getElementById('btn-volver-login-alumno-desde-registro').onclick = () => cambiarVista('vista-registro-alumno', 'vista-login-alumno');
-        document.querySelectorAll('.avatar-seleccionable').forEach(avatarDiv => { avatarDiv.onclick = () => { const nombreAvatar = avatarDiv.dataset.nombreAvatar; document.querySelectorAll('.avatar-seleccionable').forEach(ad => ad.classList.remove('seleccionado')); avatarDiv.classList.add('seleccionado'); document.getElementById('avatar-seleccionado-nombre').textContent = `Ingresando como: ${nombreAvatar}`; document.getElementById('form-login-alumno-pin').dataset.nombreAvatar = nombreAvatar; document.getElementById('selector-avatares-login').style.display = 'none'; document.getElementById('form-login-alumno-pin').style.display = 'block'; document.getElementById('alumno-pin-login').value = ''; document.getElementById('alumno-pin-login').focus(); document.getElementById('btn-ir-a-registro').style.display = 'none'; document.getElementById('btn-volver-bienvenida-alumno').style.display = 'none'; }; });
-        document.getElementById('btn-cambiar-avatar').onclick = () => { document.getElementById('selector-avatares-login').style.display = 'flex'; document.getElementById('form-login-alumno-pin').style.display = 'none'; document.getElementById('form-login-alumno-pin').dataset.nombreAvatar = ''; document.getElementById('alumno-pin-login').value = ''; document.getElementById('btn-ir-a-registro').style.display = 'inline-block'; document.getElementById('btn-volver-bienvenida-alumno').style.display = 'inline-block'; document.querySelectorAll('.avatar-seleccionable').forEach(ad => ad.classList.remove('seleccionado')); };
-        const btnVolverDashboard = document.getElementById('btn-volver-dashboard-desde-anadir');
-        if (btnVolverDashboard) { btnVolverDashboard.onclick = () => renderizarDashboard(); }
+
+        // Listeners para el nuevo flujo de login/registro alumno
+        document.getElementById('btn-mostrar-form-login-avatar').onclick = () => {
+            document.getElementById('seleccion-login-registro-alumno').style.display = 'none';
+            document.getElementById('contenedor-login-avatar').style.display = 'block';
+            document.getElementById('selector-avatares-login').style.display = 'flex';
+            document.getElementById('form-login-alumno-pin').style.display = 'none';
+        };
+        document.getElementById('btn-mostrar-form-registro-alumno').onclick = () => cambiarVista('vista-login-alumno', 'vista-registro-alumno');
+        document.getElementById('btn-volver-bienvenida-alumno').onclick = () => {
+            document.getElementById('seleccion-login-registro-alumno').style.display = 'block';
+            document.getElementById('contenedor-login-avatar').style.display = 'none';
+            document.getElementById('form-login-alumno-pin').style.display = 'none';
+            cambiarVista('vista-login-alumno', 'vista-bienvenida');
+        };
+        document.getElementById('btn-volver-a-seleccion-login-registro').onclick = () => {
+            document.getElementById('seleccion-login-registro-alumno').style.display = 'block';
+            document.getElementById('contenedor-login-avatar').style.display = 'none';
+            cambiarVista('vista-registro-alumno', 'vista-login-alumno');
+        };
+
+        document.querySelectorAll('.avatar-seleccionable').forEach(avatarDiv => { avatarDiv.onclick = () => { const nombreAvatar = avatarDiv.dataset.nombreAvatar; document.querySelectorAll('.avatar-seleccionable').forEach(ad => ad.classList.remove('seleccionado')); avatarDiv.classList.add('seleccionado'); document.getElementById('avatar-seleccionado-nombre').textContent = `Ingresando como: ${nombreAvatar}`; document.getElementById('form-login-alumno-pin').dataset.nombreAvatar = nombreAvatar; document.getElementById('selector-avatares-login').style.display = 'none'; document.getElementById('form-login-alumno-pin').style.display = 'block'; document.getElementById('alumno-pin-login').value = ''; document.getElementById('alumno-pin-login').focus();}; });
+        document.getElementById('btn-cambiar-avatar').onclick = () => { document.getElementById('selector-avatares-login').style.display = 'flex'; document.getElementById('form-login-alumno-pin').style.display = 'none'; document.getElementById('form-login-alumno-pin').dataset.nombreAvatar = ''; document.getElementById('alumno-pin-login').value = ''; document.querySelectorAll('.avatar-seleccionable').forEach(ad => ad.classList.remove('seleccionado')); };
+
+        const btnVolverDashboardAnadir = document.getElementById('btn-volver-dashboard-desde-anadir');
+        if (btnVolverDashboardAnadir) { btnVolverDashboardAnadir.onclick = () => renderizarDashboard(); }
         const btnVolverDashboardGestion = document.getElementById('btn-volver-dashboard-desde-gestion');
         if (btnVolverDashboardGestion) { btnVolverDashboardGestion.onclick = () => renderizarDashboard(); }
+
         document.getElementById('form-login-admin').addEventListener('submit', async (e) => { e.preventDefault(); const email = document.getElementById('admin-email').value; const pass = document.getElementById('admin-password').value; const admin = await loginAdmin(email, pass); if (admin) { renderizarDashboard(); actualizarMenuPrincipal(); }});
         document.getElementById('form-login-alumno-pin').addEventListener('submit', async (e) => { e.preventDefault(); const nombreAvatar = e.target.dataset.nombreAvatar; const pin = document.getElementById('alumno-pin-login').value; if (!nombreAvatar) { alert('Por favor, selecciona un avatar primero.'); document.getElementById('btn-cambiar-avatar').click(); return; } const alumno = await loginAlumno(nombreAvatar, pin); if (alumno) { renderizarDashboard(); actualizarMenuPrincipal(); e.target.dataset.nombreAvatar = ''; document.getElementById('alumno-pin-login').value = ''; document.getElementById('selector-avatares-login').style.display = 'flex'; document.getElementById('form-login-alumno-pin').style.display = 'none'; document.getElementById('btn-ir-a-registro').style.display = 'inline-block'; document.getElementById('btn-volver-bienvenida-alumno').style.display = 'inline-block'; }});
         document.getElementById('form-registro-alumno').addEventListener('submit', async (e) => { e.preventDefault(); const nickname = document.getElementById('alumno-nickname-registro').value; const idAvatar = document.getElementById('alumno-avatar-registro').value; const pin = document.getElementById('alumno-pin-registro').value; const pinConfirm = document.getElementById('alumno-pin-confirmar').value; if (pin !== pinConfirm) { alert('Los PINs no coinciden.'); return; } let pinEsValido = false; if (pin.length === 4) { if (/^[0-9]+$/.test(pin)) { pinEsValido = true; } } if (!pinEsValido) { alert('El PIN debe ser de exactamente 4 números.'); return; } const alumno = await registrarAlumno(nickname, idAvatar, pin); if (alumno) { renderizarDashboard(); actualizarMenuPrincipal(); }});
@@ -352,7 +348,7 @@ async function cargarYMostrarLibros() {
 }
 function asignarEventListenersLibros() {
     document.querySelectorAll('.btn-pedir-prestado').forEach(boton => { boton.addEventListener('click', async (event) => { if (!currentUser) { /* No alert */ console.error("Login requerido"); renderizarVistaBienvenida(); return; } const libroCard = event.target.closest('.libro-card'); const libroId = libroCard.dataset.libroId; const propietarioId = libroCard.dataset.propietarioId; if (confirm(`¿Seguro que quieres pedir prestado el libro "${libroCard.querySelector('.libro-titulo').textContent}"?`)) { await pedirLibroPrestado(libroId, propietarioId); }});});
-    document.querySelectorAll('.btn-gestionar-libro').forEach(boton => { boton.addEventListener('click', (event) => { const libroCard = event.target.closest('.libro-card'); const libroId = libroCard.dataset.libroId; console.log(`DEBUG: Gestionar libro ID: ${libroId}`); cambiarVista(document.querySelector('.vista.activa').id, 'vista-gestionar-libro-propio'); /* Más adelante pasaremos info del libro */ });});
+    document.querySelectorAll('.btn-gestionar-libro').forEach(boton => { boton.addEventListener('click', (event) => { const libroCard = event.target.closest('.libro-card'); const libroId = libroCard.dataset.libroId; console.log(`DEBUG: Gestionar libro ID: ${libroId}`); const vistaActivaActual = document.querySelector('.vista.activa'); cambiarVista(vistaActivaActual ? vistaActivaActual.id : null, 'vista-gestionar-libro-propio');});});
     document.querySelectorAll('.btn-marcar-devuelto').forEach(boton => { boton.addEventListener('click', async (event) => { const libroCard = event.target.closest('.libro-card'); const libroId = libroCard.dataset.libroId; if (confirm(`¿Confirmas que el libro "${libroCard.querySelector('.libro-titulo').textContent}" ha sido devuelto?`)) { await marcarLibroComoDevuelto(libroId); }});});
 }
 
@@ -395,12 +391,10 @@ function renderizarDashboard() {
     const vistaActivaPrevia = document.querySelector('.vista.activa');
     cambiarVista(vistaActivaPrevia ? vistaActivaPrevia.id : null, 'vista-dashboard');
     cargarMisLibrosEnPrestamo(currentUser.id).then(libros => { renderizarListaDashboard('mis-libros-en-prestamo', libros, 'prestadosPorMi'); asignarEventListenersLibros(); });
-    cargarLibrosQueMePrestaron(currentUser.id).then(libros => { renderizarListaDashboard('libros-que-me-prestaron', libros, 'prestadosAMi'); /* No se necesitan listeners aquí por ahora */ });
+    cargarLibrosQueMePrestaron(currentUser.id).then(libros => { renderizarListaDashboard('libros-que-me-prestaron', libros, 'prestadosAMi'); });
     cargarYMostrarLibros();
 }
 
-async function handleAnadirLibroSubmit(event) { /* ... (Sin cambios desde la última versión completa) ... */ }
-// Pegando cuerpo completo para asegurar:
 async function handleAnadirLibroSubmit(event) {
     event.preventDefault(); console.log("DEBUG: app.js - Guardando nuevo libro...");
     if (!supabaseClientInstance) { alert('Error: Supabase no está inicializado.'); return; }
@@ -416,10 +410,10 @@ async function handleAnadirLibroSubmit(event) {
         const urlFotoPublica = dataUrlPublica.publicUrl; console.log("DEBUG: app.js - Foto subida, URL pública:", urlFotoPublica);
         const { error: errorLibro } = await supabaseClientInstance.from('libros').insert([{ titulo: titulo, foto_url: urlFotoPublica, google_link: `https://www.google.com/search?q=${encodeURIComponent(titulo)}`, propietario_id: currentUser.id, propietario_avatar: currentUser.nombre_avatar, estado: 'disponible' }]).select();
         if (errorLibro) { throw errorLibro; }
-        /* No alert aquí */ console.log("Libro añadido exitosamente."); document.getElementById('form-anadir-libro').reset();
+        console.log("Libro añadido exitosamente."); document.getElementById('form-anadir-libro').reset();
         const previewFoto = document.getElementById('libro-foto-preview'); if(previewFoto) { previewFoto.src = '#'; previewFoto.style.display = 'none'; }
         renderizarDashboard();
-    } catch (error) { console.error("DEBUG: app.js - Error al guardar el libro:", error); /* No alert aquí */
+    } catch (error) { console.error("DEBUG: app.js - Error al guardar el libro:", error);
     } finally { submitButton.disabled = false; submitButton.textContent = 'Guardar Libro'; }
 }
 
