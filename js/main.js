@@ -18,10 +18,10 @@ if (typeof window.supabase !== 'undefined' && typeof window.supabase.createClien
     }
 } else {
     let errorMsg = 'DEBUG: main.js - Error: Supabase no pudo inicializarse (SDK local). ';
-    if (typeof window.supabase === 'undefined') errorMsg += 'SDK (window.supabase) no cargado o no encontrado. Asegúrate que supabase.js está en la raíz y se carga ANTES que los scripts de js/ en index.html. ';
-    else if (typeof window.supabase.createClient !== 'function') errorMsg += 'SDK (window.supabase) está cargado pero createClient no es una función. ';
-    if (typeof SUPABASE_URL === 'undefined' || !SUPABASE_URL) errorMsg += 'SUPABASE_URL no definida (revisa config.js). ';
-    if (typeof SUPABASE_ANON_KEY === 'undefined' || !SUPABASE_ANON_KEY) errorMsg += 'SUPABASE_ANON_KEY no definida (revisa config.js). ';
+    if (typeof window.supabase === 'undefined') errorMsg += 'SDK (window.supabase) no cargado o no encontrado. ';
+    else if (typeof window.supabase.createClient !== 'function') errorMsg += 'SDK (window.supabase) cargado pero createClient no es una función. ';
+    if (typeof SUPABASE_URL === 'undefined' || !SUPABASE_URL) errorMsg += 'SUPABASE_URL no definida. ';
+    if (typeof SUPABASE_ANON_KEY === 'undefined' || !SUPABASE_ANON_KEY) errorMsg += 'SUPABASE_ANON_KEY no definida. ';
     console.error(errorMsg);
     if (document.getElementById('contenedor-principal')) {
         document.getElementById('contenedor-principal').innerHTML = `<p style='color:red; text-align:center;'>${errorMsg}</p>`;
@@ -38,10 +38,10 @@ function asignarEventListenersGlobales() {
             btnIngresarCrear.onclick = () => {
                 console.log("DEBUG: main.js - Botón 'btn-ingresar-crear-usuario' CLICKEADO.");
                 cambiarVista('vista-bienvenida', 'vista-login-alumno');
-                // Al ir a vista-login-alumno, asegurar que se muestre la selección inicial
+                // Al ir a vista-login-alumno, asegurar que se muestre la selección inicial de botones
                 const selLoginReg = document.getElementById('seleccion-login-registro-alumno');
                 const contLoginAvatar = document.getElementById('contenedor-login-avatar');
-                if(selLoginReg) selLoginReg.style.display = 'block'; // o 'flex' según tu CSS
+                if(selLoginReg) selLoginReg.style.display = 'block'; // o 'flex' si tu CSS lo requiere
                 if(contLoginAvatar) contLoginAvatar.style.display = 'none';
             };
         } else { console.error("DEBUG: main.js - Botón 'btn-ingresar-crear-usuario' NO ENCONTRADO."); }
@@ -76,7 +76,6 @@ function asignarEventListenersGlobales() {
         if (btnVolverBienvenidaAlumno) {
              btnVolverBienvenidaAlumno.onclick = () => { 
                 console.log("DEBUG: main.js - Botón 'btn-volver-bienvenida-alumno' CLICKEADO.");
-                // Resetear la vista de login alumno a su estado inicial antes de volver
                 const seleccionLoginRegistro = document.getElementById('seleccion-login-registro-alumno');
                 const contLoginAvatar = document.getElementById('contenedor-login-avatar');
                 if (seleccionLoginRegistro) seleccionLoginRegistro.style.display = 'block';
@@ -143,8 +142,8 @@ function appInit() {
         return;
     }
     
-    renderizarVistaBienvenida(); 
-    asignarEventListenersGlobales(); 
+    renderizarVistaBienvenida(); // Llama a la función de ui_render_views.js
+    asignarEventListenersGlobales(); // Llama a la función definida en ESTE archivo (main.js)
 
     const storedUser = localStorage.getItem('libroVaUser'); 
     if (storedUser) { 

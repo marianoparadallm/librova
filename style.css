@@ -10,73 +10,68 @@ body {
     background-attachment: fixed; 
     color: #333;
     min-height: 100vh; 
+    display: flex; 
+    flex-direction: column; 
 }
 
 header {
-    background: rgba(45, 55, 72, 0.9); /* Un gris azulado oscuro, ligeramente transparente */
+    background: rgba(45, 55, 72, 0.9); 
     color: #fff;
-    padding: 10px 20px; /* Padding vertical reducido, horizontal mantenido */
-    display: flex; /* Habilitar Flexbox */
-    align-items: center; /* Centrar verticalmente los items (logo y nav) */
-    justify-content: space-between; /* Logo a la izquierda, nav a la derecha */
+    padding: 10px 20px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
     position: sticky; 
     top: 0;
     z-index: 1000; 
-    min-height: 60px; /* Altura mínima para el header */
+    min-height: 60px; 
     box-sizing: border-box;
+    flex-shrink: 0; 
 }
 
-/* Contenedor del logo */
 #logo-container {
     /* No se necesita mucho aquí si la imagen controla su tamaño */
 }
 
-/* Estilo para la imagen del logo */
 #logo-img {
-    height: 45px; /* Ajusta esta altura según el tamaño de tu logo PNG */
-    width: auto;  /* Para mantener la proporción */
-    display: block; /* Para evitar espacios extra debajo de la imagen */
+    height: 45px; 
+    width: auto;  
+    display: block; 
 }
 
-/* Quitamos el h1 del header ya que ahora es una imagen */
-/* header h1 {
-    margin: 0;
-    font-size: 2.5em;
-} */
-
 nav#menu-principal {
-    /* margin-top: 10px; Ya no es necesario con flexbox align-items */
-    /* padding-bottom: 10px; */
-    /* El justify-content: space-between en el header lo empujará a la derecha */
-    /* Si quieres que los botones dentro del nav se alineen a la derecha de su contenedor: */
     text-align: right; 
 }
 
+/* Estilo base para botones en el menú de navegación del header */
 nav#menu-principal button, nav#menu-principal span {
-    margin: 5px 0 5px 10px; /* Ajustar margen izquierdo para separar los botones entre sí */
+    margin: 5px 0 5px 10px; 
     padding: 8px 15px;
-    background-color: #4A5568;
+    background-color: #4A5568; /* Gris azulado */
     color: white;
     border: none;
     cursor: pointer;
     border-radius: 5px;
-    font-size: 0.9em; /* Ligeramente más pequeño para que quepa mejor */
+    font-size: 0.9em; 
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 nav#menu-principal button:hover {
-    background-color: #2D3748;
+    background-color: #2D3748; /* Más oscuro al pasar el mouse */
     transform: translateY(-1px);
 }
-nav#menu-principal span {
+nav#menu-principal span { /* Para el saludo "Hola, Usuario" */
     background-color: transparent;
     color: #E2E8F0;
     cursor: default;
     font-weight: bold;
-    padding-right: 0; /* Para que no tenga tanto padding a la derecha si es el último elemento */
+    padding-right: 0; 
 }
 
 main#contenedor-principal {
     padding: 20px; 
+    flex-grow: 1; 
+    display: flex; 
+    flex-direction: column; 
 }
 
 footer {
@@ -84,7 +79,7 @@ footer {
     padding: 20px;
     background: rgba(26, 32, 44, 0.85); 
     color: #A0AEC0; 
-    margin-top: 20px; 
+    flex-shrink: 0; 
 }
 
 /* Clases para ocultar/mostrar vistas */
@@ -95,70 +90,91 @@ footer {
     border-radius: 8px; 
     box-shadow: 0 6px 25px rgba(0,0,0,0.25); 
     margin-bottom: 25px; 
+    width: 100%; 
+    box-sizing: border-box;
 }
 .vista.activa {
     display: block;
 }
 
+/* Pantalla de Bienvenida: Contenedor principal flex para centrar todo */
 #vista-bienvenida {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 220px); 
-    text-align: center;
+    display: flex;                 
+    flex-direction: column;        
+    justify-content: center;       /* CENTRA VERTICALMENTE */
+    align-items: center;           /* CENTRA HORIZONTALMENTE */
+    flex-grow: 1;                  
+    text-align: center;            
     background-color: transparent; 
     box-shadow: none; 
     border-radius: 0; 
     padding: 20px; 
     position: relative; 
     box-sizing: border-box;
+    margin-bottom: 0; 
 }
 
+/* Card para el texto de bienvenida */
 #vista-bienvenida .texto-bienvenida {
-    background-color: rgba(255, 255, 255, 0.9); 
-    padding: 25px 30px; 
-    border-radius: 10px; 
-    margin-bottom: 35px; 
-    max-width: 700px; 
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    background-color: rgba(255, 255, 255, 0.92); 
+    padding: 30px 35px; 
+    border-radius: 12px; 
+    margin-bottom: 40px; 
+    max-width: 680px; 
+    width: auto; 
+    display: inline-block; 
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
     text-align: center; 
+    box-sizing: border-box; 
 }
 #vista-bienvenida .texto-bienvenida p {
-    margin: 0 0 15px 0; 
+    margin: 0 0 18px 0; 
     font-size: 1.15em;  
-    color: #2D3748;   
+    color: #1A202C;   
     line-height: 1.75; 
 }
 #vista-bienvenida .texto-bienvenida p:first-child {
     font-weight: bold; 
     font-size: 1.25em;
+    color: #2D3748;
 }
 #vista-bienvenida .texto-bienvenida p:last-child {
     margin-bottom: 0; 
 }
 
+/* Botón principal en la bienvenida */
 #vista-bienvenida .boton-grande {
-    padding: 18px 35px; font-size: 1.4em; font-weight: bold; background-color: #38A169; 
-    color: white; border: none; border-radius: 8px; cursor: pointer; margin-bottom: 20px;
+    padding: 18px 35px; font-size: 1.4em; font-weight: bold; background-color: #38A169; /* Verde */
+    color: white; border: none; border-radius: 8px; cursor: pointer; 
     box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     text-transform: uppercase; letter-spacing: 1px;
-    margin-top: 10px; 
 }
 #vista-bienvenida .boton-grande:hover {
     background-color: #2F855A; transform: translateY(-3px) scale(1.02); 
     box-shadow: 0 8px 20px rgba(0,0,0,0.25);
 }
-#vista-bienvenida .boton-admin {
+#vista-bienvenida .boton-admin { /* Botón de admin en esquina */
     position: absolute; bottom: 25px; right: 25px; padding: 8px 15px; font-size: 0.85em;
     background-color: rgba(45, 55, 72, 0.7); color: #E2E8F0; border: 1px solid rgba(255,255,255,0.3);
     border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease, color 0.3s ease;
 }
 #vista-bienvenida .boton-admin:hover { background-color: rgba(26, 32, 44, 0.9); color: white; }
 
-#vista-login-admin, #vista-login-alumno, #vista-registro-alumno, #vista-anadir-libro, #vista-gestionar-libro-propio {
-    max-width: 480px; margin: 40px auto; 
+/* Vistas de Formularios y Dashboard (general) */
+#vista-login-admin, 
+#vista-login-alumno, 
+#vista-registro-alumno, 
+#vista-anadir-libro, 
+#vista-gestionar-libro-propio,
+#vista-dashboard { 
+    max-width: 700px; 
+    margin-left: auto; 
+    margin-right: auto;
 }
+#vista-dashboard { /* Dashboard puede ser más ancho */
+    max-width: 980px; 
+}
+
 #vista-login-admin h3, #vista-login-alumno h3, #vista-registro-alumno h3, #vista-anadir-libro h3, #vista-gestionar-libro-propio h3 {
     text-align: center; color: #1A202C; margin-top: 0; margin-bottom: 30px; font-size: 1.8em;
 }
@@ -172,21 +188,51 @@ form input[type="email"]:focus, form input[type="password"]:focus, form input[ty
 form input[type="file"]:focus, form select:focus {
     border-color: #3182CE; box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.4); outline: none;
 }
-form button {
-    padding: 12px 18px; color: white; border: none; border-radius: 5px; cursor: pointer;
-    margin-right: 10px; font-weight: bold; transition: background-color 0.3s ease, transform 0.2s ease;
-}
-form button[type="submit"] { background-color: #3182CE; }
-form button[type="submit"]:hover { background-color: #2B6CB0; transform: translateY(-1px); }
-form button[type="button"] { background-color: #718096; }
-form button[type="button"]:hover { background-color: #4A5568; transform: translateY(-1px); }
 
-.boton-menu-header {
-    margin: 10px 5px 20px 5px; padding: 10px 18px; background-color: #38A169; 
-    color: white; border: none; cursor: pointer; border-radius: 5px; font-size: 1em; 
-    font-weight: bold; transition: background-color 0.3s ease, transform 0.2s ease; display: inline-block; 
+/* === ESTILO UNIFICADO PARA BOTONES DE ACCIÓN PRINCIPALES === */
+.boton-accion,
+form button[type="submit"] { /* Aplicar a submit de formularios */
+    padding: 12px 20px;
+    background-color: #38A169; /* Verde (como "Cargar Libro") */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 10px;
+    font-weight: bold;
+    font-size: 1em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
-.boton-menu-header:hover { background-color: #2F855A; transform: translateY(-2px); }
+.boton-accion:hover,
+form button[type="submit"]:hover {
+    background-color: #2F855A; /* Verde más oscuro */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Botones secundarios de formulario (grises, como "Volver", "Cancelar") */
+form button[type="button"] { 
+    padding: 10px 15px; /* Ligeramente más pequeños */
+    background-color: #A0AEC0; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    font-weight: 500; /* Menos peso */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+form button[type="button"]:hover { 
+    background-color: #718096; 
+    transform: translateY(-1px);
+}
+
+/* Botón "Cargar Libro" en el dashboard (usará .boton-accion ahora) */
+/* Ya no necesitamos .boton-menu-header si usamos .boton-accion */
+
 
 #alumno-avatar-registro { font-size: 1.2em; } 
 #libro-foto-preview {
@@ -194,10 +240,12 @@ form button[type="button"]:hover { background-color: #4A5568; transform: transla
     margin-bottom: 15px; object-fit: cover; background-color: #fff; 
 }
 
-/* === ESTILOS PARA EL DASHBOARD COMPLETO === */
+/* ESTILOS PARA EL DASHBOARD COMPLETO */
 #vista-dashboard h2 { color: #1A202C; text-align: center; margin-bottom: 10px; }
 #vista-dashboard > p { text-align: center; font-size: 1.1em; color: #2D3748; margin-bottom: 15px; }
-#vista-dashboard > button#btn-ir-anadir-libro { display: block; margin-left: auto; margin-right: auto; margin-bottom: 25px; }
+#vista-dashboard > button#btn-ir-anadir-libro { /* Este botón ahora usará .boton-accion */
+    display: block; margin-left: auto; margin-right: auto; margin-bottom: 25px; 
+}
 #vista-dashboard hr { border: none; height: 1px; background-color: #CBD5E0; margin-top: 25px; margin-bottom: 25px; }
 #vista-dashboard h3 { color: #2D3748; text-align: left; margin-bottom: 20px; margin-top: 10px; font-size: 1.5em; }
 .seccion-dashboard { margin-bottom: 30px; }
@@ -208,7 +256,10 @@ form button[type="button"]:hover { background-color: #4A5568; transform: transla
 .item-lista-libro .detalles strong { display: block; font-size: 1.1em; font-weight: 600; color: #2D3748; margin-bottom: 2px; }
 .item-lista-libro .detalles span { display: block; color: #4A5568; font-size: 0.85em; }
 .item-lista-libro .acciones { margin-left: 15px; flex-shrink: 0; }
-.item-lista-libro .acciones button { padding: 7px 14px; font-size: 0.8em; }
+.item-lista-libro .acciones button { /* Heredarán .boton-accion o .boton-secundario si les pones esas clases */
+    padding: 7px 14px; 
+    font-size: 0.8em;
+}
 
 /* Tarjetas de Libros (para la lista general "Libros Disponibles") */
 .libro-card {
@@ -227,14 +278,23 @@ form button[type="button"]:hover { background-color: #4A5568; transform: transla
 }
 .libro-propietario, .libro-estado { font-size: 0.8em; color: #4A5568; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .libro-info-prestamo { font-size: 0.8em; color: #c05621; background-color: #fffaf0; padding: 6px; border-radius: 4px; margin-top: 5px; margin-bottom: 8px; line-height: 1.3; border: 1px dashed #dd6b20; }
-.libro-card button { margin-top: auto; width: 100%; box-sizing: border-box; padding: 9px 12px; font-size: 0.85em; font-weight: 600; border-radius: 5px; border: none; color: white; cursor: pointer; transition: background-color 0.2s ease, transform 0.1s ease; }
-.libro-card button:hover { transform: translateY(-1px); }
-.libro-card button.btn-pedir-prestado { background-color: #38A169; }
-.libro-card button.btn-pedir-prestado:hover { background-color: #2F855A; }
-.libro-card button.btn-gestionar-libro { background-color: #DD6B20; } 
+
+/* Botones dentro de las tarjetas de libro (ahora usarán .boton-accion o un estilo similar) */
+.libro-card button { 
+    margin-top: auto; width: 100%; box-sizing: border-box; 
+    /* Padding y font-size se heredan de .boton-accion o se especifican */
+}
+.libro-card button.btn-pedir-prestado { /* Verde (ya usa .boton-accion si se le asigna) */
+    /* background-color: #38A169;  Si no usa .boton-accion */
+}
+.libro-card button.btn-pedir-prestado:hover { /* background-color: #2F855A; */ }
+
+.libro-card button.btn-gestionar-libro { background-color: #DD6B20; } /* Naranja para gestionar */
 .libro-card button.btn-gestionar-libro:hover { background-color: #C05621; }
-.libro-card button.btn-marcar-devuelto { background-color: #3182CE; } 
+
+.libro-card button.btn-marcar-devuelto { background-color: #3182CE; } /* Azul para marcar devuelto */
 .libro-card button.btn-marcar-devuelto:hover { background-color: #2B6CB0; }
+
 #lista-libros-disponibles { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding-top: 15px; }
 
 /* Estilos para Login Visual de Alumnos */
@@ -245,24 +305,20 @@ form button[type="button"]:hover { background-color: #4A5568; transform: transla
 .avatar-seleccionable .avatar-nombre-display { font-size: 0.9em; color: #2D3748; font-weight: 500; }
 #vista-login-alumno #avatar-seleccionado-nombre { text-align: center; font-size: 1.5em; font-weight: bold; margin-bottom: 20px; color: #1A202C; }
 #vista-login-alumno #form-login-alumno-pin { border-top: 1px solid #e2e8f0; padding-top: 25px; margin-top: 20px; }
-.link-button { background: none!important; border: none; padding: 0!important; color: #3182CE; text-decoration: underline; cursor: pointer; font-size: 0.95em; font-weight: 500; }
-.link-button:hover { color: #2B6CB0; transform: none!important; }
 
-/* Estilos para botones de selección Login/Registro Alumno */
-.boton-grande-secundario {
-    padding: 12px 25px;
-    font-size: 1.1em;
-    font-weight: 600;
-    background-color: #A0AEC0; 
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    margin: 10px;
+/* Botones de selección Login/Registro Alumno (Ahora también pueden usar .boton-accion) */
+.boton-grande-secundario { /* Se mantiene para diferenciarlos si es necesario, o se puede unificar con .boton-accion */
+    padding: 12px 25px; font-size: 1.1em; font-weight: 600;
+    background-color: #4A5568; /* Un gris azulado */
+    color: white; border: none; border-radius: 6px; cursor: pointer; margin: 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
-.boton-grande-secundario:hover {
-    background-color: #718096; 
-    transform: translateY(-2px);
+.boton-grande-secundario:hover { background-color: #2D3748; transform: translateY(-2px); }
+
+.link-button { 
+    background: none!important; border: none; padding: 5px !important; 
+    color: #3182CE; text-decoration: underline; cursor: pointer; 
+    font-size: 0.95em; font-weight: 500; display: inline-block; margin-top: 5px;
 }
+.link-button:hover { color: #2B6CB0; transform: none!important; }
