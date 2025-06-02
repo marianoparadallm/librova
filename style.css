@@ -13,34 +13,54 @@ body {
 }
 
 header {
-    background: rgba(51, 51, 51, 0.85); 
+    background: rgba(45, 55, 72, 0.9); /* Un gris azulado oscuro, ligeramente transparente */
     color: #fff;
-    padding: 1rem 0;
-    text-align: center;
+    padding: 10px 20px; /* Padding vertical reducido, horizontal mantenido */
+    display: flex; /* Habilitar Flexbox */
+    align-items: center; /* Centrar verticalmente los items (logo y nav) */
+    justify-content: space-between; /* Logo a la izquierda, nav a la derecha */
     position: sticky; 
     top: 0;
     z-index: 1000; 
+    min-height: 60px; /* Altura mínima para el header */
+    box-sizing: border-box;
 }
 
-header h1 {
+/* Contenedor del logo */
+#logo-container {
+    /* No se necesita mucho aquí si la imagen controla su tamaño */
+}
+
+/* Estilo para la imagen del logo */
+#logo-img {
+    height: 45px; /* Ajusta esta altura según el tamaño de tu logo PNG */
+    width: auto;  /* Para mantener la proporción */
+    display: block; /* Para evitar espacios extra debajo de la imagen */
+}
+
+/* Quitamos el h1 del header ya que ahora es una imagen */
+/* header h1 {
     margin: 0;
     font-size: 2.5em;
-}
+} */
 
 nav#menu-principal {
-    margin-top: 10px;
-    padding-bottom: 10px;
+    /* margin-top: 10px; Ya no es necesario con flexbox align-items */
+    /* padding-bottom: 10px; */
+    /* El justify-content: space-between en el header lo empujará a la derecha */
+    /* Si quieres que los botones dentro del nav se alineen a la derecha de su contenedor: */
+    text-align: right; 
 }
 
 nav#menu-principal button, nav#menu-principal span {
-    margin: 5px;
+    margin: 5px 0 5px 10px; /* Ajustar margen izquierdo para separar los botones entre sí */
     padding: 8px 15px;
     background-color: #4A5568;
     color: white;
     border: none;
     cursor: pointer;
     border-radius: 5px;
-    font-size: 0.95em;
+    font-size: 0.9em; /* Ligeramente más pequeño para que quepa mejor */
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 nav#menu-principal button:hover {
@@ -52,6 +72,7 @@ nav#menu-principal span {
     color: #E2E8F0;
     cursor: default;
     font-weight: bold;
+    padding-right: 0; /* Para que no tenga tanto padding a la derecha si es el último elemento */
 }
 
 main#contenedor-principal {
@@ -226,3 +247,22 @@ form button[type="button"]:hover { background-color: #4A5568; transform: transla
 #vista-login-alumno #form-login-alumno-pin { border-top: 1px solid #e2e8f0; padding-top: 25px; margin-top: 20px; }
 .link-button { background: none!important; border: none; padding: 0!important; color: #3182CE; text-decoration: underline; cursor: pointer; font-size: 0.95em; font-weight: 500; }
 .link-button:hover { color: #2B6CB0; transform: none!important; }
+
+/* Estilos para botones de selección Login/Registro Alumno */
+.boton-grande-secundario {
+    padding: 12px 25px;
+    font-size: 1.1em;
+    font-weight: 600;
+    background-color: #A0AEC0; 
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.boton-grande-secundario:hover {
+    background-color: #718096; 
+    transform: translateY(-2px);
+}
