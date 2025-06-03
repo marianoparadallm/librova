@@ -29,122 +29,41 @@ header {
     flex-shrink: 0; 
 }
 
-#logo-container {
-    /* No se necesita mucho aquí si la imagen controla su tamaño */
-}
-
-#logo-img {
-    height: 45px; 
-    width: auto;  
-    display: block; 
-}
-
-nav#menu-principal {
-    text-align: right; 
-}
-
-/* Estilo base para botones en el menú de navegación del header */
+#logo-container {}
+#logo-img { height: 45px; width: auto; display: block; }
+nav#menu-principal { text-align: right; }
 nav#menu-principal button, nav#menu-principal span {
-    margin: 5px 0 5px 10px; 
-    padding: 8px 15px;
-    background-color: #4A5568; /* Gris azulado */
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 0.9em; 
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin: 5px 0 5px 10px; padding: 8px 15px; background-color: #4A5568;
+    color: white; border: none; cursor: pointer; border-radius: 5px;
+    font-size: 0.9em; transition: background-color 0.3s ease, transform 0.2s ease;
 }
-nav#menu-principal button:hover {
-    background-color: #2D3748; /* Más oscuro al pasar el mouse */
-    transform: translateY(-1px);
-}
-nav#menu-principal span { /* Para el saludo "Hola, Usuario" */
-    background-color: transparent;
-    color: #E2E8F0;
-    cursor: default;
-    font-weight: bold;
-    padding-right: 0; 
-}
+nav#menu-principal button:hover { background-color: #2D3748; transform: translateY(-1px); }
+nav#menu-principal span { background-color: transparent; color: #E2E8F0; cursor: default; font-weight: bold; padding-right: 0; }
 
-main#contenedor-principal {
-    padding: 20px; 
-    flex-grow: 1; 
-    display: flex; 
-    flex-direction: column; 
-}
+main#contenedor-principal { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+footer { text-align: center; padding: 20px; background: rgba(26, 32, 44, 0.85); color: #A0AEC0; flex-shrink: 0; }
 
-footer {
-    text-align: center;
-    padding: 20px;
-    background: rgba(26, 32, 44, 0.85); 
-    color: #A0AEC0; 
-    flex-shrink: 0; 
-}
+.vista { display: none; padding: 25px; background-color: rgba(255, 255, 255, 0.97); border-radius: 8px; box-shadow: 0 6px 25px rgba(0,0,0,0.25); margin-bottom: 25px; width: 100%; box-sizing: border-box; }
+.vista.activa { display: block; }
 
-/* Clases para ocultar/mostrar vistas */
-.vista {
-    display: none;
-    padding: 25px; 
-    background-color: rgba(255, 255, 255, 0.97); 
-    border-radius: 8px; 
-    box-shadow: 0 6px 25px rgba(0,0,0,0.25); 
-    margin-bottom: 25px; 
-    width: 100%; 
-    box-sizing: border-box;
-}
-.vista.activa {
-    display: block;
-}
-
-/* Pantalla de Bienvenida: Contenedor principal flex para centrar todo */
 #vista-bienvenida {
-    display: flex;                 
-    flex-direction: column;        
-    justify-content: center;       /* CENTRA VERTICALMENTE */
-    align-items: center;           /* CENTRA HORIZONTALMENTE */
-    flex-grow: 1;                  
-    text-align: center;            
-    background-color: transparent; 
-    box-shadow: none; 
-    border-radius: 0; 
-    padding: 20px; 
-    position: relative; 
-    box-sizing: border-box;
-    margin-bottom: 0; 
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    flex-grow: 1; text-align: center; background-color: transparent; 
+    box-shadow: none; border-radius: 0; padding: 20px; position: relative; 
+    box-sizing: border-box; margin-bottom: 0; 
 }
-
-/* Card para el texto de bienvenida */
 #vista-bienvenida .texto-bienvenida {
-    background-color: rgba(255, 255, 255, 0.92); 
-    padding: 30px 35px; 
-    border-radius: 12px; 
-    margin-bottom: 40px; 
-    max-width: 680px; 
-    width: auto; 
-    display: inline-block; 
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-    text-align: center; 
-    box-sizing: border-box; 
+    background-color: rgba(255, 255, 255, 0.92); padding: 30px 35px; border-radius: 12px; 
+    margin-bottom: 40px; max-width: 680px; width: auto; display: inline-block; 
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2); text-align: center; box-sizing: border-box; 
 }
-#vista-bienvenida .texto-bienvenida p {
-    margin: 0 0 18px 0; 
-    font-size: 1.15em;  
-    color: #1A202C;   
-    line-height: 1.75; 
-}
-#vista-bienvenida .texto-bienvenida p:first-child {
-    font-weight: bold; 
-    font-size: 1.25em;
-    color: #2D3748;
-}
-#vista-bienvenida .texto-bienvenida p:last-child {
-    margin-bottom: 0; 
-}
+#vista-bienvenida .texto-bienvenida p { margin: 0 0 18px 0; font-size: 1.15em; color: #1A202C; line-height: 1.75; }
+#vista-bienvenida .texto-bienvenida p:first-child { font-weight: bold; font-size: 1.25em; color: #2D3748; }
+#vista-bienvenida .texto-bienvenida p:last-child { margin-bottom: 0; }
 
-/* Botón principal en la bienvenida */
+/* Botón principal en la bienvenida - YA TIENE SU ESTILO ÚNICO .boton-grande */
 #vista-bienvenida .boton-grande {
-    padding: 18px 35px; font-size: 1.4em; font-weight: bold; background-color: #38A169; /* Verde */
+    padding: 18px 35px; font-size: 1.4em; font-weight: bold; background-color: #38A169; 
     color: white; border: none; border-radius: 8px; cursor: pointer; 
     box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     text-transform: uppercase; letter-spacing: 1px;
@@ -153,29 +72,18 @@ footer {
     background-color: #2F855A; transform: translateY(-3px) scale(1.02); 
     box-shadow: 0 8px 20px rgba(0,0,0,0.25);
 }
-#vista-bienvenida .boton-admin { /* Botón de admin en esquina */
-    position: absolute; bottom: 25px; right: 25px; padding: 8px 15px; font-size: 0.85em;
-    background-color: rgba(45, 55, 72, 0.7); color: #E2E8F0; border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease, color 0.3s ease;
-}
+#vista-bienvenida .boton-admin { position: absolute; bottom: 25px; right: 25px; padding: 8px 15px; font-size: 0.85em; background-color: rgba(45, 55, 72, 0.7); color: #E2E8F0; border: 1px solid rgba(255,255,255,0.3); border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease, color 0.3s ease; }
 #vista-bienvenida .boton-admin:hover { background-color: rgba(26, 32, 44, 0.9); color: white; }
 
 /* Vistas de Formularios y Dashboard (general) */
-#vista-login-admin, 
-#vista-login-alumno, 
-#vista-registro-alumno, 
-#vista-anadir-libro, 
-#vista-gestionar-libro-propio,
-#vista-dashboard { 
-    max-width: 700px; 
-    margin-left: auto; 
-    margin-right: auto;
+#vista-login-admin, #vista-login-alumno, #vista-registro-alumno, 
+#vista-anadir-libro, #vista-gestionar-libro-propio, #vista-dashboard { 
+    max-width: 700px; margin-left: auto; margin-right: auto;
 }
-#vista-dashboard { /* Dashboard puede ser más ancho */
-    max-width: 980px; 
-}
+#vista-dashboard { max-width: 980px; }
 
-#vista-login-admin h3, #vista-login-alumno h3, #vista-registro-alumno h3, #vista-anadir-libro h3, #vista-gestionar-libro-propio h3 {
+#vista-login-admin h3, #vista-login-alumno h3, #vista-registro-alumno h3, 
+#vista-anadir-libro h3, #vista-gestionar-libro-propio h3 {
     text-align: center; color: #1A202C; margin-top: 0; margin-bottom: 30px; font-size: 1.8em;
 }
 form label { display: block; margin-bottom: 8px; font-weight: 600; color: #2D3748; }
@@ -189,40 +97,97 @@ form input[type="file"]:focus, form select:focus {
     border-color: #3182CE; box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.4); outline: none;
 }
 
-/* === ESTILO UNIFICADO PARA BOTONES DE ACCIÓN PRINCIPALES === */
-.boton-accion,
-form button[type="submit"] { /* Aplicar a submit de formularios */
-    padding: 12px 20px;
-    background-color: #38A169; /* Verde (como "Cargar Libro") */
+/* === ESTILO BASE UNIFICADO PARA BOTONES DE ACCIÓN PRINCIPALES === */
+.boton-accion-base {
+    padding: 10px 18px; /* Ajustado para consistencia */
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 6px; /* Unificado */
     cursor: pointer;
-    margin-right: 10px;
+    margin-right: 10px; /* Margen común */
     font-weight: bold;
     font-size: 1em;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    display: inline-block; 
 }
-.boton-accion:hover,
-form button[type="submit"]:hover {
-    background-color: #2F855A; /* Verde más oscuro */
+.boton-accion-base:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
+/* Colores específicos para botones que usan .boton-accion-base */
+.boton-accion-base.submit, /* Para botones de submit de formularios */
+form button[type="submit"] { /* Para compatibilidad con estilos anteriores */
+    background-color: #3182CE; /* Azul */
+}
+.boton-accion-base.submit:hover,
+form button[type="submit"]:hover {
+    background-color: #2B6CB0; 
+}
+
+.boton-accion-base.cargar, /* Para "Cargar Libro" */
+#btn-ir-anadir-libro { /* ID específico del botón Cargar Libro */
+    background-color: #38A169; /* Verde */
+}
+.boton-accion-base.cargar:hover,
+#btn-ir-anadir-libro:hover {
+    background-color: #2F855A; 
+}
+
+.boton-accion-base.gestionar, /* Para "Gestionar" en tarjeta y "Editar" en vista gestión */
+.libro-card button.btn-gestionar-libro,
+#btn-editar-libro-info {
+    background-color: #DD6B20; /* Naranja */
+}
+.boton-accion-base.gestionar:hover,
+.libro-card button.btn-gestionar-libro:hover,
+#btn-editar-libro-info:hover {
+    background-color: #C05621;
+}
+
+.boton-accion-base.eliminar, /* Para "Eliminar" en vista gestión */
+#btn-eliminar-libro {
+    background-color: #E53E3E; /* Rojo */
+}
+.boton-accion-base.eliminar:hover,
+#btn-eliminar-libro:hover {
+    background-color: #C53030;
+}
+
+.boton-accion-base.pedir, /* Para "Pedir Prestado" */
+.libro-card button.btn-pedir-prestado {
+     background-color: #38A169; /* Verde */
+}
+.boton-accion-base.pedir:hover,
+.libro-card button.btn-pedir-prestado:hover {
+    background-color: #2F855A;
+}
+
+.boton-accion-base.devolver, /* Para "Marcar como Devuelto" */
+.libro-card button.btn-marcar-devuelto,
+.item-lista-libro .acciones button.btn-marcar-devuelto {
+    background-color: #3182CE; /* Azul */
+}
+.boton-accion-base.devolver:hover,
+.libro-card button.btn-marcar-devuelto:hover,
+.item-lista-libro .acciones button.btn-marcar-devuelto:hover {
+    background-color: #2B6CB0;
+}
+
+
 /* Botones secundarios de formulario (grises, como "Volver", "Cancelar") */
 form button[type="button"] { 
-    padding: 10px 15px; /* Ligeramente más pequeños */
+    padding: 10px 15px; 
     background-color: #A0AEC0; 
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     margin-right: 10px;
-    font-weight: 500; /* Menos peso */
+    font-weight: 500; 
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 form button[type="button"]:hover { 
@@ -230,35 +195,29 @@ form button[type="button"]:hover {
     transform: translateY(-1px);
 }
 
-/* Botón "Cargar Libro" en el dashboard (usará .boton-accion ahora) */
-/* Ya no necesitamos .boton-menu-header si usamos .boton-accion */
-
-
 #alumno-avatar-registro { font-size: 1.2em; } 
-#libro-foto-preview {
-    max-width: 200px; max-height: 200px; border: 1px solid #ddd; margin-top: 5px;
-    margin-bottom: 15px; object-fit: cover; background-color: #fff; 
-}
+#libro-foto-preview { max-width: 200px; max-height: 200px; border: 1px solid #ddd; margin-top: 5px; margin-bottom: 15px; object-fit: cover; background-color: #fff; }
 
 /* ESTILOS PARA EL DASHBOARD COMPLETO */
 #vista-dashboard h2 { color: #1A202C; text-align: center; margin-bottom: 10px; }
 #vista-dashboard > p { text-align: center; font-size: 1.1em; color: #2D3748; margin-bottom: 15px; }
-#vista-dashboard > button#btn-ir-anadir-libro { /* Este botón ahora usará .boton-accion */
-    display: block; margin-left: auto; margin-right: auto; margin-bottom: 25px; 
-}
+/* El botón #btn-ir-anadir-libro ahora usa .boton-accion-base.cargar */
+#vista-dashboard > button#btn-ir-anadir-libro { display: block; margin-left: auto; margin-right: auto; margin-bottom: 25px; }
 #vista-dashboard hr { border: none; height: 1px; background-color: #CBD5E0; margin-top: 25px; margin-bottom: 25px; }
 #vista-dashboard h3 { color: #2D3748; text-align: left; margin-bottom: 20px; margin-top: 10px; font-size: 1.5em; }
 .seccion-dashboard { margin-bottom: 30px; }
-.lista-dashboard-libros { display: flex; flex-direction: column; gap: 15px; }
-.item-lista-libro { display: flex; align-items: flex-start; background-color: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-.item-lista-libro img.thumbnail { width: 60px;  height: 85px; object-fit: cover; border-radius: 4px; margin-right: 15px; flex-shrink: 0; }
-.item-lista-libro .detalles { flex-grow: 1; font-size: 0.95em; display: flex; flex-direction: column; gap: 4px; }
-.item-lista-libro .detalles strong { display: block; font-size: 1.1em; font-weight: 600; color: #2D3748; margin-bottom: 2px; }
-.item-lista-libro .detalles span { display: block; color: #4A5568; font-size: 0.85em; }
-.item-lista-libro .acciones { margin-left: 15px; flex-shrink: 0; }
-.item-lista-libro .acciones button { /* Heredarán .boton-accion o .boton-secundario si les pones esas clases */
+.lista-dashboard-libros, .lista-solicitudes { display: flex; flex-direction: column; gap: 15px; }
+.item-lista-libro, .item-solicitud { display: flex; align-items: flex-start; background-color: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.item-lista-libro img.thumbnail, .item-solicitud img.thumbnail { width: 60px;  height: 85px; object-fit: cover; border-radius: 4px; margin-right: 15px; flex-shrink: 0; }
+.item-lista-libro .detalles, .item-solicitud .detalles { flex-grow: 1; font-size: 0.95em; display: flex; flex-direction: column; gap: 4px; }
+.item-lista-libro .detalles strong, .item-solicitud .detalles strong { display: block; font-size: 1.1em; font-weight: 600; color: #2D3748; margin-bottom: 2px; }
+.item-lista-libro .detalles span, .item-solicitud .detalles span { display: block; color: #4A5568; font-size: 0.85em; }
+.item-lista-libro .acciones, .item-solicitud .acciones { margin-left: 15px; flex-shrink: 0; display:flex; flex-direction:column; gap: 5px; }
+/* Los botones dentro de .acciones ahora usarán .boton-accion-base y su color específico */
+.item-lista-libro .acciones button, .item-solicitud .acciones button { 
     padding: 7px 14px; 
-    font-size: 0.8em;
+    font-size: 0.8em; 
+    width: 100%;
 }
 
 /* Tarjetas de Libros (para la lista general "Libros Disponibles") */
@@ -278,22 +237,8 @@ form button[type="button"]:hover {
 }
 .libro-propietario, .libro-estado { font-size: 0.8em; color: #4A5568; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .libro-info-prestamo { font-size: 0.8em; color: #c05621; background-color: #fffaf0; padding: 6px; border-radius: 4px; margin-top: 5px; margin-bottom: 8px; line-height: 1.3; border: 1px dashed #dd6b20; }
-
-/* Botones dentro de las tarjetas de libro (ahora usarán .boton-accion o un estilo similar) */
-.libro-card button { 
-    margin-top: auto; width: 100%; box-sizing: border-box; 
-    /* Padding y font-size se heredan de .boton-accion o se especifican */
-}
-.libro-card button.btn-pedir-prestado { /* Verde (ya usa .boton-accion si se le asigna) */
-    /* background-color: #38A169;  Si no usa .boton-accion */
-}
-.libro-card button.btn-pedir-prestado:hover { /* background-color: #2F855A; */ }
-
-.libro-card button.btn-gestionar-libro { background-color: #DD6B20; } /* Naranja para gestionar */
-.libro-card button.btn-gestionar-libro:hover { background-color: #C05621; }
-
-.libro-card button.btn-marcar-devuelto { background-color: #3182CE; } /* Azul para marcar devuelto */
-.libro-card button.btn-marcar-devuelto:hover { background-color: #2B6CB0; }
+.libro-card button { margin-top: auto; width: 100%; box-sizing: border-box; }
+/* Los botones btn-pedir-prestado, btn-gestionar-libro, btn-marcar-devuelto en .libro-card USARÁN .boton-accion-base y su modificador de color */
 
 #lista-libros-disponibles { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding-top: 15px; }
 
@@ -305,12 +250,12 @@ form button[type="button"]:hover {
 .avatar-seleccionable .avatar-nombre-display { font-size: 0.9em; color: #2D3748; font-weight: 500; }
 #vista-login-alumno #avatar-seleccionado-nombre { text-align: center; font-size: 1.5em; font-weight: bold; margin-bottom: 20px; color: #1A202C; }
 #vista-login-alumno #form-login-alumno-pin { border-top: 1px solid #e2e8f0; padding-top: 25px; margin-top: 20px; }
+#vista-login-alumno #seleccion-login-registro-alumno button { margin-bottom: 10px;} 
 
-/* Botones de selección Login/Registro Alumno (Ahora también pueden usar .boton-accion) */
-.boton-grande-secundario { /* Se mantiene para diferenciarlos si es necesario, o se puede unificar con .boton-accion */
+.boton-grande-secundario { /* Para "Ya tengo Usuario" y "Soy Nuevo" */
     padding: 12px 25px; font-size: 1.1em; font-weight: 600;
-    background-color: #4A5568; /* Un gris azulado */
-    color: white; border: none; border-radius: 6px; cursor: pointer; margin: 10px;
+    background-color: #4A5568; color: white; border: none;
+    border-radius: 6px; cursor: pointer; margin: 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
@@ -322,3 +267,9 @@ form button[type="button"]:hover {
     font-size: 0.95em; font-weight: 500; display: inline-block; margin-top: 5px;
 }
 .link-button:hover { color: #2B6CB0; transform: none!important; }
+
+/* Específicos para botones de Aceptar/Rechazar solicitud en el dashboard */
+.item-solicitud .acciones .btn-aceptar-solicitud { background-color: #38A169; } /* Verde */
+.item-solicitud .acciones .btn-aceptar-solicitud:hover { background-color: #2F855A; }
+.item-solicitud .acciones .btn-rechazar-solicitud { background-color: #E53E3E; } /* Rojo */
+.item-solicitud .acciones .btn-rechazar-solicitud:hover { background-color: #C53030; }
