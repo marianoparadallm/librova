@@ -23,12 +23,12 @@ async function cargarYMostrarLibros() {
             .order('created_at', { ascending: false });
         if (error) { throw error; }
         if (libros && libros.length > 0) {
-            listaLibrosDiv.innerHTML = ''; 
+            listaLibrosDiv.innerHTML = '';
             libros.forEach(libro => {
                 const propietarioNombre = libro.propietario ? libro.propietario.nickname : 'Desconocido';
                 let infoPrestamoHTML = '';
-                if (libro.estado === 'prestado') { 
-                    const nombrePrestadoA = libro.prestado_a ? libro.prestado_a.nickname : 'Alguien'; 
+                if (libro.estado === 'prestado') {
+                    const nombrePrestadoA = libro.prestado_a ? libro.prestado_a.nickname : 'Alguien';
                     const fechaDev = libro.fecha_limite_devolucion ? new Date(libro.fecha_limite_devolucion).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Fecha no definida';
                     infoPrestamoHTML = `<p class="libro-info-prestamo">Prestado a: ${nombrePrestadoA}<br>Devolver el: ${fechaDev}</p>`;
                 }
@@ -48,48 +48,49 @@ async function cargarYMostrarLibros() {
                     </div>`;
                 listaLibrosDiv.innerHTML += libroCardHTML;
             });
-            asignarEventListenersLibros(); 
-        } else { 
-            listaLibrosDiv.innerHTML = '<p>Aún no hay libros en la biblioteca. ¡Sé el primero en cargar uno!</p>'; 
+            asignarEventListenersLibros();
+        } else {
+            listaLibrosDiv.innerHTML = '<p>Aún no hay libros en la biblioteca. ¡Sé el primero en cargar uno!</p>';
         }
-    } catch (error) { 
-        console.error("DEBUG: libros_ui.js - Error al cargar libros:", error); 
+    } catch (error) {
+        console.error("DEBUG: libros_ui.js - Error al cargar libros:", error);
         listaLibrosDiv.innerHTML = '<p style="color:red;">Error al cargar los libros.</p>';
     }
 }
 
-function asignarEventListenersLibros() { 
+function asignarEventListenersLibros() {
     console.log("DEBUG: libros_ui.js - Asignando event listeners a botones de libros y solicitudes.");
-    
-    document.querySelectorAll('#lista-libros-disponibles .btn-pedir-prestado, #mis-libros-en-prestamo .btn-pedir-prestado, #libros-que-me-prestaron .btn-pedir-prestado').forEach(boton => { 
-        boton.addEventListener('click', async (event) => { 
-            if (!currentUser) { console.error("Login requerido"); renderizarVistaBienvenida(); return; } 
-            const libroCard = event.target.closest('.libro-card') || event.target.closest('.item-lista-libro'); 
-            const libroId = libroCard.dataset.libroId; 
-            const propietarioId = libroCard.dataset.propietarioId; 
-            const tituloLibro = libroCard.querySelector('strong, .libro-titulo').textContent;
-            if (confirm(`¿Seguro que quieres pedir prestado el libro "${tituloLibro}"?`)) { 
-                await pedirLibroPrestamo(libroId, propietarioId, tituloLibro); 
+
+    document.querySelectorAll('#lista-libros-disponibles .btn-pedir-prestado').forEach(boton => {
+        boton.addEventListener('click', async (event) => {
+            if (!currentUser) { console.error("Login requerido"); renderizarVistaBienvenida(); return; }
+            const libroCard = event.target.closest('.libro-card');
+            const libroId = libroCard.dataset.libroId;
+            const propietarioId = libroCard.dataset.propietarioId;
+            const tituloLibroElement = libroCard.querySelector('.libro-titulo');
+            const tituloLibro = tituloLibroElement ? tituloLibroElement.textContent : "este libro";
+            if (confirm(`¿Seguro que quieres pedir prestado el libro "${tituloLibro}"?`)) {
+                await pedirLibroPrestamo(libroId, propietarioId, tituloLibro);
             }
         });
     });
-    document.querySelectorAll('#lista-libros-disponibles .btn-gestionar-libro').forEach(boton => { 
-        boton.addEventListener('click', (event) => { 
-            const libroCard = event.target.closest('.libro-card'); 
-            const libroId = libroCard.dataset.libroId; 
-            console.log(`DEBUG: libros_ui.js - Gestionar libro ID: ${libroId} desde lista general.`); 
+    document.querySelectorAll('#lista-libros-disponibles .btn-gestionar-libro').forEach(boton => {
+        boton.addEventListener('click', (event) => {
+            const libroCard = event.target.closest('.libro-card');
+            const libroId = libroCard.dataset.libroId;
+            console.log(`DEBUG: libros_ui.js - Gestionar libro ID: ${libroId} desde lista general.`);
             renderizarDetallesGestionLibro(libroId);
         });
     });
-    
-    document.querySelectorAll('.btn-marcar-devuelto').forEach(boton => { 
-        boton.addEventListener('click', async (event) => { 
+
+    document.querySelectorAll('.btn-marcar-devuelto').forEach(boton => {
+        boton.addEventListener('click', async (event) => {
             const cardElement = event.target.closest('.libro-card') || event.target.closest('.item-lista-libro');
-            const libroId = cardElement.dataset.libroId; 
+            const libroId = cardElement.dataset.libroId;
             const tituloElement = cardElement.querySelector('strong, .libro-titulo');
             const tituloConfirm = tituloElement ? tituloElement.textContent : "este libro";
-            if (confirm(`¿Confirmas que el libro "${tituloConfirm}" ha sido devuelto?`)) { 
-                await marcarLibroComoDevuelto(libroId); 
+            if (confirm(`¿Confirmas que el libro "${tituloConfirm}" ha sido devuelto?`)) {
+                await marcarLibroComoDevuelto(libroId);
             }
         });
     });
@@ -100,10 +101,10 @@ function asignarEventListenersLibros() {
             const solicitudId = itemSolicitud.dataset.solicitudId;
             const libroId = itemSolicitud.dataset.libroId;
             const solicitanteId = itemSolicitud.dataset.solicitanteId;
-            const propietarioId = itemSolicitud.dataset.propietarioId; 
+            const propietarioId = itemSolicitud.dataset.propietarioId;
             const libroTitulo = itemSolicitud.querySelector('strong') ? itemSolicitud.querySelector('strong').textContent : "este libro";
-            const solicitanteNickname = itemSolicitud.querySelector('.detalles span').textContent.replace('Solicitado por: ','');
-
+            const solicitanteNicknameElement = itemSolicitud.querySelector('.detalles span:nth-child(2)'); // Asume que el segundo span es el del solicitante
+            const solicitanteNickname = solicitanteNicknameElement ? solicitanteNicknameElement.textContent.replace('Solicitado por: ','').trim() : 'Alguien';
 
             console.log(`DEBUG: libros_ui.js - Aceptar solicitud ID: ${solicitudId}`);
             await responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, propietarioId, 'aceptada', libroTitulo, solicitanteNickname);
@@ -113,9 +114,10 @@ function asignarEventListenersLibros() {
         boton.addEventListener('click', async (event) => {
             const itemSolicitud = event.target.closest('.item-solicitud');
             const solicitudId = itemSolicitud.dataset.solicitudId;
-            const propietarioId = itemSolicitud.dataset.propietarioId; 
+            const propietarioId = itemSolicitud.dataset.propietarioId;
             const libroTitulo = itemSolicitud.querySelector('strong') ? itemSolicitud.querySelector('strong').textContent : "este libro";
-            const solicitanteNickname = itemSolicitud.querySelector('.detalles span').textContent.replace('Solicitado por: ','');
+            const solicitanteNicknameElement = itemSolicitud.querySelector('.detalles span:nth-child(2)'); // Asume que el segundo span es el del solicitante
+            const solicitanteNickname = solicitanteNicknameElement ? solicitanteNicknameElement.textContent.replace('Solicitado por: ','').trim() : 'Alguien';
 
             console.log(`DEBUG: libros_ui.js - Rechazar solicitud ID: ${solicitudId}`);
             await responderSolicitudPrestamo(solicitudId, null, solicitanteId, propietarioId, 'rechazada', libroTitulo, solicitanteNickname);
@@ -147,6 +149,7 @@ async function cargarLibrosQueMePrestaron(userId) {
     return data || [];
 }
 
+// --- FUNCIÓN cargarSolicitudesRecibidas AÑADIDA/CORREGIDA ---
 async function cargarSolicitudesRecibidas(userId) {
     console.log("DEBUG: libros_ui.js - Cargando solicitudes de préstamo recibidas para propietario ID:", userId);
     if (!supabaseClientInstance) {
@@ -171,12 +174,12 @@ async function cargarSolicitudesRecibidas(userId) {
 
         if (error) {
             console.error("DEBUG: libros_ui.js - Error de Supabase al cargar solicitudes recibidas:", error);
-            return []; 
+            return [];
         }
         console.log("DEBUG: libros_ui.js - Solicitudes recibidas cargadas:", data);
         return data || [];
-    } catch (error) {
-        console.error("DEBUG: libros_ui.js - Error general al cargar solicitudes recibidas:", error);
+    } catch (errorCatch) { // Renombrado para evitar conflicto con la variable 'error' de la desestructuración
+        console.error("DEBUG: libros_ui.js - Error general (catch) al cargar solicitudes recibidas:", errorCatch);
         return [];
     }
 }

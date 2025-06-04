@@ -52,21 +52,30 @@ footer { text-align: center; padding: 20px; background: rgba(26, 32, 44, 0.85); 
     box-shadow: none; border-radius: 0; padding: 20px; position: relative; 
     box-sizing: border-box; margin-bottom: 0; 
 }
+
 #vista-bienvenida .texto-bienvenida {
-    background-color: rgba(255, 255, 255, 0.92); padding: 30px 35px; border-radius: 12px; 
-    margin-bottom: 40px; max-width: 680px; width: auto; display: inline-block; 
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2); text-align: center; box-sizing: border-box; 
+    background-color: rgba(255, 255, 255, 0.92);
+    padding: 30px 35px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    max-width: 680px;
+    /* width: auto;  Quitamos 'width: auto;' o 'display: inline-block;' si estaba. */
+    /* display: inline-block;  <--- QUITAR ESTO SI ESTÁ */
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    text-align: center;
+    box-sizing: border-box;
+    /* Por defecto, un div es display: block, lo cual está bien para un ítem flex en una columna */
 }
+
 #vista-bienvenida .texto-bienvenida p { margin: 0 0 18px 0; font-size: 1.15em; color: #1A202C; line-height: 1.75; }
 #vista-bienvenida .texto-bienvenida p:first-child { font-weight: bold; font-size: 1.25em; color: #2D3748; }
 #vista-bienvenida .texto-bienvenida p:last-child { margin-bottom: 0; }
 
 /* Botón principal en la bienvenida - YA TIENE SU ESTILO ÚNICO .boton-grande */
 #vista-bienvenida .boton-grande {
-    padding: 18px 35px; font-size: 1.4em; font-weight: bold; background-color: #38A169; 
-    color: white; border: none; border-radius: 8px; cursor: pointer; 
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    text-transform: uppercase; letter-spacing: 1px;
+    /* Los estilos de padding, font-size, etc. se mantienen */
+    /* display: inline-block; ya lo tenías y está bien para este botón en sí mismo,
+       pero su centrado lo maneja el align-items: center del padre #vista-bienvenida */
 }
 #vista-bienvenida .boton-grande:hover {
     background-color: #2F855A; transform: translateY(-3px) scale(1.02); 
