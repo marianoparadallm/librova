@@ -3,36 +3,35 @@ console.log("DEBUG: libros_ops.js - Cargado.");
 
 
 async function pedirLibroPrestado(libroId, propietarioIdLibro) {
-    // ... (Misma función pedirLibroPrestado que tenías)
-    console.log(`DEBUG: libros_ops.js - Intentando pedir prestado libro ID: ${libroId}, del propietario ID: ${propietarioIdLibro}`);
-    if (!currentUser || !currentUser.id) { /* No alert */ console.error("Error de sesión."); return; }
-    if (!supabaseClientInstance) { /* No alert */ console.error("Error de conexión."); return; }
-    if (currentUser.reputacion <= -3) { /* No alert */ console.warn("Límite de préstamos alcanzado."); return; }
+    console.log(`DEBUG: libros_ops.js - Solicitando libro ID: ${libroId} al propietario ID: ${propietarioIdLibro}`);
+    if (!currentUser || !currentUser.id) { console.error("Error de sesión."); return; }
+    if (!supabaseClientInstance) { console.error("Error de conexión."); return; }
+    if (currentUser.reputacion <= -3) { console.warn("Límite de préstamos alcanzado."); return; }
 
-    const fechaDevolucion = new Date(); fechaDevolucion.setDate(fechaDevolucion.getDate() + 14);
     const botonesLibro = document.querySelectorAll(`.libro-card[data-libro-id="${libroId}"] button`);
     botonesLibro.forEach(b => b.disabled = true);
-    let libroFuePrestadoExitosamente = false; let tituloLibroPrestado = `ID ${libroId}`;
     try {
-        const { error: updateErr, count } = await supabaseClientInstance.from('libros').update({ estado: 'prestado', esta_con_usuario_id: currentUser.id, fecha_limite_devolucion: fechaDevolucion.toISOString() }).eq('id', libroId).eq('estado', 'disponible');
-        if (updateErr) throw updateErr;
-        if (count === 0 || count === null) { console.warn(`DEBUG: libros_ops.js - No se actualizó el libro ID: ${libroId}.`); /* No alert */ cargarYMostrarLibros(); return; } // Asume cargarYMostrarLibros es global
-        libroFuePrestadoExitosamente = true; console.log(`DEBUG: libros_ops.js - Libro ID: ${libroId} actualizado a 'prestado'.`);
-        const { data: libroInfo } = await supabaseClientInstance.from('libros').select('titulo').eq('id', libroId).single();
-        if (libroInfo) tituloLibroPrestado = libroInfo.titulo;
-        const nRS = (currentUser.reputacion || 0) - 1;
-        await supabaseClientInstance.from('usuarios').update({ reputacion: nRS }).eq('id', currentUser.id);
-        currentUser.reputacion = nRS; // Actualiza currentUser global
-        const { data: dP } = await supabaseClientInstance.from('usuarios').select('reputacion').eq('id', propietarioIdLibro).single();
-        if (dP) { const nRP = (dP.reputacion || 0) + 1; await supabaseClientInstance.from('usuarios').update({ reputacion: nRP }).eq('id', propietarioIdLibro); }
-        console.log(`Libro "${tituloLibroPrestado}" prestado.`); 
-    } catch (error) { console.error("DEBUG: libros_ops.js - Error al pedir libro:", error); 
+        const { error: insErr } = await supabaseClientInstance.from('solicitudes_prestamo').insert({
+            libro_id: libroId,
+            propietario_id: propietarioIdLibro,
+            solicitante_id: currentUser.id,
+            fecha_solicitud: new Date().toISOString(),
+            estado_solicitud: 'pendiente'
+        });
+        if (insErr) throw insErr;
+
+        await supabaseClientInstance.from('libros')
+            .update({ estado: 'solicitado' })
+            .eq('id', libroId)
+            .eq('estado', 'disponible');
+        console.log(`DEBUG: libros_ops.js - Solicitud creada para libro ${libroId}.`);
+    } catch (error) {
+        console.error('DEBUG: libros_ops.js - Error al solicitar libro:', error);
     } finally {
-        if (libroFuePrestadoExitosamente) actualizarMenuPrincipal();
         cargarYMostrarLibros();
         recargarSeccionesPrestamosDashboard();
         botonesLibro.forEach(b => b.disabled = false);
-    } // Asume globales
+    }
 
 }
 
@@ -71,6 +70,30 @@ async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, p
                 .update({ estado: "prestado", esta_con_usuario_id: solicitanteId, fecha_limite_devolucion: fechaDev.toISOString() })
                 .eq("id", libroId)
                 .eq("propietario_id", propietarioId);
+            const { data: repSol } = await supabaseClientInstance.from('usuarios').select('reputacion').eq('id', solicitanteId).single();
+            if (repSol) {
+                const nRS = (repSol.reputacion || 0) - 1;
+                await supabaseClientInstance.from('usuarios').update({ reputacion: nRS }).eq('id', solicitanteId);
+                if (currentUser.id === solicitanteId) currentUser.reputacion = nRS;
+            }
+            const { data: repProp } = await supabaseClientInstance.from('usuarios').select('reputacion').eq('id', propietarioId).single();
+            if (repProp) {
+                const nRP = (repProp.reputacion || 0) + 1;
+                await supabaseClientInstance.from('usuarios').update({ reputacion: nRP }).eq('id', propietarioId);
+                if (currentUser.id === propietarioId) currentUser.reputacion = nRP;
+            }
+        } else if (nuevoEstado === 'rechazada' && libroId) {
+            const { data: pendientes } = await supabaseClientInstance
+                .from('solicitudes_prestamo')
+                .select('id')
+                .eq('libro_id', libroId)
+                .eq('estado_solicitud', 'pendiente');
+            if (!pendientes || pendientes.length === 0) {
+                await supabaseClientInstance.from('libros')
+                    .update({ estado: 'disponible' })
+                    .eq('id', libroId)
+                    .eq('propietario_id', propietarioId);
+            }
         }
         console.log(`DEBUG: libros_ops.js - Solicitud ${solicitudId} actualizada a ${nuevoEstado}.`);
     } catch (err) {
