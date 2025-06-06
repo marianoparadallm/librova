@@ -39,11 +39,11 @@ async function cargarYMostrarLibros() {
                         <p class="libro-propietario">Dueño: ${propietarioNombre}</p>
                         <p class="libro-estado">Estado: ${libro.estado}</p>
                         ${infoPrestamoHTML}
-                        ${currentUser && currentUser.id !== libro.propietario_id && libro.estado === 'disponible' ? 
+                        ${currentUser && currentUser.id !== libro.propietario_id && (libro.estado === 'disponible' || libro.estado === 'solicitado') ?
                             '<button class="btn-pedir-prestamo boton-accion-base pedir">Pedir Prestamo</button>' : ''}
                         ${currentUser && currentUser.id === libro.propietario_id && libro.estado === 'prestado' && libro.esta_con_usuario_id ? 
                             '<button class="btn-marcar-devuelto boton-accion-base devolver">Marcar como Devuelto</button>' : ''}
-                        ${currentUser && currentUser.id === libro.propietario_id && libro.estado === 'disponible' ? 
+                        ${currentUser && currentUser.id === libro.propietario_id && (libro.estado === 'disponible' || libro.estado === 'solicitado') ?
                             '<button class="btn-gestionar-libro boton-accion-base gestionar">Gestionar (Mío)</button>' : ''}
                     </div>`;
                 listaLibrosDiv.innerHTML += libroCardHTML;
