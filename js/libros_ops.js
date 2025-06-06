@@ -1,6 +1,7 @@
 // js/libros_ops.js
 console.log("DEBUG: libros_ops.js - Cargado.");
 
+
 async function pedirLibroPrestado(libroId, propietarioIdLibro) {
     // ... (Misma función pedirLibroPrestado que tenías)
     console.log(`DEBUG: libros_ops.js - Intentando pedir prestado libro ID: ${libroId}, del propietario ID: ${propietarioIdLibro}`);
@@ -32,6 +33,7 @@ async function pedirLibroPrestado(libroId, propietarioIdLibro) {
         recargarSeccionesPrestamosDashboard();
         botonesLibro.forEach(b => b.disabled = false);
     } // Asume globales
+
 }
 
 async function marcarLibroComoDevuelto(libroId) {
