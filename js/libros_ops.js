@@ -26,7 +26,12 @@ async function pedirLibroPrestado(libroId, propietarioIdLibro) {
         if (dP) { const nRP = (dP.reputacion || 0) + 1; await supabaseClientInstance.from('usuarios').update({ reputacion: nRP }).eq('id', propietarioIdLibro); }
         console.log(`Libro "${tituloLibroPrestado}" prestado.`); 
     } catch (error) { console.error("DEBUG: libros_ops.js - Error al pedir libro:", error); 
-    } finally { if (libroFuePrestadoExitosamente) actualizarMenuPrincipal(); cargarYMostrarLibros(); botonesLibro.forEach(b => b.disabled = false); } // Asume globales
+    } finally {
+        if (libroFuePrestadoExitosamente) actualizarMenuPrincipal();
+        cargarYMostrarLibros();
+        recargarSeccionesPrestamosDashboard();
+        botonesLibro.forEach(b => b.disabled = false);
+    } // Asume globales
 }
 
 async function marcarLibroComoDevuelto(libroId) {
@@ -40,8 +45,12 @@ async function marcarLibroComoDevuelto(libroId) {
         if (error) throw error;
         if (count === 0 || count === null) { console.warn(`DEBUG: libros_ops.js - No se actualizó libro ID: ${libroId} a devuelto.`); /* No alert */ }
         else { console.log(`DEBUG: libros_ops.js - Libro ID: ${libroId} marcado como 'disponible'.`); /* No alert */ }
-    } catch (error) { console.error("DEBUG: libros_ops.js - Error al marcar devuelto:", error); /* No alert */ } 
-    finally { cargarYMostrarLibros(); } // Asume cargarYMostrarLibros es global
+    } catch (error) {
+        console.error("DEBUG: libros_ops.js - Error al marcar devuelto:", error); /* No alert */
+    } finally {
+        cargarYMostrarLibros();
+        recargarSeccionesPrestamosDashboard();
+    } // Asume cargarYMostrarLibros es global
 }
 
 async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, propietarioId, nuevoEstado, libroTitulo, solicitanteNickname) {
@@ -70,6 +79,7 @@ async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, p
             asignarEventListenersLibros();
         });
         cargarYMostrarLibros();
+        recargarSeccionesPrestamosDashboard();
         actualizarMenuPrincipal();
     }
 }
@@ -96,4 +106,25 @@ async function handleAnadirLibroSubmit(event) {
         renderizarDashboard(); // Asume renderizarDashboard es global
     } catch (error) { console.error("DEBUG: libros_ops.js - Error al guardar el libro:", error); 
     } finally { submitButton.disabled = false; submitButton.textContent = 'Guardar Libro'; }
+}
+
+function recargarSeccionesPrestamosDashboard() {
+    if (!currentUser) return;
+    if (document.getElementById('mis-libros-en-prestamo')) {
+        cargarMisLibrosEnPrestamo(currentUser.id).then(libros => {
+            renderizarListaDashboard('mis-libros-en-prestamo', libros, 'prestadosPorMi');
+            asignarEventListenersLibros();
+        });
+    }
+    if (document.getElementById('libros-que-me-prestaron')) {
+        cargarLibrosQueMePrestaron(currentUser.id).then(libros => {
+            renderizarListaDashboard('libros-que-me-prestaron', libros, 'prestadosAMi');
+        });
+    }
+    if (document.getElementById('solicitudes-prestamo-recibidas')) {
+        cargarSolicitudesRecibidas(currentUser.id).then(s => {
+            renderizarListaSolicitudesRecibidas('solicitudes-prestamo-recibidas', s);
+            asignarEventListenersLibros();
+        });
+    }
 }
