@@ -44,6 +44,37 @@ async function marcarLibroComoDevuelto(libroId) {
     finally { cargarYMostrarLibros(); } // Asume cargarYMostrarLibros es global
 }
 
+async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, propietarioId, nuevoEstado, libroTitulo, solicitanteNickname) {
+    console.log(`DEBUG: libros_ops.js - Respondiendo solicitud ${solicitudId} con estado ${nuevoEstado}`);
+    if (!supabaseClientInstance || !currentUser) { console.error("DEBUG: libros_ops.js - Supabase o usuario no inicializado."); return; }
+    try {
+        const { error } = await supabaseClientInstance
+            .from("solicitudes_prestamo")
+            .update({ estado_solicitud: nuevoEstado })
+            .eq("id", solicitudId);
+        if (error) throw error;
+        if (nuevoEstado === "aceptada" && libroId) {
+            const fechaDev = new Date();
+            fechaDev.setDate(fechaDev.getDate() + 14);
+            await supabaseClientInstance.from("libros")
+                .update({ estado: "prestado", esta_con_usuario_id: solicitanteId, fecha_limite_devolucion: fechaDev.toISOString() })
+                .eq("id", libroId)
+                .eq("propietario_id", propietarioId);
+        }
+        console.log(`DEBUG: libros_ops.js - Solicitud ${solicitudId} actualizada a ${nuevoEstado}.`);
+    } catch (err) {
+        console.error("DEBUG: libros_ops.js - Error procesando solicitud:", err);
+    } finally {
+        cargarSolicitudesRecibidas(currentUser.id).then(s => {
+            renderizarListaSolicitudesRecibidas("solicitudes-prestamo-recibidas", s);
+            asignarEventListenersLibros();
+        });
+        cargarYMostrarLibros();
+        actualizarMenuPrincipal();
+    }
+}
+
+
 async function handleAnadirLibroSubmit(event) {
     // ... (Misma función handleAnadirLibroSubmit que tenías)
     event.preventDefault(); console.log("DEBUG: libros_ops.js - Guardando nuevo libro...");
