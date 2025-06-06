@@ -140,10 +140,10 @@ async function cargarSolicitudesRecibidas(userId) {
                 id,
                 fecha_solicitud,
                 libro_id,
-                propietario_id, /* Añadido para integridad */
-                solicitante_id, /* Añadido para integridad */
-                libros ( titulo, foto_url ), 
-                usuarios!solicitudes_prestamo_solicitante_id_fkey ( nickname ) /* Nickname del solicitante */
+                propietario_id,
+                solicitante_id,
+                libros ( titulo, foto_url ),
+                usuarios!solicitudes_prestamo_solicitante_id_fkey ( nickname )
             `)
             .eq('propietario_id', userId)
             .eq('estado_solicitud', 'pendiente')
