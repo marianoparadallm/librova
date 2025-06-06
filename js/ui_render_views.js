@@ -1,4 +1,96 @@
 
+function renderizarVistaBienvenida() {
+    console.log("DEBUG: ui_render_views.js - Renderizando vista de bienvenida.");
+    if (!contenedorPrincipal) {
+        console.error("DEBUG: ui_render_views.js - contenedorPrincipal no encontrado.");
+        return;
+    }
+    const parrafoCargando = document.getElementById('parrafo-carga-inicial');
+    if (parrafoCargando) parrafoCargando.remove();
+    document.querySelectorAll('.vista').forEach(v => { v.style.display = 'none'; v.classList.remove('activa'); });
+
+    let avataresLoginHTML = '';
+    AVATARES_DISPONIBLES.forEach(avatar => {
+        avataresLoginHTML += `
+            <div class="avatar-seleccionable" data-nombre-avatar="${avatar.nombre}">
+                <span class="avatar-emoji">${avatar.emoji}</span>
+                <span class="avatar-nombre-display">${avatar.nombre}</span>
+            </div>
+        `;
+    });
+
+    contenedorPrincipal.innerHTML = `
+        <div id="vista-bienvenida" class="vista">
+            <div class="texto-bienvenida">
+                <p>¡Hola, explorador de historias! 👋</p>
+                <p>Bienvenido a LibroVa, ¡nuestra biblioteca mágica! Acá vas a poder compartir cuentos y libros que ya leíste y descubrir nuevas aventuras que tus compañeros tienen para vos. Sumate agregando tus libros y pidiendo prestamos e intercambialos en tu clase!</p>
+                <p>¿Listo para empezar a compartir y leer?</p>
+            </div>
+            <button id="btn-ingresar-crear-usuario" class="boton-grande">Ingresar o Crear Usuario</button>
+            <button id="btn-acceso-admin" class="boton-admin">ADMIN</button>
+        </div>
+        <div id="vista-login-admin" class="vista">
+            <h3>Login Administrador</h3>
+            <form id="form-login-admin">
+                <label for="admin-email">Email:</label><input type="email" id="admin-email" required><br><br>
+                <label for="admin-password">Contraseña:</label><input type="password" id="admin-password" required><br><br>
+                <button type="submit">Ingresar como Admin</button>
+                <button type="button" id="btn-volver-bienvenida-admin">Volver</button>
+            </form>
+        </div>
+        <div id="vista-login-alumno" class="vista">
+            <h3>Acceso Alumnos</h3>
+            <div id="seleccion-login-registro-alumno" style="text-align:center;margin-bottom:20px;">
+                <button id="btn-mostrar-form-login-avatar" class="boton-grande-secundario">Ya tengo Usuario (Ingresar)</button>
+                <button id="btn-mostrar-form-registro-alumno" class="boton-grande-secundario">Soy Nuevo (Registrarme)</button>
+            </div>
+            <div id="contenedor-login-avatar" style="display:none;">
+                <h4>Elige tu Avatar para Ingresar</h4>
+                <div id="selector-avatares-login" class="contenedor-avatares">${avataresLoginHTML}</div>
+                <form id="form-login-alumno-pin" style="display:none;">
+                    <h4 id="avatar-seleccionado-nombre"></h4>
+                    <label for="alumno-pin-login">Tu PIN (4 dígitos):</label>
+                    <input type="password" id="alumno-pin-login" maxlength="4" pattern="\\d{4}" required inputmode="numeric" autocomplete="current-password"><br><br>
+                    <button type="submit">Ingresar</button>
+                    <button type="button" id="btn-cambiar-avatar">Cambiar Avatar</button>
+                </form>
+            </div>
+            <div style="text-align:center; margin-top: 20px;">
+                 <button type="button" id="btn-volver-bienvenida-alumno" class="link-button" style="margin-top:10px;">Volver a Inicio</button>
+            </div>
+        </div>
+        <div id="vista-registro-alumno" class="vista">
+            <h3>Registro de Alumno Nuevo</h3>
+            <form id="form-registro-alumno">
+                <label for="alumno-nickname-registro">Elige tu Nickname (único, min. 3 caracteres):</label>
+                <input type="text" id="alumno-nickname-registro" required minlength="3"><br><br>
+                <label for="alumno-avatar-registro">Elige tu Avatar:</label>
+                <select id="alumno-avatar-registro" required></select><br><br>
+                <label for="alumno-pin-registro">Crea tu PIN (4 dígitos numéricos):</label>
+                <input type="password" id="alumno-pin-registro" maxlength="4" pattern="\\d{4}" required inputmode="numeric"><br><br>
+                <label for="alumno-pin-confirmar">Confirma tu PIN:</label>
+                <input type="password" id="alumno-pin-confirmar" maxlength="4" pattern="\\d{4}" required inputmode="numeric"><br><br>
+                <button type="submit">Registrarme</button>
+                <button type="button" id="btn-volver-a-seleccion-login-registro" class="link-button">Ya tengo cuenta / Volver</button>
+            </form>
+        </div>
+        <div id="vista-dashboard" class="vista"></div>
+        <div id="vista-anadir-libro" class="vista"><h3>Añadir Nuevo Libro</h3><form id="form-anadir-libro"><label for="libro-titulo">Título del Libro:</label><input type="text" id="libro-titulo" required><br><br><label for="libro-foto">Foto de la Portada:</label><input type="file" id="libro-foto" accept="image/*" capture="environment" required><br><br><img id="libro-foto-preview" src="#" alt="Vista previa de la portada" style="max-width: 200px; max-height: 200px; display: none; margin-bottom:15px;"><br><button type="submit">Guardar Libro</button><button type="button" id="btn-volver-dashboard-desde-anadir">Cancelar y Volver al Dashboard</button></form></div>
+        <div id="vista-gestionar-libro-propio" class="vista"><h3>Gestionar Mi Libro</h3><p>Aquí podrás editar o eliminar tu libro que esté disponible.</p><div id="detalles-libro-gestion"></div><button type="button" id="btn-volver-dashboard-desde-gestion">Volver al Dashboard</button></div>
+    `;
+    const selectAvatarRegistro = document.getElementById('alumno-avatar-registro');
+    if (selectAvatarRegistro) {
+        selectAvatarRegistro.innerHTML = '';
+        AVATARES_DISPONIBLES.forEach(avatar => {
+            const optionValue = avatar.id;
+            const optionText = `${avatar.emoji} ${avatar.nombre}`;
+            const optionHTML = `<option value="${optionValue}">${optionText}</option>`;
+            selectAvatarRegistro.innerHTML += optionHTML;
+        });
+    }
+    asignarEventListenersGlobales();
+    cambiarVista(null, 'vista-bienvenida');
+}
 
 function renderizarListaDashboard(divId, libros, tipoLista) {
     const div = document.getElementById(divId); if (!div) { console.error(`DEBUG: ui_render_views.js - Div ${divId} no encontrado.`); return; }
