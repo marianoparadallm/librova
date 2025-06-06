@@ -1,29 +1,39 @@
 // js/libros_ops.js
 console.log("DEBUG: libros_ops.js - Cargado.");
 
+
 async function pedirLibroPrestado(libroId, propietarioIdLibro) {
-    // Registrar solicitud de préstamo en lugar de actualizar el libro directamente
+    // ... (Misma función pedirLibroPrestado que tenías)
     console.log(`DEBUG: libros_ops.js - Intentando pedir prestado libro ID: ${libroId}, del propietario ID: ${propietarioIdLibro}`);
     if (!currentUser || !currentUser.id) { /* No alert */ console.error("Error de sesión."); return; }
     if (!supabaseClientInstance) { /* No alert */ console.error("Error de conexión."); return; }
     if (currentUser.reputacion <= -3) { /* No alert */ console.warn("Límite de préstamos alcanzado."); return; }
 
+    const fechaDevolucion = new Date(); fechaDevolucion.setDate(fechaDevolucion.getDate() + 14);
     const botonesLibro = document.querySelectorAll(`.libro-card[data-libro-id="${libroId}"] button`);
     botonesLibro.forEach(b => b.disabled = true);
-    let solicitudExitosa = false;
+    let libroFuePrestadoExitosamente = false; let tituloLibroPrestado = `ID ${libroId}`;
     try {
-        const { error } = await supabaseClientInstance
-            .from('solicitudes_prestamo')
-            .insert([{ libro_id: libroId, propietario_id: propietarioIdLibro, solicitante_id: currentUser.id, fecha_solicitud: new Date().toISOString(), estado_solicitud: 'pendiente' }]);
-        if (error) throw error;
-        solicitudExitosa = true;
-        console.log(`DEBUG: libros_ops.js - Solicitud de préstamo registrada para libro ID: ${libroId}`);
-    } catch (error) {
-        console.error("DEBUG: libros_ops.js - Error al solicitar préstamo:", error);
+        const { error: updateErr, count } = await supabaseClientInstance.from('libros').update({ estado: 'prestado', esta_con_usuario_id: currentUser.id, fecha_limite_devolucion: fechaDevolucion.toISOString() }).eq('id', libroId).eq('estado', 'disponible');
+        if (updateErr) throw updateErr;
+        if (count === 0 || count === null) { console.warn(`DEBUG: libros_ops.js - No se actualizó el libro ID: ${libroId}.`); /* No alert */ cargarYMostrarLibros(); return; } // Asume cargarYMostrarLibros es global
+        libroFuePrestadoExitosamente = true; console.log(`DEBUG: libros_ops.js - Libro ID: ${libroId} actualizado a 'prestado'.`);
+        const { data: libroInfo } = await supabaseClientInstance.from('libros').select('titulo').eq('id', libroId).single();
+        if (libroInfo) tituloLibroPrestado = libroInfo.titulo;
+        const nRS = (currentUser.reputacion || 0) - 1;
+        await supabaseClientInstance.from('usuarios').update({ reputacion: nRS }).eq('id', currentUser.id);
+        currentUser.reputacion = nRS; // Actualiza currentUser global
+        const { data: dP } = await supabaseClientInstance.from('usuarios').select('reputacion').eq('id', propietarioIdLibro).single();
+        if (dP) { const nRP = (dP.reputacion || 0) + 1; await supabaseClientInstance.from('usuarios').update({ reputacion: nRP }).eq('id', propietarioIdLibro); }
+        console.log(`Libro "${tituloLibroPrestado}" prestado.`); 
+    } catch (error) { console.error("DEBUG: libros_ops.js - Error al pedir libro:", error); 
     } finally {
+        if (libroFuePrestadoExitosamente) actualizarMenuPrincipal();
+        cargarYMostrarLibros();
+        recargarSeccionesPrestamosDashboard();
         botonesLibro.forEach(b => b.disabled = false);
-        if (solicitudExitosa) alert('Solicitud de préstamo enviada.');
-    }
+    } // Asume globales
+
 }
 
 async function marcarLibroComoDevuelto(libroId) {
@@ -37,8 +47,12 @@ async function marcarLibroComoDevuelto(libroId) {
         if (error) throw error;
         if (count === 0 || count === null) { console.warn(`DEBUG: libros_ops.js - No se actualizó libro ID: ${libroId} a devuelto.`); /* No alert */ }
         else { console.log(`DEBUG: libros_ops.js - Libro ID: ${libroId} marcado como 'disponible'.`); /* No alert */ }
-    } catch (error) { console.error("DEBUG: libros_ops.js - Error al marcar devuelto:", error); /* No alert */ } 
-    finally { cargarYMostrarLibros(); } // Asume cargarYMostrarLibros es global
+    } catch (error) {
+        console.error("DEBUG: libros_ops.js - Error al marcar devuelto:", error); /* No alert */
+    } finally {
+        cargarYMostrarLibros();
+        recargarSeccionesPrestamosDashboard();
+    } // Asume cargarYMostrarLibros es global
 }
 
 async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, propietarioId, nuevoEstado, libroTitulo, solicitanteNickname) {
@@ -67,6 +81,7 @@ async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, p
             asignarEventListenersLibros();
         });
         cargarYMostrarLibros();
+        recargarSeccionesPrestamosDashboard();
         actualizarMenuPrincipal();
     }
 }
@@ -93,4 +108,25 @@ async function handleAnadirLibroSubmit(event) {
         renderizarDashboard(); // Asume renderizarDashboard es global
     } catch (error) { console.error("DEBUG: libros_ops.js - Error al guardar el libro:", error); 
     } finally { submitButton.disabled = false; submitButton.textContent = 'Guardar Libro'; }
+}
+
+function recargarSeccionesPrestamosDashboard() {
+    if (!currentUser) return;
+    if (document.getElementById('mis-libros-en-prestamo')) {
+        cargarMisLibrosEnPrestamo(currentUser.id).then(libros => {
+            renderizarListaDashboard('mis-libros-en-prestamo', libros, 'prestadosPorMi');
+            asignarEventListenersLibros();
+        });
+    }
+    if (document.getElementById('libros-que-me-prestaron')) {
+        cargarLibrosQueMePrestaron(currentUser.id).then(libros => {
+            renderizarListaDashboard('libros-que-me-prestaron', libros, 'prestadosAMi');
+        });
+    }
+    if (document.getElementById('solicitudes-prestamo-recibidas')) {
+        cargarSolicitudesRecibidas(currentUser.id).then(s => {
+            renderizarListaSolicitudesRecibidas('solicitudes-prestamo-recibidas', s);
+            asignarEventListenersLibros();
+        });
+    }
 }
