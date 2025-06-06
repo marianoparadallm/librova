@@ -52,6 +52,7 @@ async function cargarYMostrarLibros() {
         } else {
             listaLibrosDiv.innerHTML = '<p>Aún no hay libros en la biblioteca. ¡Sé el primero en cargar uno!</p>';
         }
+
     } catch (error) {
         console.error("DEBUG: libros_ui.js - Error al cargar libros:", error);
         listaLibrosDiv.innerHTML = '<p style="color:red;">Error al cargar los libros.</p>';
@@ -111,6 +112,7 @@ function delegarClicksLibros(event) {
         const solicitanteNickname = solicitanteNicknameElement ? solicitanteNicknameElement.textContent.replace("Solicitado por: ", "").trim() : "Alguien";
         console.log(`DEBUG: libros_ui.js - Rechazar solicitud ID: ${solicitudId}`);
         responderSolicitudPrestamo(solicitudId, null, solicitanteId, propietarioId, "rechazada", libroTitulo, solicitanteNickname);
+
     }
 }
 
@@ -138,7 +140,6 @@ async function cargarLibrosQueMePrestaron(userId) {
     return data || [];
 }
 
-// --- FUNCIÓN cargarSolicitudesRecibidas AÑADIDA/CORREGIDA ---
 async function cargarSolicitudesRecibidas(userId) {
     console.log("DEBUG: libros_ui.js - Cargando solicitudes de préstamo recibidas para propietario ID:", userId);
     if (!supabaseClientInstance) {
