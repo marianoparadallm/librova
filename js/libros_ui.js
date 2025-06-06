@@ -173,3 +173,10 @@ async function cargarSolicitudesRecibidas(userId) {
         return [];
     }
 }
+
+// Exponer helpers a nivel global
+window.cargarYMostrarLibros = cargarYMostrarLibros;
+window.asignarEventListenersLibros = asignarEventListenersLibros;
+window.cargarMisLibrosEnPrestamo = cargarMisLibrosEnPrestamo;
+window.cargarLibrosQueMePrestaron = cargarLibrosQueMePrestaron;
+window.cargarSolicitudesRecibidas = cargarSolicitudesRecibidas;
