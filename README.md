@@ -1,5 +1,6 @@
 # LibroVa
 
+
 LibroVa es una sencilla aplicación web pensada para que estudiantes compartan y pidan prestados libros entre compañeros. Utiliza **Supabase** como plataforma backend para el manejo de usuarios y del catálogo de libros.
 
 ## Ejecución local
@@ -19,4 +20,3 @@ Los valores `SUPABASE_URL` y `SUPABASE_ANON_KEY` se encuentran definidos en el f
 ## Archivos de prueba
 
 Para verificar que la conexión con Supabase está correctamente configurada puedes abrir [`test_index.html`](test_index.html). Este archivo carga `test_app_test.js` y muestra mensajes básicos de éxito o error.
-
