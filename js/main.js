@@ -73,9 +73,9 @@ function asignarEventListenersGlobales() {
         document.getElementById('btn-cambiar-avatar').onclick = () => { document.getElementById('selector-avatares-login').style.display='flex'; document.getElementById('form-login-alumno-pin').style.display='none'; document.getElementById('form-login-alumno-pin').dataset.nombreAvatar=''; document.getElementById('alumno-pin-login').value=''; document.querySelectorAll('.avatar-seleccionable').forEach(ad=>ad.classList.remove('seleccionado'));};
         const btnVolverDashAnadir = document.getElementById('btn-volver-dashboard-desde-anadir'); if(btnVolverDashAnadir)btnVolverDashAnadir.onclick=()=>renderizarDashboard();
         const btnVolverDashGestion = document.getElementById('btn-volver-dashboard-desde-gestion'); if(btnVolverDashGestion)btnVolverDashGestion.onclick=()=>renderizarDashboard();
-        document.getElementById('form-login-admin').addEventListener('submit', async (e)=>{e.preventDefault();const em=document.getElementById('admin-email').value;const ps=document.getElementById('admin-password').value;const ad=await loginAdmin(em,ps);if(ad){renderizarDashboard();actualizarMenuPrincipal();}});
-        document.getElementById('form-login-alumno-pin').addEventListener('submit', async (e)=>{e.preventDefault();const nA=e.target.dataset.nombreAvatar;const pn=document.getElementById('alumno-pin-login').value;if(!nA){alert('Selecciona avatar');document.getElementById('btn-cambiar-avatar').click();return;}const al=await loginAlumno(nA,pn);if(al){renderizarDashboard();actualizarMenuPrincipal();e.target.dataset.nombreAvatar='';document.getElementById('alumno-pin-login').value='';document.getElementById('selector-avatares-login').style.display='flex';document.getElementById('form-login-alumno-pin').style.display='none';}});
-        document.getElementById('form-registro-alumno').addEventListener('submit', async (e)=>{e.preventDefault();const nick=document.getElementById('alumno-nickname-registro').value;const idAv=document.getElementById('alumno-avatar-registro').value;const pn=document.getElementById('alumno-pin-registro').value;const pnC=document.getElementById('alumno-pin-confirmar').value;if(pn!==pnC){alert('PINs no coinciden');return;}let pV=false;if(pn.length===4){if(/^[0-9]+$/.test(pn)){pV=true;}}if(!pV){alert('PIN debe ser 4 números');return;}const al=await registrarAlumno(nick,idAv,pn);if(al){renderizarDashboard();actualizarMenuPrincipal();}});
+        document.getElementById('form-login-admin').addEventListener('submit', async (e)=>{e.preventDefault();const em=document.getElementById('admin-email').value;const ps=document.getElementById('admin-password').value;const ad=await loginAdmin(em,ps);if(ad){renderizarDashboard();await refrescarNotificaciones();actualizarMenuPrincipal();}});
+        document.getElementById('form-login-alumno-pin').addEventListener('submit', async (e)=>{e.preventDefault();const nA=e.target.dataset.nombreAvatar;const pn=document.getElementById('alumno-pin-login').value;if(!nA){alert('Selecciona avatar');document.getElementById('btn-cambiar-avatar').click();return;}const al=await loginAlumno(nA,pn);if(al){renderizarDashboard();await refrescarNotificaciones();actualizarMenuPrincipal();e.target.dataset.nombreAvatar='';document.getElementById('alumno-pin-login').value='';document.getElementById('selector-avatares-login').style.display='flex';document.getElementById('form-login-alumno-pin').style.display='none';}});
+        document.getElementById('form-registro-alumno').addEventListener('submit', async (e)=>{e.preventDefault();const nick=document.getElementById('alumno-nickname-registro').value;const idAv=document.getElementById('alumno-avatar-registro').value;const pn=document.getElementById('alumno-pin-registro').value;const pnC=document.getElementById('alumno-pin-confirmar').value;if(pn!==pnC){alert('PINs no coinciden');return;}let pV=false;if(pn.length===4){if(/^[0-9]+$/.test(pn)){pV=true;}}if(!pV){alert('PIN debe ser 4 números');return;}const al=await registrarAlumno(nick,idAv,pn);if(al){renderizarDashboard();await refrescarNotificaciones();actualizarMenuPrincipal();}});
         const formAnL=document.getElementById('form-anadir-libro');if(formAnL)formAnL.addEventListener('submit',handleAnadirLibroSubmit);
         const inF=document.getElementById('libro-foto');const prF=document.getElementById('libro-foto-preview');if(inF&&prF){inF.addEventListener('change',function(ev){const fl=ev.target.files[0];if(fl){const r=new FileReader();r.onload=function(eR){prF.src=eR.target.result;prF.style.display='block';};r.readAsDataURL(fl);}else{prF.src='#';prF.style.display='none';}}); }
         console.log("DEBUG: main.js - Todos los event listeners globales asignados.");
@@ -142,9 +142,10 @@ function appInit() {
         }
 
         if (authStateChangedUser) {
-            if (currentUser) { renderizarDashboard(); }
+            if (currentUser) { await refrescarNotificaciones(); renderizarDashboard(); }
             else { cambiarVista(idVistaActivaPrevia || 'vista-dashboard', 'vista-bienvenida'); }
         } else if (currentUser) {
+            await refrescarNotificaciones();
             renderizarDashboard();
         } else {
             // Si no hubo cambio por auth y no hay currentUser, asegurar que se muestre bienvenida
@@ -156,6 +157,7 @@ function appInit() {
 
     if (currentUser) {
         console.log("DEBUG: main.js - appInit: Hay currentUser (localStorage), renderizando dashboard.");
+        await refrescarNotificaciones();
         renderizarDashboard();
     } else {
          console.log("DEBUG: main.js - appInit: No hay currentUser (localStorage), onAuthStateChange o bienvenida inicial determinará.");

@@ -37,6 +37,17 @@ function actualizarMenuPrincipal() {
         btnDashboard.textContent = 'Dashboard';
         btnDashboard.onclick = () => renderizarDashboard(); // Asume que renderizarDashboard es global
         menuPrincipal.appendChild(btnDashboard);
+        const btnNotificaciones = document.createElement('button');
+        btnNotificaciones.id = 'btn-notificaciones';
+        const cont = notificacionesNuevas > 0 ? ` (${notificacionesNuevas})` : '';
+        btnNotificaciones.textContent = '🔔' + cont;
+        btnNotificaciones.onclick = async () => {
+            await refrescarNotificaciones();
+            renderizarDashboard();
+            const lista = document.getElementById('lista-notificaciones');
+            if (lista) lista.scrollIntoView({ behavior: 'smooth' });
+        };
+        menuPrincipal.appendChild(btnNotificaciones);
         const btnCerrarSesion = document.createElement('button');
         btnCerrarSesion.textContent = 'Cerrar Sesión';
         btnCerrarSesion.onclick = cerrarSesion; // Asume que cerrarSesion es global
