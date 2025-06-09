@@ -75,6 +75,10 @@ function renderizarVistaBienvenida() {
             </form>
         </div>
         <div id="vista-dashboard" class="vista"></div>
+        <div id="vista-buscar-libros" class="vista">
+            <h3>Búsqueda de Libros</h3>
+            <div id="lista-libros-disponibles">Cargando libros...</div>
+        </div>
         <div id="vista-anadir-libro" class="vista"><h3>Añadir Nuevo Libro</h3><form id="form-anadir-libro"><label for="libro-titulo">Título del Libro:</label><input type="text" id="libro-titulo" required><br><br><label for="libro-foto">Foto de la Portada:</label><input type="file" id="libro-foto" accept="image/*" capture="environment" required><br><br><img id="libro-foto-preview" src="#" alt="Vista previa de la portada" style="max-width: 200px; max-height: 200px; display: none; margin-bottom:15px;"><br><button type="submit">Guardar Libro</button><button type="button" id="btn-volver-dashboard-desde-anadir">Cancelar y Volver al Dashboard</button></form></div>
         <div id="vista-gestionar-libro-propio" class="vista"><h3>Gestionar Mi Libro</h3><p>Aquí podrás editar o eliminar tu libro que esté disponible.</p><div id="detalles-libro-gestion"></div><button type="button" id="btn-volver-dashboard-desde-gestion">Volver al Dashboard</button></div>
     `;
@@ -201,9 +205,7 @@ function renderizarDashboard() {
             <h3>Libros que me Prestaron</h3>
             <div id="libros-que-me-prestaron" class="lista-dashboard-libros">Cargando...</div>
         </div>
-        <hr>
-        <h3>Todos los Libros Disponibles en la Biblioteca</h3>
-        <div id="lista-libros-disponibles">Cargando libros...</div>`;
+        `;
 
     const btnIrAnadirLibro = document.getElementById('btn-ir-anadir-libro');
     if (btnIrAnadirLibro) { btnIrAnadirLibro.onclick = () => cambiarVista('vista-dashboard', 'vista-anadir-libro');}
@@ -223,7 +225,6 @@ function renderizarDashboard() {
     cargarLibrosQueMePrestaron(currentUser.id).then(libros => {
         renderizarListaDashboard('libros-que-me-prestaron', libros, 'prestadosAMi');
     });
-    cargarYMostrarLibros();
     refrescarNotificaciones().then(() => {
         renderizarListaNotificaciones('lista-notificaciones', notificaciones);
         const ids = notificaciones.filter(n => !n.leida).map(n => n.id);

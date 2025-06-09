@@ -37,6 +37,15 @@ function actualizarMenuPrincipal() {
         btnDashboard.textContent = 'Dashboard';
         btnDashboard.onclick = () => renderizarDashboard(); // Asume que renderizarDashboard es global
         menuPrincipal.appendChild(btnDashboard);
+
+        const btnBuscarLibros = document.createElement('button');
+        btnBuscarLibros.textContent = 'Buscar Libros';
+        btnBuscarLibros.onclick = () => {
+            const vistaActiva = document.querySelector('.vista.activa');
+            cambiarVista(vistaActiva ? vistaActiva.id : null, 'vista-buscar-libros');
+            cargarYMostrarLibros();
+        };
+        menuPrincipal.appendChild(btnBuscarLibros);
         const btnNotificaciones = document.createElement('button');
         btnNotificaciones.id = 'btn-notificaciones';
         const cont = notificacionesNuevas > 0 ? ` (${notificacionesNuevas})` : '';
