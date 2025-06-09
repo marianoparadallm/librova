@@ -8,7 +8,8 @@ async function cerrarSesion() {
         const { error } = await supabaseClientInstance.auth.signOut();
         if (error) { console.error('DEBUG: auth.js - Error al cerrar sesión de admin:', error); /* No alert */ }
     }
-    currentUser = null; localStorage.removeItem('libroVaUser'); 
+    detenerMonitoreoNotificaciones();
+    currentUser = null; localStorage.removeItem('libroVaUser');
     console.log('DEBUG: auth.js - Sesión cerrada localmente.');
     renderizarVistaBienvenida(); // Asume que renderizarVistaBienvenida es global
     actualizarMenuPrincipal(); // Asume que actualizarMenuPrincipal es global
@@ -23,6 +24,7 @@ async function loginAdmin(email, password) {
     if (data.user) {
         console.log('DEBUG: auth.js - Admin logueado:', data.user);
         currentUser = { id: data.user.id, email: data.user.email, rol: 'admin', reputacion: 'N/A' }; // Actualiza currentUser global
+        iniciarMonitoreoNotificaciones();
         return currentUser;
     }
     return null;
@@ -43,7 +45,9 @@ async function registrarAlumno(nickname, idAvatarSeleccionado, pin) {
     const { data, error } = await supabaseClientInstance.from('usuarios').insert([{ nickname: nicknameLimpio, nombre_avatar: nombreAvatarParaGuardar, pin: pin, rol: 'alumno', reputacion: 0 }]).select().single();
     if (error) { console.error('DEBUG: auth.js - Error al registrar alumno:', error); alert(`Error al registrar: ${error.message}`); return null; }
     console.log('DEBUG: auth.js - Alumno registrado:', data);
-    currentUser = data; localStorage.setItem('libroVaUser', JSON.stringify(currentUser)); return currentUser; // Actualiza currentUser global
+    currentUser = data; localStorage.setItem('libroVaUser', JSON.stringify(currentUser));
+    iniciarMonitoreoNotificaciones();
+    return currentUser; // Actualiza currentUser global
 }
 
 async function loginAlumno(nombreAvatarSeleccionado, pin) {
@@ -57,5 +61,7 @@ async function loginAlumno(nombreAvatarSeleccionado, pin) {
         return null;
     }
     console.log('DEBUG: auth.js - Alumno logueado:', data);
-    currentUser = data; localStorage.setItem('libroVaUser', JSON.stringify(currentUser)); return currentUser; // Actualiza currentUser global
+    currentUser = data; localStorage.setItem('libroVaUser', JSON.stringify(currentUser));
+    iniciarMonitoreoNotificaciones();
+    return currentUser; // Actualiza currentUser global
 }
