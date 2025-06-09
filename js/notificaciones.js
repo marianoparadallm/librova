@@ -50,6 +50,24 @@ async function refrescarNotificaciones() {
     if (!currentUser) return;
     notificaciones = await cargarNotificacionesUsuario(currentUser.id);
     notificacionesNuevas = notificaciones.filter(n => !n.leida).length;
+    actualizarMenuPrincipal();
 }
 
 window.refrescarNotificaciones = refrescarNotificaciones;
+
+function iniciarMonitoreoNotificaciones() {
+    detenerMonitoreoNotificaciones();
+    if (!currentUser) return;
+    refrescarNotificaciones();
+    notificacionesIntervalId = setInterval(refrescarNotificaciones, 60000);
+}
+
+function detenerMonitoreoNotificaciones() {
+    if (notificacionesIntervalId) {
+        clearInterval(notificacionesIntervalId);
+        notificacionesIntervalId = null;
+    }
+}
+
+window.iniciarMonitoreoNotificaciones = iniciarMonitoreoNotificaciones;
+window.detenerMonitoreoNotificaciones = detenerMonitoreoNotificaciones;

@@ -115,6 +115,7 @@ async function appInit() {
     if (storedUser) {
         try { currentUser = JSON.parse(storedUser); console.log('DEBUG: main.js - Alumno recuperado de localStorage:', currentUser); }
         catch (e) { console.error("DEBUG: main.js - Error parseando localStorage:", e); localStorage.removeItem('libroVaUser'); currentUser = null; }
+        if (currentUser) iniciarMonitoreoNotificaciones();
     }
 
     supabaseClientInstance.auth.onAuthStateChange(async (event, session) => {
@@ -142,8 +143,15 @@ async function appInit() {
         }
 
         if (authStateChangedUser) {
-            if (currentUser) { await refrescarNotificaciones(); renderizarDashboard(); }
-            else { cambiarVista(idVistaActivaPrevia || 'vista-dashboard', 'vista-bienvenida'); }
+            if (currentUser) { 
+                await refrescarNotificaciones(); 
+                iniciarMonitoreoNotificaciones();
+                renderizarDashboard(); 
+            }
+            else { 
+                detenerMonitoreoNotificaciones();
+                cambiarVista(idVistaActivaPrevia || 'vista-dashboard', 'vista-bienvenida'); 
+            }
         } else if (currentUser) {
             await refrescarNotificaciones();
             renderizarDashboard();
@@ -158,9 +166,11 @@ async function appInit() {
     if (currentUser) {
         console.log("DEBUG: main.js - appInit: Hay currentUser (localStorage), renderizando dashboard.");
         await refrescarNotificaciones();
+        iniciarMonitoreoNotificaciones();
         renderizarDashboard();
     } else {
          console.log("DEBUG: main.js - appInit: No hay currentUser (localStorage), onAuthStateChange o bienvenida inicial determinará.");
+         detenerMonitoreoNotificaciones();
          const vistaActivaActual = document.querySelector('.vista.activa');
          // renderizarVistaBienvenida() ya se llamó y estableció la vista de bienvenida.
          // Si por alguna razón no es la activa (ej. onAuthStateChange se disparó antes y no encontró sesión), la forzamos.
