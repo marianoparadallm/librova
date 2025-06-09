@@ -2,7 +2,7 @@
 console.log("DEBUG: libros_ops.js - Cargado.");
 
 
-async function pedirLibroPrestado(libroId, propietarioIdLibro) {
+async function pedirLibroPrestado(libroId, propietarioIdLibro, tituloLibro) {
     console.log(`DEBUG: libros_ops.js - Solicitando libro ID: ${libroId} al propietario ID: ${propietarioIdLibro}`);
     if (!currentUser || !currentUser.id) { console.error("Error de sesión."); return; }
     if (!supabaseClientInstance) { console.error("Error de conexión."); return; }
@@ -25,6 +25,9 @@ async function pedirLibroPrestado(libroId, propietarioIdLibro) {
             .eq('id', libroId)
             .eq('estado', 'disponible');
         console.log(`DEBUG: libros_ops.js - Solicitud creada para libro ${libroId}.`);
+        if (tituloLibro) {
+            agregarNotificacion(propietarioIdLibro, `${currentUser.nickname} solicitó prestado "${tituloLibro}"`);
+        }
     } catch (error) {
         console.error('DEBUG: libros_ops.js - Error al solicitar libro:', error);
     } finally {
@@ -42,16 +45,41 @@ async function marcarLibroComoDevuelto(libroId) {
     if (!supabaseClientInstance) { console.error("Error de conexión."); return; }
     console.log(`DEBUG: libros_ops.js - ID del usuario (propietario devolviendo): ${currentUser.id}`);
     try {
-        const { error, count } = await supabaseClientInstance.from('libros').update({ estado: 'disponible', esta_con_usuario_id: null, fecha_limite_devolucion: null }).eq('id', libroId).eq('propietario_id', currentUser.id).eq('estado', 'prestado');
+        const { data: libroActual, error: fetchErr } = await supabaseClientInstance
+            .from('libros')
+            .select('titulo, esta_con_usuario_id')
+            .eq('id', libroId)
+            .single();
+        if (fetchErr) throw fetchErr;
+
+        const { error, count } = await supabaseClientInstance.from('libros')
+            .update({ estado: 'disponible', esta_con_usuario_id: null, fecha_limite_devolucion: null })
+            .eq('id', libroId)
+            .eq('propietario_id', currentUser.id)
+            .eq('estado', 'prestado');
         if (error) throw error;
-        if (count === 0 || count === null) { console.warn(`DEBUG: libros_ops.js - No se actualizó libro ID: ${libroId} a devuelto.`); /* No alert */ }
-        else { console.log(`DEBUG: libros_ops.js - Libro ID: ${libroId} marcado como 'disponible'.`); /* No alert */ }
+        if (count === 0 || count === null) {
+            console.warn(`DEBUG: libros_ops.js - No se actualizó libro ID: ${libroId} a devuelto.`);
+        } else {
+            console.log(`DEBUG: libros_ops.js - Libro ID: ${libroId} marcado como 'disponible'.`);
+        }
+
+        if (libroActual && libroActual.esta_con_usuario_id) {
+            const { data: repPrest } = await supabaseClientInstance.from('usuarios').select('reputacion').eq('id', libroActual.esta_con_usuario_id).single();
+            if (repPrest) {
+                const nuevaRep = (repPrest.reputacion || 0) + 1;
+                await supabaseClientInstance.from('usuarios').update({ reputacion: nuevaRep }).eq('id', libroActual.esta_con_usuario_id);
+                if (currentUser.id === libroActual.esta_con_usuario_id) currentUser.reputacion = nuevaRep;
+            }
+            agregarNotificacion(libroActual.esta_con_usuario_id, `Se registró la devolución de "${libroActual.titulo}"`);
+        }
     } catch (error) {
-        console.error("DEBUG: libros_ops.js - Error al marcar devuelto:", error); /* No alert */
+        console.error("DEBUG: libros_ops.js - Error al marcar devuelto:", error);
     } finally {
         cargarYMostrarLibros();
         recargarSeccionesPrestamosDashboard();
-    } // Asume cargarYMostrarLibros es global
+        actualizarMenuPrincipal();
+    }
 }
 
 async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, propietarioId, nuevoEstado, libroTitulo, solicitanteNickname) {
@@ -82,6 +110,7 @@ async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, p
                 await supabaseClientInstance.from('usuarios').update({ reputacion: nRP }).eq('id', propietarioId);
                 if (currentUser.id === propietarioId) currentUser.reputacion = nRP;
             }
+            agregarNotificacion(solicitanteId, `Tu solicitud para "${libroTitulo}" fue aceptada`);
         } else if (nuevoEstado === 'rechazada' && libroId) {
             const { data: pendientes } = await supabaseClientInstance
                 .from('solicitudes_prestamo')
@@ -94,6 +123,7 @@ async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, p
                     .eq('id', libroId)
                     .eq('propietario_id', propietarioId);
             }
+            agregarNotificacion(solicitanteId, `Tu solicitud para "${libroTitulo}" fue rechazada`);
         }
         console.log(`DEBUG: libros_ops.js - Solicitud ${solicitudId} actualizada a ${nuevoEstado}.`);
     } catch (err) {

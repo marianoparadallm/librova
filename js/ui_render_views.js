@@ -26,8 +26,8 @@ function renderizarVistaBienvenida() {
                 <p>Bienvenido a LibroVa, ¡nuestra biblioteca mágica! Acá vas a poder compartir cuentos y libros que ya leíste y descubrir nuevas aventuras que tus compañeros tienen para vos. Sumate agregando tus libros y pidiendo prestamos e intercambialos en tu clase!</p>
                 <p>¿Listo para empezar a compartir y leer?</p>
             </div>
-            <button id="btn-ingresar-crear-usuario" class="boton-grande">Ingresar o Crear Usuario</button>
-            <button id="btn-acceso-admin" class="boton-admin">ADMIN</button>
+            <button id="btn-ingresar-crear-usuario" class="boton-accion-base submit boton-grande">Ingresar o Crear Usuario</button>
+            <button id="btn-acceso-admin" class="boton-accion-base gestionar boton-admin">ADMIN</button>
         </div>
         <div id="vista-login-admin" class="vista">
             <h3>Login Administrador</h3>
@@ -102,7 +102,7 @@ function renderizarListaDashboard(divId, libros, tipoLista) {
         if (tipoLista === 'prestadosPorMi') {
             const prestatario = libro.prestado_a ? libro.prestado_a.nickname : 'Alguien';
             infoExtra = `<span>Prestado a: ${prestatario}</span><span>Devolver el: ${fechaDev}</span>`;
-            botonHTML = `<button class="btn-marcar-devuelto boton-accion-base" data-libro-id="${libro.id}" style="background-color: #3182CE;">Marcar Devuelto</button>`;
+            botonHTML = `<button class="btn-marcar-devuelto boton-accion-base devolver" data-libro-id="${libro.id}">Marcar Devuelto</button>`;
         } else if (tipoLista === 'prestadosAMi') {
             const dueno = libro.propietario ? libro.propietario.nickname : 'Desconocido';
             infoExtra = `<span>Dueño: ${dueno}</span><span>Devolver el: ${fechaDev}</span>`;
@@ -136,8 +136,8 @@ function renderizarListaSolicitudesRecibidas(divId, solicitudes) {
                     <span>Fecha solicitud: ${new Date(solicitud.fecha_solicitud).toLocaleDateString('es-AR')}</span>
                 </div>
                 <div class="acciones">
-                    <button class="btn-aceptar-solicitud boton-accion-base" style="background-color: #38A169;">Aceptar</button>
-                    <button class="btn-rechazar-solicitud boton-accion-base" style="background-color: #E53E3E; margin-top:5px;">Rechazar</button>
+                    <button class="btn-aceptar-solicitud boton-accion-base aceptar">Aceptar</button>
+                    <button class="btn-rechazar-solicitud boton-accion-base eliminar" style="margin-top:5px;">Rechazar</button>
                 </div>
             </div>
         `;
@@ -161,7 +161,7 @@ async function renderizarDetallesGestionLibro(libroId) {
             vistaGestion.querySelector('h3').textContent = `Gestionar: ${libro.titulo}`;
             detallesDiv.innerHTML = `
                 <div class="gestion-libro-info"><h4>${libro.titulo}</h4><img src="${libro.foto_url}" alt="Portada de ${libro.titulo}" style="max-width: 150px; border-radius: 4px; margin-bottom: 15px;"><p><strong>ID:</strong> ${libro.id}</p><p><strong>Estado:</strong> ${libro.estado}</p></div>
-                <div class="gestion-libro-acciones"><button id="btn-editar-libro-info" class="boton-accion-base gestionar">Editar</button><button id="btn-eliminar-libro" class="boton-accion-base eliminar" style="background-color: #E53E3E;" data-libro-id="${libro.id}" ${libro.estado !== 'disponible' ? 'disabled title="No se puede eliminar un libro prestado"' : ''}>Eliminar</button></div>`;
+                <div class="gestion-libro-acciones"><button id="btn-editar-libro-info" class="boton-accion-base gestionar">Editar</button><button id="btn-eliminar-libro" class="boton-accion-base eliminar" data-libro-id="${libro.id}" ${libro.estado !== 'disponible' ? 'disabled title="No se puede eliminar un libro prestado"' : ''}>Eliminar</button></div>`;
             document.getElementById('btn-editar-libro-info').onclick = () => alert(`Editar Libro ID: ${libro.id} (no implementado).`);
             document.getElementById('btn-eliminar-libro').onclick = async () => alert(`Eliminar Libro ID: ${libro.id} (no implementado).`);
         } else { detallesDiv.innerHTML = "<p>No se encontraron detalles o no tienes permiso.</p>"; }
@@ -181,6 +181,11 @@ function renderizarDashboard() {
         <h2>Dashboard de ${nombreUsuario}</h2>
         <p>Tu reputación: ${reputacionMostrar}</p>
         <button id="btn-ir-anadir-libro" class="boton-accion-base cargar">Cargar Libro</button>
+        <hr>
+        <div class="seccion-dashboard">
+            <h3>Notificaciones</h3>
+            <div id="lista-notificaciones" class="lista-notificaciones">Cargando...</div>
+        </div>
         <hr>
         <div class="seccion-dashboard">
             <h3>Solicitudes de Préstamo Recibidas</h3>
@@ -219,4 +224,23 @@ function renderizarDashboard() {
         renderizarListaDashboard('libros-que-me-prestaron', libros, 'prestadosAMi');
     });
     cargarYMostrarLibros();
+    refrescarNotificaciones().then(() => {
+        renderizarListaNotificaciones('lista-notificaciones', notificaciones);
+        const ids = notificaciones.filter(n => !n.leida).map(n => n.id);
+        if (ids.length > 0) {
+            marcarNotificacionesLeidas(ids).then(refrescarNotificaciones);
+        }
+    });
+}
+
+function renderizarListaNotificaciones(divId, notas) {
+    const div = document.getElementById(divId);
+    if (!div) { console.error(`DEBUG: ui_render_views.js - Div ${divId} no encontrado para notificaciones.`); return; }
+    div.innerHTML = '';
+    if (!notas || notas.length === 0) { div.innerHTML = '<p>No tienes notificaciones.</p>'; return; }
+    notas.forEach(n => {
+        const fecha = new Date(n.created_at).toLocaleDateString('es-AR');
+        const clase = n.leida ? 'item-notificacion' : 'item-notificacion nueva';
+        div.innerHTML += `<div class="${clase}">${n.mensaje} <span style="float:right;font-size:0.8em;color:#4A5568;">${fecha}</span></div>`;
+    });
 }
