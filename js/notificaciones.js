@@ -1,0 +1,55 @@
+// js/notificaciones.js
+console.log("DEBUG: notificaciones.js - Cargado.");
+
+async function agregarNotificacion(usuarioId, mensaje) {
+    if (!supabaseClientInstance) return;
+    try {
+        await supabaseClientInstance.from('notificaciones').insert({
+            usuario_id: usuarioId,
+            mensaje,
+            leida: false,
+            created_at: new Date().toISOString()
+        });
+    } catch (e) {
+        console.error('DEBUG: notificaciones.js - Error al agregar notificación:', e);
+    }
+}
+
+async function cargarNotificacionesUsuario(usuarioId) {
+    if (!supabaseClientInstance) return [];
+    try {
+        const { data, error } = await supabaseClientInstance
+            .from('notificaciones')
+            .select('*')
+            .eq('usuario_id', usuarioId)
+            .order('created_at', { ascending: false });
+        if (error) throw error;
+        return data || [];
+    } catch (e) {
+        console.error('DEBUG: notificaciones.js - Error cargando notificaciones:', e);
+        return [];
+    }
+}
+
+async function marcarNotificacionesLeidas(ids) {
+    if (!supabaseClientInstance || !ids || ids.length === 0) return;
+    try {
+        await supabaseClientInstance.from('notificaciones')
+            .update({ leida: true })
+            .in('id', ids);
+    } catch (e) {
+        console.error('DEBUG: notificaciones.js - Error marcando notificaciones como leídas:', e);
+    }
+}
+
+window.agregarNotificacion = agregarNotificacion;
+window.cargarNotificacionesUsuario = cargarNotificacionesUsuario;
+window.marcarNotificacionesLeidas = marcarNotificacionesLeidas;
+
+async function refrescarNotificaciones() {
+    if (!currentUser) return;
+    notificaciones = await cargarNotificacionesUsuario(currentUser.id);
+    notificacionesNuevas = notificaciones.filter(n => !n.leida).length;
+}
+
+window.refrescarNotificaciones = refrescarNotificaciones;

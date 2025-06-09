@@ -6,3 +6,6 @@ let currentUser = null;
 
 let contenedorPrincipal = null;
 let menuPrincipal = null;
+
+let notificaciones = [];
+let notificacionesNuevas = 0;
