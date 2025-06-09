@@ -84,7 +84,7 @@ function asignarEventListenersGlobales() {
     }
 }
 
-function appInit() {
+async function appInit() {
     console.log("DEBUG: main.js - appInit() iniciada.");
 
     // Las variables globales se asignan aquí DENTRO de appInit,
