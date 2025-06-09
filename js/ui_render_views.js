@@ -128,7 +128,7 @@ function renderizarListaSolicitudesRecibidas(divId, solicitudes) {
             <div class="item-solicitud" data-solicitud-id="${solicitud.id}" 
                  data-libro-id="${solicitud.libro_id}" 
                  data-solicitante-id="${solicitud.solicitante_id}"
-                 data-propietario-id="${solicitud.propietario_id}"> {/* propietario_id es el currentUser aquí */}
+                 data-propietario-id="${solicitud.propietario_id}"> <!-- propietario_id es el currentUser aquí -->
                 <img src="${fotoUrl}" alt="Portada de ${libroTitulo}" class="thumbnail">
                 <div class="detalles">
                     <strong>${libroTitulo}</strong>
