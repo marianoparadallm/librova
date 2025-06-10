@@ -1,13 +1,14 @@
 // js/config.js
 console.log("DEBUG: config.js - Cargado.");
 
-const SUPABASE_URL =
-    (typeof window !== 'undefined' && window.SUPABASE_URL) ||
-    (typeof process !== 'undefined' && process.env.SUPABASE_URL) ||
+
+const X_SUPABASE_URL =
+    (typeof window !== 'undefined' && window.X_SUPABASE_URL) ||
+    (typeof process !== 'undefined' && process.env.X_SUPABASE_URL) ||
     '';
-const SUPABASE_ANON_KEY =
-    (typeof window !== 'undefined' && window.SUPABASE_ANON_KEY) ||
-    (typeof process !== 'undefined' && process.env.SUPABASE_ANON_KEY) ||
+const X_SUPABASE_ANON_KEY =
+    (typeof window !== 'undefined' && window.X_SUPABASE_ANON_KEY) ||
+    (typeof process !== 'undefined' && process.env.X_SUPABASE_ANON_KEY) ||
     '';
 
 const AVATARES_DISPONIBLES = [ 
