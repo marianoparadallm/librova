@@ -93,13 +93,21 @@ function renderizarVistaBienvenida() {
             </div>
             <div id="lista-libros-disponibles">Cargando libros...</div>
         </div>
+
         <div id="vista-ranking" class="vista">
             <h3>Ranking de Usuarios</h3>
             <div id="lista-ranking">Cargando...</div>
         </div>
+        <div id="vista-admin-panel" class="vista">
+            <h3>Panel de Administración</h3>
+            <button id="btn-admin-gestionar-libros">Libros</button>
+            <button id="btn-admin-gestionar-usuarios">Usuarios</button>
+            <button id="btn-admin-gestionar-prestamos">Préstamos</button>
+            <button id="btn-admin-gestionar-notificaciones">Notificaciones</button>
+            <button type="button" id="btn-volver-dashboard-desde-admin">Volver al Dashboard</button>
+        </div>
         <div id="vista-anadir-libro" class="vista"><h3>Añadir Nuevo Libro</h3><form id="form-anadir-libro"><label for="libro-titulo">Título del Libro:</label><input type="text" id="libro-titulo" required><br><br><label for="libro-foto">Foto de la Portada:</label><input type="file" id="libro-foto" accept="image/*" capture="environment" required><br><br><img id="libro-foto-preview" src="#" alt="Vista previa de la portada" style="max-width: 200px; max-height: 200px; display: none; margin-bottom:15px;"><br><button type="submit">Guardar Libro</button><button type="button" id="btn-volver-dashboard-desde-anadir">Cancelar y Volver al Dashboard</button></form></div>
         <div id="vista-gestionar-libro-propio" class="vista"><h3>Gestionar Mi Libro</h3><p>Aquí podrás editar o eliminar tu libro que esté disponible.</p><div id="detalles-libro-gestion"></div><button type="button" id="btn-volver-dashboard-desde-gestion">Volver al Dashboard</button></div>
-        <div id="vista-admin-panel" class="vista"></div>
     `;
     const selectAvatarRegistro = document.getElementById('alumno-avatar-registro');
     if (selectAvatarRegistro) {

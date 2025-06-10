@@ -85,6 +85,16 @@ function actualizarMenuPrincipal() {
             renderizarVistaRanking();
         };
         menuPrincipal.appendChild(btnRanking);
+
+        if (currentUser.rol === 'admin') {
+            const btnPanelAdmin = document.createElement('button');
+            btnPanelAdmin.textContent = 'Panel Admin';
+            btnPanelAdmin.onclick = () => {
+                const vistaActiva = document.querySelector('.vista.activa');
+                cambiarVista(vistaActiva ? vistaActiva.id : null, 'vista-admin-panel');
+            };
+            menuPrincipal.appendChild(btnPanelAdmin);
+        }
         const btnNotificaciones = document.createElement('button');
         btnNotificaciones.id = 'btn-notificaciones';
         const cont = notificacionesNuevas > 0 ? ` (${notificacionesNuevas})` : '';

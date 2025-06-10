@@ -73,6 +73,7 @@ function asignarEventListenersGlobales() {
         document.getElementById('btn-cambiar-avatar').onclick = () => { document.getElementById('selector-avatares-login').style.display='flex'; document.getElementById('form-login-alumno-pin').style.display='none'; document.getElementById('form-login-alumno-pin').dataset.nombreAvatar=''; document.getElementById('alumno-pin-login').value=''; document.querySelectorAll('.avatar-seleccionable').forEach(ad=>ad.classList.remove('seleccionado'));};
         const btnVolverDashAnadir = document.getElementById('btn-volver-dashboard-desde-anadir'); if(btnVolverDashAnadir)btnVolverDashAnadir.onclick=()=>renderizarDashboard();
         const btnVolverDashGestion = document.getElementById('btn-volver-dashboard-desde-gestion'); if(btnVolverDashGestion)btnVolverDashGestion.onclick=()=>renderizarDashboard();
+        const btnVolverDashAdmin = document.getElementById('btn-volver-dashboard-desde-admin'); if(btnVolverDashAdmin)btnVolverDashAdmin.onclick=()=>renderizarDashboard();
         document.getElementById('form-login-admin').addEventListener('submit', async (e)=>{
             e.preventDefault();
             const nick=document.getElementById('admin-alias').value;
