@@ -31,7 +31,7 @@ header {
 
 #logo-container {}
 #logo-img { height: 45px; width: auto; display: block; }
-nav#menu-principal { text-align: right; }
+nav#menu-principal { text-align: right; position: relative; }
 nav#menu-principal button, nav#menu-principal span {
     margin: 5px 0 5px 10px; padding: 8px 15px; background-color: #4A5568;
     color: white; border: none; cursor: pointer; border-radius: 5px;
@@ -219,6 +219,9 @@ form button[type="button"]:hover {
 .lista-notificaciones { display: flex; flex-direction: column; gap: 10px; }
 .item-notificacion { background-color: #edf2f7; padding: 8px 12px; border-radius: 5px; }
 .item-notificacion.nueva { font-weight: bold; }
+.lista-novedades { display: flex; flex-direction: column; gap: 15px; }
+.item-novedad { display: flex; align-items: flex-start; }
+.item-novedad .icono-novedad { margin-right: 8px; }
 .item-lista-libro, .item-solicitud { display: flex; align-items: flex-start; background-color: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 .item-lista-libro img.thumbnail, .item-solicitud img.thumbnail { width: 60px;  height: 85px; object-fit: cover; border-radius: 4px; margin-right: 15px; flex-shrink: 0; }
 .item-lista-libro .detalles, .item-solicitud .detalles { flex-grow: 1; font-size: 0.95em; display: flex; flex-direction: column; gap: 4px; }
@@ -299,3 +302,21 @@ form button[type="button"]:hover {
 
 .lista-ranking { list-style: decimal; padding-left: 20px; }
 .lista-ranking li { margin-bottom: 5px; }
+
+#popup-notificaciones {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 5px);
+    display: none;
+    background-color: #fff;
+    border: 1px solid #CBD5E0;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    width: 260px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+    z-index: 1500;
+}
+#popup-notificaciones .item-notificacion { margin-bottom: 8px; }
+#popup-notificaciones .item-notificacion:last-child { margin-bottom: 0; }

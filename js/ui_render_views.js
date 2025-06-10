@@ -306,13 +306,8 @@ function renderizarDashboard() {
         <button id="btn-ir-anadir-libro" class="boton-accion-base cargar">Cargar Libro</button>
         <hr>
         <div class="seccion-dashboard">
-            <h3>Notificaciones</h3>
-            <div id="lista-notificaciones" class="lista-notificaciones">Cargando...</div>
-        </div>
-        <hr>
-        <div class="seccion-dashboard">
-            <h3>Solicitudes de Préstamo Recibidas</h3>
-            <div id="solicitudes-prestamo-recibidas" class="lista-solicitudes">Cargando solicitudes...</div>
+            <h3>Novedades y Decisiones Pendientes</h3>
+            <div id="lista-novedades" class="lista-novedades">Cargando...</div>
         </div>
         <hr>
         <div class="seccion-dashboard">
@@ -338,9 +333,16 @@ function renderizarDashboard() {
     const vistaActivaPrevia = document.querySelector('.vista.activa');
     cambiarVista(vistaActivaPrevia ? vistaActivaPrevia.id : null, 'vista-dashboard');
 
-    cargarSolicitudesRecibidas(currentUser.id).then(solicitudes => {
-        renderizarListaSolicitudesRecibidas('solicitudes-prestamo-recibidas', solicitudes);
-        asignarEventListenersLibros(); // Reutilizamos esta para los botones de Aceptar/Rechazar y Marcar Devuelto
+    Promise.all([
+        cargarSolicitudesRecibidas(currentUser.id),
+        refrescarNotificaciones()
+    ]).then(([solicitudes]) => {
+        renderizarNovedadesPendientes('lista-novedades', notificaciones, solicitudes);
+        const ids = notificaciones.filter(n => !n.leida).map(n => n.id);
+        if (ids.length > 0) {
+            marcarNotificacionesLeidas(ids).then(refrescarNotificaciones);
+        }
+        asignarEventListenersLibros();
     });
     cargarMisLibrosEnPrestamo(currentUser.id).then(libros => {
         renderizarListaDashboard('mis-libros-en-prestamo', libros, 'prestadosPorMi');
@@ -348,13 +350,6 @@ function renderizarDashboard() {
     });
     cargarLibrosQueMePrestaron(currentUser.id).then(libros => {
         renderizarListaDashboard('libros-que-me-prestaron', libros, 'prestadosAMi');
-    });
-    refrescarNotificaciones().then(() => {
-        renderizarListaNotificaciones('lista-notificaciones', notificaciones);
-        const ids = notificaciones.filter(n => !n.leida).map(n => n.id);
-        if (ids.length > 0) {
-            marcarNotificacionesLeidas(ids).then(refrescarNotificaciones);
-        }
     });
 }
 
@@ -376,6 +371,88 @@ function renderizarListaNotificaciones(divId, notas) {
 
         item.appendChild(span);
         div.appendChild(item);
+    }
+}
+
+function renderizarNovedadesPendientes(divId, notas, solicitudes) {
+    const div = document.getElementById(divId);
+    if (!div) { console.error(`DEBUG: ui_render_views.js - Div ${divId} no encontrado para novedades.`); return; }
+    div.innerHTML = '';
+    const tieneNotas = notas && notas.length > 0;
+    const tieneSol = solicitudes && solicitudes.length > 0;
+    if (!tieneNotas && !tieneSol) { div.innerHTML = '<p>No hay novedades ni decisiones pendientes.</p>'; return; }
+    if (tieneNotas) {
+        notas.forEach(n => {
+            const item = document.createElement('div');
+            item.className = (n.leida ? 'item-notificacion' : 'item-notificacion nueva') + ' item-novedad';
+            const icon = document.createElement('span');
+            icon.className = 'icono-novedad';
+            icon.textContent = '🔔';
+            item.appendChild(icon);
+            const texto = document.createElement('span');
+            texto.textContent = n.mensaje;
+            item.appendChild(texto);
+            const span = document.createElement('span');
+            span.style.float = 'right';
+            span.style.fontSize = '0.8em';
+            span.style.color = '#4A5568';
+            span.textContent = new Date(n.created_at).toLocaleDateString('es-AR');
+            item.appendChild(span);
+            div.appendChild(item);
+        });
+    }
+    if (tieneSol) {
+        solicitudes.forEach(solicitud => {
+            const libroTitulo = solicitud.libros ? solicitud.libros.titulo : 'Libro desconocido';
+            const solicitanteNickname = solicitud.usuarios ? solicitud.usuarios.nickname : 'Usuario desconocido';
+            const fotoUrl = solicitud.libros ? (solicitud.libros.foto_url || './placeholder-portada.png') : './placeholder-portada.png';
+
+            const item = document.createElement('div');
+            item.className = 'item-solicitud item-novedad';
+            item.dataset.solicitudId = solicitud.id;
+            item.dataset.libroId = solicitud.libro_id;
+            item.dataset.solicitanteId = solicitud.solicitante_id;
+            item.dataset.propietarioId = solicitud.propietario_id;
+
+            const icon = document.createElement('span');
+            icon.className = 'icono-novedad';
+            icon.textContent = '📚';
+            item.appendChild(icon);
+
+            const img = document.createElement('img');
+            img.src = fotoUrl;
+            img.alt = `Portada de ${libroTitulo}`;
+            img.className = 'thumbnail';
+            item.appendChild(img);
+
+            const detalles = document.createElement('div');
+            detalles.className = 'detalles';
+            const strong = document.createElement('strong');
+            strong.textContent = libroTitulo;
+            const spanNick = document.createElement('span');
+            spanNick.textContent = `Solicitado por: ${solicitanteNickname}`;
+            const spanFecha = document.createElement('span');
+            spanFecha.textContent = `Fecha solicitud: ${new Date(solicitud.fecha_solicitud).toLocaleDateString('es-AR')}`;
+            detalles.appendChild(strong);
+            detalles.appendChild(spanNick);
+            detalles.appendChild(spanFecha);
+            item.appendChild(detalles);
+
+            const acciones = document.createElement('div');
+            acciones.className = 'acciones';
+            const btnAceptar = document.createElement('button');
+            btnAceptar.className = 'btn-aceptar-solicitud boton-accion-base aceptar';
+            btnAceptar.textContent = 'Aceptar';
+            const btnRechazar = document.createElement('button');
+            btnRechazar.className = 'btn-rechazar-solicitud boton-accion-base eliminar';
+            btnRechazar.style.marginTop = '5px';
+            btnRechazar.textContent = 'Rechazar';
+            acciones.appendChild(btnAceptar);
+            acciones.appendChild(btnRechazar);
+            item.appendChild(acciones);
+
+            div.appendChild(item);
+        });
     }
 }
 
@@ -408,3 +485,5 @@ async function renderizarVistaRanking() {
 }
 
 window.renderizarVistaRanking = renderizarVistaRanking;
+window.renderizarListaNotificaciones = renderizarListaNotificaciones;
+window.renderizarNovedadesPendientes = renderizarNovedadesPendientes;
