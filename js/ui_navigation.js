@@ -46,6 +46,13 @@ function actualizarMenuPrincipal() {
             cargarYMostrarLibros();
         };
         menuPrincipal.appendChild(btnBuscarLibros);
+
+        const btnRanking = document.createElement('button');
+        btnRanking.textContent = 'Ranking';
+        btnRanking.onclick = () => {
+            renderizarVistaRanking();
+        };
+        menuPrincipal.appendChild(btnRanking);
         const btnNotificaciones = document.createElement('button');
         btnNotificaciones.id = 'btn-notificaciones';
         const cont = notificacionesNuevas > 0 ? ` (${notificacionesNuevas})` : '';
