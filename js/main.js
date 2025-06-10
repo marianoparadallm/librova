@@ -2,15 +2,15 @@
 console.log("DEBUG: main.js - Script principal INICIADO.");
 
 // Inicialización de Supabase (para SDK LOCAL ./supabase.js)
-// Asegúrate que SUPABASE_URL y SUPABASE_ANON_KEY vienen de config.js y están definidos
+// Asegúrate que X_SUPABASE_URL y X_SUPABASE_ANON_KEY vienen de config.js y están definidos
 console.log("DEBUG: main.js - Verificando SDK global 'supabase'. typeof window.supabase:", typeof window.supabase);
 if (typeof window.supabase !== 'undefined' &&
     typeof window.supabase.createClient === 'function' &&
-    typeof SUPABASE_URL !== 'undefined' && typeof SUPABASE_ANON_KEY !== 'undefined' &&
-    SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_URL !== 'TU_SUPABASE_URL') {
+    typeof X_SUPABASE_URL !== 'undefined' && typeof X_SUPABASE_ANON_KEY !== 'undefined' &&
+    X_SUPABASE_URL && X_SUPABASE_ANON_KEY && X_SUPABASE_URL !== 'TU_SUPABASE_URL') {
     try {
         // supabaseClientInstance se declara en globals.js y se asigna aquí
-        supabaseClientInstance = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        supabaseClientInstance = window.supabase.createClient(X_SUPABASE_URL, X_SUPABASE_ANON_KEY);
         console.log('DEBUG: main.js - Instancia del cliente Supabase creada exitosamente desde SDK LOCAL.');
     } catch (e) {
         console.error('DEBUG: main.js - Error al inicializar Supabase con createClient (SDK local):', e);
@@ -25,8 +25,8 @@ if (typeof window.supabase !== 'undefined' &&
     let errorMsg = 'DEBUG: main.js - Error: Supabase no pudo inicializarse (SDK local). ';
     if (typeof window.supabase === 'undefined') errorMsg += 'SDK (window.supabase) no cargado o no encontrado. ';
     else if (typeof window.supabase.createClient !== 'function') errorMsg += 'SDK (window.supabase) cargado pero createClient no es una función. ';
-    if (typeof SUPABASE_URL === 'undefined' || !SUPABASE_URL) errorMsg += 'SUPABASE_URL no definida. ';
-    if (typeof SUPABASE_ANON_KEY === 'undefined' || !SUPABASE_ANON_KEY) errorMsg += 'SUPABASE_ANON_KEY no definida. ';
+    if (typeof X_SUPABASE_URL === 'undefined' || !X_SUPABASE_URL) errorMsg += 'X_SUPABASE_URL no definida. ';
+    if (typeof X_SUPABASE_ANON_KEY === 'undefined' || !X_SUPABASE_ANON_KEY) errorMsg += 'X_SUPABASE_ANON_KEY no definida. ';
     console.error(errorMsg);
     const cpError = document.getElementById('contenedor-principal');
     if (cpError) {
