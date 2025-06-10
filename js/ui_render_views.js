@@ -182,8 +182,42 @@ async function renderizarDetallesGestionLibro(libroId) {
             detallesDiv.innerHTML = `
                 <div class="gestion-libro-info"><h4>${libro.titulo}</h4><img src="${libro.foto_url}" alt="Portada de ${libro.titulo}" style="max-width: 150px; border-radius: 4px; margin-bottom: 15px;"><p><strong>ID:</strong> ${libro.id}</p><p><strong>Estado:</strong> ${libro.estado}</p></div>
                 <div class="gestion-libro-acciones"><button id="btn-editar-libro-info" class="boton-accion-base gestionar">Editar</button><button id="btn-eliminar-libro" class="boton-accion-base eliminar" data-libro-id="${libro.id}" ${libro.estado !== 'disponible' ? 'disabled title="No se puede eliminar un libro prestado"' : ''}>Eliminar</button></div>`;
-            document.getElementById('btn-editar-libro-info').onclick = () => alert(`Editar Libro ID: ${libro.id} (no implementado).`);
-            document.getElementById('btn-eliminar-libro').onclick = async () => alert(`Eliminar Libro ID: ${libro.id} (no implementado).`);
+            document.getElementById('btn-editar-libro-info').onclick = async () => {
+                const nuevoTitulo = prompt('Nuevo título para el libro:', libro.titulo);
+                if (!nuevoTitulo || nuevoTitulo.trim() === '' || nuevoTitulo.trim() === libro.titulo) return;
+                try {
+                    const { error } = await supabaseClientInstance.from('libros')
+                        .update({ titulo: nuevoTitulo.trim() })
+                        .eq('id', libro.id)
+                        .eq('propietario_id', currentUser.id);
+                    if (error) throw error;
+                    alert('Libro actualizado correctamente');
+                    renderizarDetallesGestionLibro(libro.id);
+                    cargarYMostrarLibros();
+                    recargarSeccionesPrestamosDashboard();
+                } catch (e) {
+                    console.error('Error actualizando libro:', e);
+                    alert('Error al actualizar el libro');
+                }
+            };
+            document.getElementById('btn-eliminar-libro').onclick = async () => {
+                if (!confirm(`¿Seguro que deseas eliminar "${libro.titulo}"?`)) return;
+                try {
+                    const { error } = await supabaseClientInstance.from('libros')
+                        .delete()
+                        .eq('id', libro.id)
+                        .eq('propietario_id', currentUser.id)
+                        .eq('estado', 'disponible');
+                    if (error) throw error;
+                    alert('Libro eliminado');
+                    renderizarDashboard();
+                    cargarYMostrarLibros();
+                    recargarSeccionesPrestamosDashboard();
+                } catch (e) {
+                    console.error('Error eliminando libro:', e);
+                    alert('No se pudo eliminar el libro');
+                }
+            };
         } else { detallesDiv.innerHTML = "<p>No se encontraron detalles o no tienes permiso.</p>"; }
     } catch (error) { console.error("DEBUG: ui_render_views.js - Error cargando detalles para gestionar:", error); detallesDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`; }
 }
