@@ -32,8 +32,10 @@ function renderizarVistaBienvenida() {
         <div id="vista-login-admin" class="vista">
             <h3>Login Administrador</h3>
             <form id="form-login-admin">
-                <label for="admin-email">Email:</label><input type="email" id="admin-email" required><br><br>
-                <label for="admin-password">Contraseña:</label><input type="password" id="admin-password" required><br><br>
+                <label for="admin-alias">Alias de administrador:</label>
+                <input type="text" id="admin-alias" required><br><br>
+                <label for="admin-pin">PIN:</label>
+                <input type="password" id="admin-pin" maxlength="4" pattern="\\d{4}" required inputmode="numeric"><br><br>
                 <button type="submit">Ingresar como Admin</button>
                 <button type="button" id="btn-volver-bienvenida-admin">Volver</button>
             </form>
