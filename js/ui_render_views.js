@@ -236,6 +236,7 @@ async function renderizarDetallesGestionLibro(libroId) {
     try {
         const { data: libro, error } = await supabaseClientInstance.from('libros').select('id, titulo, foto_url, propietario_id, estado').eq('id', libroId).eq('propietario_id', currentUser.id).single();
         if (error) { throw error.code === 'PGRST116' ? new Error("Libro no encontrado o no te pertenece.") : error; }
+
         if (libro) {
             vistaGestion.querySelector('h3').textContent = `Gestionar: ${libro.titulo}`;
             detallesDiv.innerHTML = '';
@@ -282,6 +283,7 @@ async function renderizarDetallesGestionLibro(libroId) {
 
             document.getElementById('btn-editar-libro-info').onclick = () => alert(`Editar Libro ID: ${libro.id} (no implementado).`);
             document.getElementById('btn-eliminar-libro').onclick = async () => alert(`Eliminar Libro ID: ${libro.id} (no implementado).`);
+
         } else { detallesDiv.innerHTML = "<p>No se encontraron detalles o no tienes permiso.</p>"; }
     } catch (error) { console.error("DEBUG: ui_render_views.js - Error cargando detalles para gestionar:", error); detallesDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`; }
 }

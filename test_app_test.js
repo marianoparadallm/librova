@@ -14,8 +14,14 @@ function updateStatus(message, type = "info") {
 
 updateStatus("Verificando SDK de Supabase...", "info");
 
-const SUPABASE_URL = 'https://srqdgsgxkxfiveynxkwt.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNycWRnc2d4a3hmaXZleW54a3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Mjg2MjUsImV4cCI6MjA2NDEwNDYyNX0.xenXPUm17l0LvbvUk0fsbVik3y5uKP3ADwaVN5BcKGY';
+const SUPABASE_URL =
+    (typeof window !== 'undefined' && window.SUPABASE_URL) ||
+    (typeof process !== 'undefined' && process.env.SUPABASE_URL) ||
+    '';
+const SUPABASE_ANON_KEY =
+    (typeof window !== 'undefined' && window.SUPABASE_ANON_KEY) ||
+    (typeof process !== 'undefined' && process.env.SUPABASE_ANON_KEY) ||
+    '';
 
 let supabaseClientInstance = null; // Renombrada para evitar confusión con el global del SDK
 
