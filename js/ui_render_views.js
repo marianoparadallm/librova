@@ -77,7 +77,23 @@ function renderizarVistaBienvenida() {
         <div id="vista-dashboard" class="vista"></div>
         <div id="vista-buscar-libros" class="vista">
             <h3>Búsqueda de Libros</h3>
+            <div id="filtros-busqueda" class="filtros-libros">
+                <label for="filtro-dueno">Dueño:</label>
+                <input type="text" id="filtro-dueno" placeholder="Nickname">
+                <label for="filtro-fecha-dev">Fecha devolución antes de:</label>
+                <input type="date" id="filtro-fecha-dev">
+                <label for="filtro-orden">Ordenar:</label>
+                <select id="filtro-orden">
+                    <option value="nuevos">Más nuevos</option>
+                    <option value="antiguos">Más antiguos</option>
+                </select>
+                <button id="btn-aplicar-filtros" class="boton-accion-base submit">Filtrar</button>
+            </div>
             <div id="lista-libros-disponibles">Cargando libros...</div>
+        </div>
+        <div id="vista-ranking" class="vista">
+            <h3>Ranking de Usuarios</h3>
+            <div id="lista-ranking">Cargando...</div>
         </div>
         <div id="vista-anadir-libro" class="vista"><h3>Añadir Nuevo Libro</h3><form id="form-anadir-libro"><label for="libro-titulo">Título del Libro:</label><input type="text" id="libro-titulo" required><br><br><label for="libro-foto">Foto de la Portada:</label><input type="file" id="libro-foto" accept="image/*" capture="environment" required><br><br><img id="libro-foto-preview" src="#" alt="Vista previa de la portada" style="max-width: 200px; max-height: 200px; display: none; margin-bottom:15px;"><br><button type="submit">Guardar Libro</button><button type="button" id="btn-volver-dashboard-desde-anadir">Cancelar y Volver al Dashboard</button></form></div>
         <div id="vista-gestionar-libro-propio" class="vista"><h3>Gestionar Mi Libro</h3><p>Aquí podrás editar o eliminar tu libro que esté disponible.</p><div id="detalles-libro-gestion"></div><button type="button" id="btn-volver-dashboard-desde-gestion">Volver al Dashboard</button></div>
@@ -245,3 +261,33 @@ function renderizarListaNotificaciones(divId, notas) {
         div.innerHTML += `<div class="${clase}">${n.mensaje} <span style="float:right;font-size:0.8em;color:#4A5568;">${fecha}</span></div>`;
     });
 }
+
+async function renderizarVistaRanking() {
+    const vistaActiva = document.querySelector('.vista.activa');
+    const rankingDiv = document.getElementById('lista-ranking');
+    if (!rankingDiv) return;
+    rankingDiv.innerHTML = 'Cargando ranking...';
+    cambiarVista(vistaActiva ? vistaActiva.id : null, 'vista-ranking');
+    if (!supabaseClientInstance) { rankingDiv.innerHTML = '<p>Error de conexión.</p>'; return; }
+    try {
+        const { data, error } = await supabaseClientInstance
+            .from('usuarios')
+            .select('nickname, reputacion')
+            .order('reputacion', { ascending: false })
+            .limit(20);
+        if (error) throw error;
+        if (!data || data.length === 0) { rankingDiv.innerHTML = '<p>No hay usuarios.</p>'; return; }
+        rankingDiv.innerHTML = '<ol class="lista-ranking"></ol>';
+        const ol = rankingDiv.querySelector('ol');
+        data.forEach(u => {
+            const li = document.createElement('li');
+            li.textContent = `${u.nickname} - ${u.reputacion ?? 0}`;
+            ol.appendChild(li);
+        });
+    } catch (err) {
+        console.error('DEBUG: ui_render_views.js - Error cargando ranking', err);
+        rankingDiv.innerHTML = '<p style="color:red;">Error al cargar ranking.</p>';
+    }
+}
+
+window.renderizarVistaRanking = renderizarVistaRanking;
