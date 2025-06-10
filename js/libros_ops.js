@@ -52,13 +52,15 @@ async function marcarLibroComoDevuelto(libroId) {
             .single();
         if (fetchErr) throw fetchErr;
 
-        const { error, count } = await supabaseClientInstance.from('libros')
+        const { data, error } = await supabaseClientInstance
+            .from('libros')
             .update({ estado: 'disponible', esta_con_usuario_id: null, fecha_limite_devolucion: null })
             .eq('id', libroId)
             .eq('propietario_id', currentUser.id)
-            .eq('estado', 'prestado');
+            .eq('estado', 'prestado')
+            .select();
         if (error) throw error;
-        if (count === 0 || count === null) {
+        if (!data || data.length === 0) {
             console.warn(`DEBUG: libros_ops.js - No se actualizó libro ID: ${libroId} a devuelto.`);
         } else {
             console.log(`DEBUG: libros_ops.js - Libro ID: ${libroId} marcado como 'disponible'.`);
