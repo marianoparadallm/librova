@@ -252,9 +252,12 @@ async function renderizarDetallesGestionLibro(libroId) {
             img.style.borderRadius = '4px';
             img.style.marginBottom = '15px';
             const pId = document.createElement('p');
-            pId.innerHTML = `<strong>ID:</strong> ${libro.id}`;
+            pId.appendChild(document.createElement('strong')).textContent = 'ID:';
+            pId.append(` ${libro.id}`);
+
             const pEstado = document.createElement('p');
-            pEstado.innerHTML = `<strong>Estado:</strong> ${libro.estado}`;
+            pEstado.appendChild(document.createElement('strong')).textContent = 'Estado:';
+            pEstado.append(` ${libro.estado}`);
             infoDiv.appendChild(h4);
             infoDiv.appendChild(img);
             infoDiv.appendChild(pId);
