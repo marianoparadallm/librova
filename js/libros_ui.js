@@ -14,17 +14,35 @@ async function cargarYMostrarLibros() {
                 titulo, 
                 foto_url, 
                 estado, 
-                propietario_id, 
-                fecha_limite_devolucion, 
-                esta_con_usuario_id, 
+                propietario_id,
+                fecha_limite_devolucion,
+                created_at,
+                esta_con_usuario_id,
                 propietario:usuarios!propietario_id ( nickname ), 
                 prestado_a:usuarios!esta_con_usuario_id ( nickname )
             `)
             .order('created_at', { ascending: false });
         if (error) { throw error; }
-        if (libros && libros.length > 0) {
+        let filtrados = libros || [];
+        const filtroDueno = document.getElementById('filtro-dueno');
+        const filtroFechaDev = document.getElementById('filtro-fecha-dev');
+        const filtroOrden = document.getElementById('filtro-orden');
+        if (filtroDueno && filtroDueno.value) {
+            const d = filtroDueno.value.toLowerCase();
+            filtrados = filtrados.filter(l => l.propietario && l.propietario.nickname.toLowerCase().includes(d));
+        }
+        if (filtroFechaDev && filtroFechaDev.value) {
+            const f = filtroFechaDev.value;
+            filtrados = filtrados.filter(l => l.fecha_limite_devolucion && l.fecha_limite_devolucion.slice(0,10) <= f);
+        }
+        if (filtroOrden && filtroOrden.value === 'antiguos') {
+            filtrados.sort((a,b)=> new Date(a.created_at) - new Date(b.created_at));
+        } else {
+            filtrados.sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
+        }
+        if (filtrados.length > 0) {
             listaLibrosDiv.innerHTML = '';
-            libros.forEach(libro => {
+            filtrados.forEach(libro => {
                 const propietarioNombre = libro.propietario ? libro.propietario.nickname : 'Desconocido';
                 let infoPrestamoHTML = '';
                 if (libro.estado === 'prestado') {
