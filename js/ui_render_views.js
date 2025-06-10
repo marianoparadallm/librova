@@ -363,11 +363,20 @@ function renderizarListaNotificaciones(divId, notas) {
     if (!div) { console.error(`DEBUG: ui_render_views.js - Div ${divId} no encontrado para notificaciones.`); return; }
     div.innerHTML = '';
     if (!notas || notas.length === 0) { div.innerHTML = '<p>No tienes notificaciones.</p>'; return; }
-    notas.forEach(n => {
-        const fecha = new Date(n.created_at).toLocaleDateString('es-AR');
-        const clase = n.leida ? 'item-notificacion' : 'item-notificacion nueva';
-        div.innerHTML += `<div class="${clase}">${n.mensaje} <span style="float:right;font-size:0.8em;color:#4A5568;">${fecha}</span></div>`;
-    });
+    for (const n of notas) {
+        const item = document.createElement('div');
+        item.className = n.leida ? 'item-notificacion' : 'item-notificacion nueva';
+        item.textContent = n.mensaje;
+
+        const span = document.createElement('span');
+        span.style.float = 'right';
+        span.style.fontSize = '0.8em';
+        span.style.color = '#4A5568';
+        span.textContent = new Date(n.created_at).toLocaleDateString('es-AR');
+
+        item.appendChild(span);
+        div.appendChild(item);
+    }
 }
 
 async function renderizarVistaRanking() {
