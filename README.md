@@ -15,7 +15,7 @@ Luego visita `http://localhost:8000/index.html`.
 
 ## Credenciales de Supabase
 
-Los valores `SUPABASE_URL` y `SUPABASE_ANON_KEY` se encuentran definidos en el fichero [`js/config.js`](js/config.js). Estas mismas constantes también se utilizan en `app.js` y en `test_app_test.js` para inicializar el cliente de Supabase. Asegúrate de actualizar estos valores si cambias de proyecto en Supabase.
+Los valores `X_SUPABASE_URL` y `X_SUPABASE_ANON_KEY` se cargan desde variables de entorno o desde un archivo `js/config.js` que no está versionado. Copia [`js/config.sample.js`](js/config.sample.js) a `js/config.js` y completa tus credenciales, o bien define las variables de entorno `X_SUPABASE_URL` y `X_SUPABASE_ANON_KEY` antes de servir la página.
 
 ## Archivos de prueba
 
