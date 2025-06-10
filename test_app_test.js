@@ -14,6 +14,7 @@ function updateStatus(message, type = "info") {
 
 updateStatus("Verificando SDK de Supabase...", "info");
 
+
 const X_SUPABASE_URL =
     (typeof window !== 'undefined' && window.X_SUPABASE_URL) ||
     (typeof process !== 'undefined' && process.env.X_SUPABASE_URL) ||

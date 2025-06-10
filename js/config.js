@@ -1,6 +1,7 @@
 // js/config.js
 console.log("DEBUG: config.js - Cargado.");
 
+
 const X_SUPABASE_URL =
     (typeof window !== 'undefined' && window.X_SUPABASE_URL) ||
     (typeof process !== 'undefined' && process.env.X_SUPABASE_URL) ||

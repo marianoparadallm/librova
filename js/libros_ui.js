@@ -44,27 +44,64 @@ async function cargarYMostrarLibros() {
             listaLibrosDiv.innerHTML = '';
             filtrados.forEach(libro => {
                 const propietarioNombre = libro.propietario ? libro.propietario.nickname : 'Desconocido';
-                let infoPrestamoHTML = '';
+
+                const card = document.createElement('div');
+                card.className = 'libro-card';
+                card.dataset.libroId = libro.id;
+                card.dataset.propietarioId = libro.propietario_id;
+
+                const img = document.createElement('img');
+                img.src = libro.foto_url;
+                img.alt = `Portada de ${libro.titulo}`;
+                img.className = 'libro-portada';
+                card.appendChild(img);
+
+                const titulo = document.createElement('h4');
+                titulo.className = 'libro-titulo';
+                titulo.textContent = libro.titulo;
+                card.appendChild(titulo);
+
+                const propietario = document.createElement('p');
+                propietario.className = 'libro-propietario';
+                propietario.textContent = `Dueño: ${propietarioNombre}`;
+                card.appendChild(propietario);
+
+                const estado = document.createElement('p');
+                estado.className = 'libro-estado';
+                estado.textContent = `Estado: ${libro.estado}`;
+                card.appendChild(estado);
+
                 if (libro.estado === 'prestado') {
+                    const prestamoInfo = document.createElement('p');
+                    prestamoInfo.className = 'libro-info-prestamo';
                     const nombrePrestadoA = libro.prestado_a ? libro.prestado_a.nickname : 'Alguien';
                     const fechaDev = libro.fecha_limite_devolucion ? new Date(libro.fecha_limite_devolucion).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Fecha no definida';
-                    infoPrestamoHTML = `<p class="libro-info-prestamo">Prestado a: ${nombrePrestadoA}<br>Devolver el: ${fechaDev}</p>`;
+                    prestamoInfo.append(`Prestado a: ${nombrePrestadoA}`);
+                    prestamoInfo.appendChild(document.createElement('br'));
+                    prestamoInfo.append(`Devolver el: ${fechaDev}`);
+                    card.appendChild(prestamoInfo);
                 }
-                const libroCardHTML = `
-                    <div class="libro-card" data-libro-id="${libro.id}" data-propietario-id="${libro.propietario_id}">
-                        <img src="${libro.foto_url}" alt="Portada de ${libro.titulo}" class="libro-portada">
-                        <h4 class="libro-titulo">${libro.titulo}</h4>
-                        <p class="libro-propietario">Dueño: ${propietarioNombre}</p>
-                        <p class="libro-estado">Estado: ${libro.estado}</p>
-                        ${infoPrestamoHTML}
-                        ${currentUser && currentUser.id !== libro.propietario_id && (libro.estado === 'disponible' || libro.estado === 'solicitado') ?
-                            '<button class="btn-pedir-prestamo boton-accion-base pedir">Pedir Prestamo</button>' : ''}
-                        ${currentUser && currentUser.id === libro.propietario_id && libro.estado === 'prestado' && libro.esta_con_usuario_id ? 
-                            '<button class="btn-marcar-devuelto boton-accion-base devolver">Marcar como Devuelto</button>' : ''}
-                        ${currentUser && currentUser.id === libro.propietario_id && (libro.estado === 'disponible' || libro.estado === 'solicitado') ?
-                            '<button class="btn-gestionar-libro boton-accion-base gestionar">Gestionar (Mío)</button>' : ''}
-                    </div>`;
-                listaLibrosDiv.innerHTML += libroCardHTML;
+
+                if (currentUser && currentUser.id !== libro.propietario_id && (libro.estado === 'disponible' || libro.estado === 'solicitado')) {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-pedir-prestamo boton-accion-base pedir';
+                    btn.textContent = 'Pedir Prestamo';
+                    card.appendChild(btn);
+                }
+                if (currentUser && currentUser.id === libro.propietario_id && libro.estado === 'prestado' && libro.esta_con_usuario_id) {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-marcar-devuelto boton-accion-base devolver';
+                    btn.textContent = 'Marcar como Devuelto';
+                    card.appendChild(btn);
+                }
+                if (currentUser && currentUser.id === libro.propietario_id && (libro.estado === 'disponible' || libro.estado === 'solicitado')) {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-gestionar-libro boton-accion-base gestionar';
+                    btn.textContent = 'Gestionar (Mío)';
+                    card.appendChild(btn);
+                }
+
+                listaLibrosDiv.appendChild(card);
             });
             asignarEventListenersLibros();
         } else {
