@@ -117,18 +117,55 @@ function renderizarListaDashboard(divId, libros, tipoLista) {
     div.innerHTML = '';
     if (!libros || libros.length === 0) { div.innerHTML = `<p>No tienes libros en esta categoría.</p>`; return; }
     libros.forEach(libro => {
-        let infoExtra = ''; let botonHTML = '';
+        const item = document.createElement('div');
+        item.className = 'item-lista-libro';
+        item.dataset.libroId = libro.id;
+
+        const img = document.createElement('img');
+        img.src = libro.foto_url || './placeholder-portada.png';
+        img.alt = `Portada de ${libro.titulo}`;
+        img.className = 'thumbnail';
+        item.appendChild(img);
+
+        const detalles = document.createElement('div');
+        detalles.className = 'detalles';
+        const strong = document.createElement('strong');
+        strong.textContent = libro.titulo;
+        detalles.appendChild(strong);
+
         const fechaDev = libro.fecha_limite_devolucion ? new Date(libro.fecha_limite_devolucion).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'N/A';
         if (tipoLista === 'prestadosPorMi') {
             const prestatario = libro.prestado_a ? libro.prestado_a.nickname : 'Alguien';
-            infoExtra = `<span>Prestado a: ${prestatario}</span><span>Devolver el: ${fechaDev}</span>`;
-            botonHTML = `<button class="btn-marcar-devuelto boton-accion-base devolver" data-libro-id="${libro.id}">Marcar Devuelto</button>`;
+            const span1 = document.createElement('span');
+            span1.textContent = `Prestado a: ${prestatario}`;
+            const span2 = document.createElement('span');
+            span2.textContent = `Devolver el: ${fechaDev}`;
+            detalles.appendChild(span1);
+            detalles.appendChild(span2);
         } else if (tipoLista === 'prestadosAMi') {
             const dueno = libro.propietario ? libro.propietario.nickname : 'Desconocido';
-            infoExtra = `<span>Dueño: ${dueno}</span><span>Devolver el: ${fechaDev}</span>`;
+            const span1 = document.createElement('span');
+            span1.textContent = `Dueño: ${dueno}`;
+            const span2 = document.createElement('span');
+            span2.textContent = `Devolver el: ${fechaDev}`;
+            detalles.appendChild(span1);
+            detalles.appendChild(span2);
         }
-        const itemHTML = `<div class="item-lista-libro" data-libro-id="${libro.id}"><img src="${libro.foto_url || './placeholder-portada.png'}" alt="Portada de ${libro.titulo}" class="thumbnail"><div class="detalles"><strong>${libro.titulo}</strong>${infoExtra}</div><div class="acciones">${botonHTML}</div></div>`;
-        div.innerHTML += itemHTML;});
+        item.appendChild(detalles);
+
+        const acciones = document.createElement('div');
+        acciones.className = 'acciones';
+        if (tipoLista === 'prestadosPorMi') {
+            const btn = document.createElement('button');
+            btn.className = 'btn-marcar-devuelto boton-accion-base devolver';
+            btn.dataset.libroId = libro.id;
+            btn.textContent = 'Marcar Devuelto';
+            acciones.appendChild(btn);
+        }
+        item.appendChild(acciones);
+
+        div.appendChild(item);
+    });
 }
 
 function renderizarListaSolicitudesRecibidas(divId, solicitudes) {
@@ -144,24 +181,46 @@ function renderizarListaSolicitudesRecibidas(divId, solicitudes) {
         const solicitanteNickname = solicitud.usuarios ? solicitud.usuarios.nickname : 'Usuario desconocido';
         const fotoUrl = solicitud.libros ? (solicitud.libros.foto_url || './placeholder-portada.png') : './placeholder-portada.png';
 
-        const itemHTML = `
-            <div class="item-solicitud" data-solicitud-id="${solicitud.id}" 
-                 data-libro-id="${solicitud.libro_id}" 
-                 data-solicitante-id="${solicitud.solicitante_id}"
-                 data-propietario-id="${solicitud.propietario_id}"> <!-- propietario_id es el currentUser aquí -->
-                <img src="${fotoUrl}" alt="Portada de ${libroTitulo}" class="thumbnail">
-                <div class="detalles">
-                    <strong>${libroTitulo}</strong>
-                    <span>Solicitado por: ${solicitanteNickname}</span>
-                    <span>Fecha solicitud: ${new Date(solicitud.fecha_solicitud).toLocaleDateString('es-AR')}</span>
-                </div>
-                <div class="acciones">
-                    <button class="btn-aceptar-solicitud boton-accion-base aceptar">Aceptar</button>
-                    <button class="btn-rechazar-solicitud boton-accion-base eliminar" style="margin-top:5px;">Rechazar</button>
-                </div>
-            </div>
-        `;
-        div.innerHTML += itemHTML;
+        const item = document.createElement('div');
+        item.className = 'item-solicitud';
+        item.dataset.solicitudId = solicitud.id;
+        item.dataset.libroId = solicitud.libro_id;
+        item.dataset.solicitanteId = solicitud.solicitante_id;
+        item.dataset.propietarioId = solicitud.propietario_id; // propietario_id es el currentUser aquí
+
+        const img = document.createElement('img');
+        img.src = fotoUrl;
+        img.alt = `Portada de ${libroTitulo}`;
+        img.className = 'thumbnail';
+        item.appendChild(img);
+
+        const detalles = document.createElement('div');
+        detalles.className = 'detalles';
+        const strong = document.createElement('strong');
+        strong.textContent = libroTitulo;
+        const spanNick = document.createElement('span');
+        spanNick.textContent = `Solicitado por: ${solicitanteNickname}`;
+        const spanFecha = document.createElement('span');
+        spanFecha.textContent = `Fecha solicitud: ${new Date(solicitud.fecha_solicitud).toLocaleDateString('es-AR')}`;
+        detalles.appendChild(strong);
+        detalles.appendChild(spanNick);
+        detalles.appendChild(spanFecha);
+        item.appendChild(detalles);
+
+        const acciones = document.createElement('div');
+        acciones.className = 'acciones';
+        const btnAceptar = document.createElement('button');
+        btnAceptar.className = 'btn-aceptar-solicitud boton-accion-base aceptar';
+        btnAceptar.textContent = 'Aceptar';
+        const btnRechazar = document.createElement('button');
+        btnRechazar.className = 'btn-rechazar-solicitud boton-accion-base eliminar';
+        btnRechazar.style.marginTop = '5px';
+        btnRechazar.textContent = 'Rechazar';
+        acciones.appendChild(btnAceptar);
+        acciones.appendChild(btnRechazar);
+        item.appendChild(acciones);
+
+        div.appendChild(item);
     });
 }
 
@@ -179,9 +238,48 @@ async function renderizarDetallesGestionLibro(libroId) {
         if (error) { throw error.code === 'PGRST116' ? new Error("Libro no encontrado o no te pertenece.") : error; }
         if (libro) {
             vistaGestion.querySelector('h3').textContent = `Gestionar: ${libro.titulo}`;
-            detallesDiv.innerHTML = `
-                <div class="gestion-libro-info"><h4>${libro.titulo}</h4><img src="${libro.foto_url}" alt="Portada de ${libro.titulo}" style="max-width: 150px; border-radius: 4px; margin-bottom: 15px;"><p><strong>ID:</strong> ${libro.id}</p><p><strong>Estado:</strong> ${libro.estado}</p></div>
-                <div class="gestion-libro-acciones"><button id="btn-editar-libro-info" class="boton-accion-base gestionar">Editar</button><button id="btn-eliminar-libro" class="boton-accion-base eliminar" data-libro-id="${libro.id}" ${libro.estado !== 'disponible' ? 'disabled title="No se puede eliminar un libro prestado"' : ''}>Eliminar</button></div>`;
+            detallesDiv.innerHTML = '';
+
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'gestion-libro-info';
+            const h4 = document.createElement('h4');
+            h4.textContent = libro.titulo;
+            const img = document.createElement('img');
+            img.src = libro.foto_url;
+            img.alt = `Portada de ${libro.titulo}`;
+            img.style.maxWidth = '150px';
+            img.style.borderRadius = '4px';
+            img.style.marginBottom = '15px';
+            const pId = document.createElement('p');
+            pId.innerHTML = `<strong>ID:</strong> ${libro.id}`;
+            const pEstado = document.createElement('p');
+            pEstado.innerHTML = `<strong>Estado:</strong> ${libro.estado}`;
+            infoDiv.appendChild(h4);
+            infoDiv.appendChild(img);
+            infoDiv.appendChild(pId);
+            infoDiv.appendChild(pEstado);
+
+            const accionesDiv = document.createElement('div');
+            accionesDiv.className = 'gestion-libro-acciones';
+            const btnEditar = document.createElement('button');
+            btnEditar.id = 'btn-editar-libro-info';
+            btnEditar.className = 'boton-accion-base gestionar';
+            btnEditar.textContent = 'Editar';
+            const btnEliminar = document.createElement('button');
+            btnEliminar.id = 'btn-eliminar-libro';
+            btnEliminar.className = 'boton-accion-base eliminar';
+            btnEliminar.dataset.libroId = libro.id;
+            if (libro.estado !== 'disponible') {
+                btnEliminar.disabled = true;
+                btnEliminar.title = 'No se puede eliminar un libro prestado';
+            }
+            btnEliminar.textContent = 'Eliminar';
+            accionesDiv.appendChild(btnEditar);
+            accionesDiv.appendChild(btnEliminar);
+
+            detallesDiv.appendChild(infoDiv);
+            detallesDiv.appendChild(accionesDiv);
+
             document.getElementById('btn-editar-libro-info').onclick = () => alert(`Editar Libro ID: ${libro.id} (no implementado).`);
             document.getElementById('btn-eliminar-libro').onclick = async () => alert(`Eliminar Libro ID: ${libro.id} (no implementado).`);
         } else { detallesDiv.innerHTML = "<p>No se encontraron detalles o no tienes permiso.</p>"; }
@@ -198,8 +296,8 @@ function renderizarDashboard() {
     const nombreUsuario = currentUser.rol === 'admin' ? currentUser.email : currentUser.nickname;
     const reputacionMostrar = (currentUser.reputacion !== undefined && currentUser.reputacion !== null) ? currentUser.reputacion : 0;
     dashboardView.innerHTML = `
-        <h2>Dashboard de ${nombreUsuario}</h2>
-        <p>Tu reputación: ${reputacionMostrar}</p>
+        <h2 id="titulo-dashboard"></h2>
+        <p id="reputacion-dashboard"></p>
         <button id="btn-ir-anadir-libro" class="boton-accion-base cargar">Cargar Libro</button>
         <hr>
         <div class="seccion-dashboard">
@@ -222,6 +320,11 @@ function renderizarDashboard() {
             <div id="libros-que-me-prestaron" class="lista-dashboard-libros">Cargando...</div>
         </div>
         `;
+
+    const tituloDash = document.getElementById('titulo-dashboard');
+    if (tituloDash) tituloDash.textContent = `Dashboard de ${nombreUsuario}`;
+    const repDash = document.getElementById('reputacion-dashboard');
+    if (repDash) repDash.textContent = `Tu reputación: ${reputacionMostrar}`;
 
     const btnIrAnadirLibro = document.getElementById('btn-ir-anadir-libro');
     if (btnIrAnadirLibro) { btnIrAnadirLibro.onclick = () => cambiarVista('vista-dashboard', 'vista-anadir-libro');}
