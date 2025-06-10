@@ -13,6 +13,13 @@ python3 -m http.server
 
 Luego visita `http://localhost:8000/index.html`.
 
+## Video de fondo
+
+La página principal muestra el video `fondo.mp4` como fondo animado. Puedes
+reemplazar el archivo por otro video o eliminar el elemento
+`<video id="background-video">` en `index.html` si prefieres solo la imagen de
+fondo estática `fondo.jpg`.
+
 ## Credenciales de Supabase
 
 
