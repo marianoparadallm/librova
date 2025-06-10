@@ -2,32 +2,45 @@
 console.log("DEBUG: auth.js - Cargado.");
 
 async function cerrarSesion() {
-    // ... (Misma función cerrarSesion que tenías, usa supabaseClientInstance y currentUser globales)
     console.log("DEBUG: auth.js - Cerrando sesión...");
-    if (currentUser && currentUser.rol === 'admin' && supabaseClientInstance) {
-        const { error } = await supabaseClientInstance.auth.signOut();
-        if (error) { console.error('DEBUG: auth.js - Error al cerrar sesión de admin:', error); /* No alert */ }
-    }
+    // Admin ya no utiliza Supabase Auth, solo limpiamos estado local
     detenerMonitoreoNotificaciones();
-    currentUser = null; localStorage.removeItem('libroVaUser');
+    currentUser = null;
+    localStorage.removeItem('libroVaUser');
     console.log('DEBUG: auth.js - Sesión cerrada localmente.');
-    renderizarVistaBienvenida(); // Asume que renderizarVistaBienvenida es global
-    actualizarMenuPrincipal(); // Asume que actualizarMenuPrincipal es global
+    renderizarVistaBienvenida();
+    actualizarMenuPrincipal();
 }
 
-async function loginAdmin(email, password) {
-    // ... (Misma función loginAdmin que tenías)
-    console.log("DEBUG: auth.js - Intentando login admin con email:", email);
-    if (!supabaseClientInstance) { alert('Error: Supabase no está inicializado.'); return null; } // Mantener alert aquí o manejar error
-    const { data, error } = await supabaseClientInstance.auth.signInWithPassword({ email, password });
-    if (error) { console.error('DEBUG: auth.js - Error login Admin:', error.message); alert(`Error Admin: ${error.message}`); return null; }
-    if (data.user) {
-        console.log('DEBUG: auth.js - Admin logueado:', data.user);
-        currentUser = { id: data.user.id, email: data.user.email, rol: 'admin', reputacion: 'N/A' }; // Actualiza currentUser global
-        iniciarMonitoreoNotificaciones();
-        return currentUser;
+async function loginAdmin(nickname, pin) {
+    console.log("DEBUG: auth.js - Intentando login admin con nickname:", nickname);
+    if (!supabaseClientInstance) { alert('Error: Supabase no está inicializado.'); return null; }
+
+    if (nickname !== 'admin') { alert('Alias de administrador incorrecto.'); return null; }
+
+    const { data, error } = await supabaseClientInstance
+        .from('usuarios')
+        .select('*')
+        .eq('nickname', 'admin')
+        .eq('pin', pin)
+        .single();
+
+    if (error) {
+        console.error('DEBUG: auth.js - Error login Admin:', error);
+        alert('Error al iniciar sesión como admin.');
+        return null;
     }
-    return null;
+
+    if (!data || data.rol !== 'admin') {
+        alert('Credenciales de administrador inválidas.');
+        return null;
+    }
+
+    console.log('DEBUG: auth.js - Admin logueado:', data);
+    currentUser = data;
+    localStorage.setItem('libroVaUser', JSON.stringify(currentUser));
+    iniciarMonitoreoNotificaciones();
+    return currentUser;
 }
 
 async function registrarAlumno(nickname, idAvatarSeleccionado, pin) {
