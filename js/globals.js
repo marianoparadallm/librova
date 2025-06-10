@@ -10,3 +10,4 @@ let menuPrincipal = null;
 let notificaciones = [];
 let notificacionesNuevas = 0;
 let notificacionesIntervalId = null;
+let popupNotificacionesVisible = false;

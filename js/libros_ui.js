@@ -146,7 +146,7 @@ function delegarClicksLibros(event) {
         if (confirm(`¿Confirmas que el libro "${tituloConfirm}" ha sido devuelto?`)) {
             marcarLibroComoDevuelto(libroId);
         }
-    } else if (event.target.closest("#solicitudes-prestamo-recibidas .btn-aceptar-solicitud")) {
+    } else if (event.target.closest("#lista-novedades .btn-aceptar-solicitud")) {
         const itemSolicitud = event.target.closest(".item-solicitud");
         const solicitudId = itemSolicitud.dataset.solicitudId;
         const libroId = itemSolicitud.dataset.libroId;
@@ -157,7 +157,7 @@ function delegarClicksLibros(event) {
         const solicitanteNickname = solicitanteNicknameElement ? solicitanteNicknameElement.textContent.replace("Solicitado por: ", "").trim() : "Alguien";
         console.log(`DEBUG: libros_ui.js - Aceptar solicitud ID: ${solicitudId}`);
         responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, propietarioId, "aceptada", libroTitulo, solicitanteNickname);
-    } else if (event.target.closest("#solicitudes-prestamo-recibidas .btn-rechazar-solicitud")) {
+    } else if (event.target.closest("#lista-novedades .btn-rechazar-solicitud")) {
         const itemSolicitud = event.target.closest(".item-solicitud");
         const solicitudId = itemSolicitud.dataset.solicitudId;
         const solicitanteId = itemSolicitud.dataset.solicitanteId;

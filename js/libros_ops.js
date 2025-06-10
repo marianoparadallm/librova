@@ -132,7 +132,7 @@ async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, p
         console.error("DEBUG: libros_ops.js - Error procesando solicitud:", err);
     } finally {
         cargarSolicitudesRecibidas(currentUser.id).then(s => {
-            renderizarListaSolicitudesRecibidas("solicitudes-prestamo-recibidas", s);
+            renderizarNovedadesPendientes("lista-novedades", notificaciones, s);
             asignarEventListenersLibros();
         });
         cargarYMostrarLibros();
@@ -178,9 +178,9 @@ function recargarSeccionesPrestamosDashboard() {
             renderizarListaDashboard('libros-que-me-prestaron', libros, 'prestadosAMi');
         });
     }
-    if (document.getElementById('solicitudes-prestamo-recibidas')) {
+    if (document.getElementById('lista-novedades')) {
         cargarSolicitudesRecibidas(currentUser.id).then(s => {
-            renderizarListaSolicitudesRecibidas('solicitudes-prestamo-recibidas', s);
+            renderizarNovedadesPendientes('lista-novedades', notificaciones, s);
             asignarEventListenersLibros();
         });
     }

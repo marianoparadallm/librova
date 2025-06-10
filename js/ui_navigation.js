@@ -1,6 +1,38 @@
 // js/ui_navigation.js
 console.log("DEBUG: ui_navigation.js - Cargado.");
 
+function togglePopupNotificaciones() {
+    const popup = document.getElementById('popup-notificaciones');
+    if (!popup) return;
+    if (popupNotificacionesVisible) {
+        popup.style.display = 'none';
+        popupNotificacionesVisible = false;
+    } else {
+        refrescarNotificaciones().then(() => {
+            renderizarListaNotificaciones('popup-notificaciones', notificaciones);
+            popup.style.display = 'block';
+            popupNotificacionesVisible = true;
+        });
+    }
+}
+
+function ocultarPopupNotificaciones() {
+    const popup = document.getElementById('popup-notificaciones');
+    if (!popup) return;
+    popup.style.display = 'none';
+    popupNotificacionesVisible = false;
+}
+
+document.addEventListener('click', (e) => {
+    const popup = document.getElementById('popup-notificaciones');
+    if (!popup) return;
+    if (popupNotificacionesVisible && !popup.contains(e.target) && e.target.id !== 'btn-notificaciones') {
+        ocultarPopupNotificaciones();
+    }
+});
+
+window.togglePopupNotificaciones = togglePopupNotificaciones;
+
 function cambiarVista(idVistaActual, idVistaNueva) {
     // ... (Misma función cambiarVista que tenías en tu app.js funcional)
     console.log(`DEBUG: ui_navigation.js - Intentando cambiar de vista: ${idVistaActual || 'ninguna'} a ${idVistaNueva}`);
@@ -57,12 +89,7 @@ function actualizarMenuPrincipal() {
         btnNotificaciones.id = 'btn-notificaciones';
         const cont = notificacionesNuevas > 0 ? ` (${notificacionesNuevas})` : '';
         btnNotificaciones.textContent = '🔔' + cont;
-        btnNotificaciones.onclick = async () => {
-            await refrescarNotificaciones();
-            renderizarDashboard();
-            const lista = document.getElementById('lista-notificaciones');
-            if (lista) lista.scrollIntoView({ behavior: 'smooth' });
-        };
+        btnNotificaciones.onclick = togglePopupNotificaciones;
         menuPrincipal.appendChild(btnNotificaciones);
         const btnCerrarSesion = document.createElement('button');
         btnCerrarSesion.textContent = 'Cerrar Sesión';
