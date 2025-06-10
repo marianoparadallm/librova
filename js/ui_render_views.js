@@ -93,6 +93,7 @@ function renderizarVistaBienvenida() {
             </div>
             <div id="lista-libros-disponibles">Cargando libros...</div>
         </div>
+
         <div id="vista-ranking" class="vista">
             <h3>Ranking de Usuarios</h3>
             <div id="lista-ranking">Cargando...</div>
@@ -310,10 +311,12 @@ function renderizarDashboard() {
 
     const nombreUsuario = currentUser.rol === 'admin' ? currentUser.email : currentUser.nickname;
     const reputacionMostrar = (currentUser.reputacion !== undefined && currentUser.reputacion !== null) ? currentUser.reputacion : 0;
+    const adminBtn = currentUser.rol === 'admin' ? '<button id="btn-ir-admin-panel" class="boton-accion-base gestionar">Panel Admin</button><hr>' : '';
     dashboardView.innerHTML = `
         <h2 id="titulo-dashboard"></h2>
         <p id="reputacion-dashboard"></p>
         <button id="btn-ir-anadir-libro" class="boton-accion-base cargar">Cargar Libro</button>
+        ${adminBtn}
         <hr>
         <div class="seccion-dashboard">
             <h3>Novedades y Decisiones Pendientes</h3>
@@ -338,6 +341,8 @@ function renderizarDashboard() {
 
     const btnIrAnadirLibro = document.getElementById('btn-ir-anadir-libro');
     if (btnIrAnadirLibro) { btnIrAnadirLibro.onclick = () => cambiarVista('vista-dashboard', 'vista-anadir-libro');}
+    const btnIrAdminPanel = document.getElementById('btn-ir-admin-panel');
+    if (btnIrAdminPanel) btnIrAdminPanel.onclick = renderizarPanelAdmin;
     console.log("DEBUG: ui_render_views.js - HTML de Dashboard completo inyectado.");
 
     const vistaActivaPrevia = document.querySelector('.vista.activa');
@@ -494,6 +499,214 @@ async function renderizarVistaRanking() {
     }
 }
 
+async function renderizarPanelAdmin() {
+    const vistaActual = document.querySelector('.vista.activa');
+    const vista = document.getElementById('vista-admin-panel');
+    if (!vista) return;
+    vista.innerHTML = `
+        <h3>Panel Administrador</h3>
+        <div class="seccion-dashboard">
+            <h4>Libros</h4>
+            <div id="admin-lista-libros">Cargando...</div>
+            <form id="form-admin-libro">
+                <input type="text" id="admin-libro-titulo" placeholder="Título">
+                <button type="submit" class="boton-accion-base submit">Crear Libro</button>
+            </form>
+        </div>
+        <div class="seccion-dashboard">
+            <h4>Usuarios</h4>
+            <div id="admin-lista-usuarios">Cargando...</div>
+            <form id="form-admin-usuario">
+                <input type="text" id="admin-usuario-nickname" placeholder="Nickname">
+                <button type="submit" class="boton-accion-base submit">Crear Usuario</button>
+            </form>
+        </div>
+        <div class="seccion-dashboard">
+            <h4>Solicitudes</h4>
+            <div id="admin-lista-solicitudes">Cargando...</div>
+        </div>
+        <div class="seccion-dashboard">
+            <h4>Notificaciones</h4>
+            <div id="admin-lista-notificaciones">Cargando...</div>
+        </div>
+        <button type="button" id="btn-volver-dashboard-desde-admin" class="boton-accion-base gestionar">Volver al Dashboard</button>
+    `;
+    cambiarVista(vistaActual ? vistaActual.id : null, 'vista-admin-panel');
+
+    await cargarDatosPanelAdmin();
+
+    document.getElementById('form-admin-libro').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const t = document.getElementById('admin-libro-titulo').value.trim();
+        if (t) {
+            await crearLibroAdmin({ titulo: t });
+            renderizarPanelAdmin();
+        }
+    });
+
+    document.getElementById('form-admin-usuario').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const n = document.getElementById('admin-usuario-nickname').value.trim();
+        if (n) {
+            await crearUsuarioAdmin({ nickname: n });
+            renderizarPanelAdmin();
+        }
+    });
+
+    document.getElementById('btn-volver-dashboard-desde-admin').onclick = renderizarDashboard;
+}
+
+async function cargarDatosPanelAdmin() {
+    const divLibros = document.getElementById('admin-lista-libros');
+    const libros = await listarLibrosAdmin();
+    divLibros.innerHTML = '';
+    libros.forEach(l => {
+        const item = document.createElement('div');
+        item.className = 'item-lista-libro';
+        const detalles = document.createElement('div');
+        detalles.className = 'detalles';
+        detalles.textContent = `[${l.id}] ${l.titulo}`;
+        item.appendChild(detalles);
+        const acciones = document.createElement('div');
+        acciones.className = 'acciones';
+        const bE = document.createElement('button');
+        bE.className = 'boton-accion-base gestionar';
+        bE.textContent = 'Editar';
+        bE.onclick = async () => {
+            const nuevo = prompt('Nuevo título', l.titulo);
+            if (nuevo !== null) {
+                await editarLibroAdmin(l.id, { titulo: nuevo });
+                renderizarPanelAdmin();
+            }
+        };
+        const bD = document.createElement('button');
+        bD.className = 'boton-accion-base eliminar';
+        bD.textContent = 'Eliminar';
+        bD.onclick = async () => {
+            if (confirm('¿Eliminar libro?')) {
+                await eliminarLibroAdmin(l.id);
+                renderizarPanelAdmin();
+            }
+        };
+        acciones.appendChild(bE);
+        acciones.appendChild(bD);
+        item.appendChild(acciones);
+        divLibros.appendChild(item);
+    });
+
+    const divUsuarios = document.getElementById('admin-lista-usuarios');
+    const usuarios = await listarUsuariosAdmin();
+    divUsuarios.innerHTML = '';
+    usuarios.forEach(u => {
+        const item = document.createElement('div');
+        item.className = 'item-lista-libro';
+        const detalles = document.createElement('div');
+        detalles.className = 'detalles';
+        detalles.textContent = `[${u.id}] ${u.nickname}`;
+        item.appendChild(detalles);
+        const acciones = document.createElement('div');
+        acciones.className = 'acciones';
+        const bE = document.createElement('button');
+        bE.className = 'boton-accion-base gestionar';
+        bE.textContent = 'Editar';
+        bE.onclick = async () => {
+            const nuevo = prompt('Nuevo nickname', u.nickname);
+            if (nuevo !== null) {
+                await editarUsuarioAdmin(u.id, { nickname: nuevo });
+                renderizarPanelAdmin();
+            }
+        };
+        const bD = document.createElement('button');
+        bD.className = 'boton-accion-base eliminar';
+        bD.textContent = 'Eliminar';
+        bD.onclick = async () => {
+            if (confirm('¿Eliminar usuario?')) {
+                await eliminarUsuarioAdmin(u.id);
+                renderizarPanelAdmin();
+            }
+        };
+        acciones.appendChild(bE);
+        acciones.appendChild(bD);
+        item.appendChild(acciones);
+        divUsuarios.appendChild(item);
+    });
+
+    const divSol = document.getElementById('admin-lista-solicitudes');
+    const solicitudes = await listarSolicitudesAdmin();
+    divSol.innerHTML = '';
+    solicitudes.forEach(s => {
+        const item = document.createElement('div');
+        item.className = 'item-lista-libro';
+        const detalles = document.createElement('div');
+        detalles.className = 'detalles';
+        detalles.textContent = `[${s.id}] libro ${s.libro_id} - ${s.estado_solicitud}`;
+        item.appendChild(detalles);
+        const acciones = document.createElement('div');
+        acciones.className = 'acciones';
+        const bE = document.createElement('button');
+        bE.className = 'boton-accion-base gestionar';
+        bE.textContent = 'Editar';
+        bE.onclick = async () => {
+            const nuevo = prompt('Nuevo estado', s.estado_solicitud);
+            if (nuevo !== null) {
+                await editarSolicitudAdmin(s.id, { estado_solicitud: nuevo });
+                renderizarPanelAdmin();
+            }
+        };
+        const bD = document.createElement('button');
+        bD.className = 'boton-accion-base eliminar';
+        bD.textContent = 'Eliminar';
+        bD.onclick = async () => {
+            if (confirm('¿Eliminar solicitud?')) {
+                await eliminarSolicitudAdmin(s.id);
+                renderizarPanelAdmin();
+            }
+        };
+        acciones.appendChild(bE);
+        acciones.appendChild(bD);
+        item.appendChild(acciones);
+        divSol.appendChild(item);
+    });
+
+    const divNot = document.getElementById('admin-lista-notificaciones');
+    const notas = await listarNotificacionesAdmin();
+    divNot.innerHTML = '';
+    notas.forEach(n => {
+        const item = document.createElement('div');
+        item.className = 'item-lista-libro';
+        const detalles = document.createElement('div');
+        detalles.className = 'detalles';
+        detalles.textContent = `[${n.id}] ${n.mensaje}`;
+        item.appendChild(detalles);
+        const acciones = document.createElement('div');
+        acciones.className = 'acciones';
+        const bE = document.createElement('button');
+        bE.className = 'boton-accion-base gestionar';
+        bE.textContent = 'Editar';
+        bE.onclick = async () => {
+            const nuevo = prompt('Nuevo mensaje', n.mensaje);
+            if (nuevo !== null) {
+                await editarNotificacionAdmin(n.id, { mensaje: nuevo });
+                renderizarPanelAdmin();
+            }
+        };
+        const bD = document.createElement('button');
+        bD.className = 'boton-accion-base eliminar';
+        bD.textContent = 'Eliminar';
+        bD.onclick = async () => {
+            if (confirm('¿Eliminar notificación?')) {
+                await eliminarNotificacionAdmin(n.id);
+                renderizarPanelAdmin();
+            }
+        };
+        acciones.appendChild(bE);
+        acciones.appendChild(bD);
+        item.appendChild(acciones);
+        divNot.appendChild(item);
+    });
+}
+
 window.renderizarVistaRanking = renderizarVistaRanking;
 window.renderizarListaNotificaciones = renderizarListaNotificaciones;
 window.renderizarNovedadesPendientes = renderizarNovedadesPendientes;
+window.renderizarPanelAdmin = renderizarPanelAdmin;
