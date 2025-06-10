@@ -22,3 +22,8 @@ Los valores `X_SUPABASE_URL` y `X_SUPABASE_ANON_KEY` se cargan desde variables d
 ## Archivos de prueba
 
 Para verificar que la conexión con Supabase está correctamente configurada puedes abrir [`test_index.html`](test_index.html). Este archivo carga `test_app_test.js` y muestra mensajes básicos de éxito o error.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
