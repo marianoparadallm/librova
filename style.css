@@ -231,7 +231,12 @@ form button[type="button"]:hover {
 .seccion-dashboard { margin-bottom: 30px; }
 .lista-dashboard-libros, .lista-solicitudes { display: flex; flex-direction: column; gap: 15px; }
 .lista-notificaciones { display: flex; flex-direction: column; gap: 10px; }
-.item-notificacion { background-color: #edf2f7; padding: 8px 12px; border-radius: 5px; }
+.item-notificacion {
+    background-color: #edf2f7;
+    padding: 8px 12px;
+    border-radius: 5px;
+    color: #2D3748;
+}
 .item-notificacion.nueva { font-weight: bold; }
 .lista-novedades { display: flex; flex-direction: column; gap: 15px; }
 .item-novedad { display: flex; align-items: flex-start; }
