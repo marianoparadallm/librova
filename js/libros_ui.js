@@ -43,10 +43,9 @@ async function cargarYMostrarLibros() {
         if (filtrados.length > 0) {
             listaLibrosDiv.innerHTML = '';
             filtrados.forEach(libro => {
-                const propietarioNombre = libro.propietario ? libro.propietario.nickname : 'Desconocido';
-
                 const card = document.createElement('div');
                 card.className = 'libro-card';
+                if (libro.estado !== 'disponible') card.classList.add('no-disponible');
                 card.dataset.libroId = libro.id;
                 card.dataset.propietarioId = libro.propietario_id;
 
@@ -60,32 +59,6 @@ async function cargarYMostrarLibros() {
                 titulo.className = 'libro-titulo';
                 titulo.textContent = libro.titulo;
                 card.appendChild(titulo);
-
-                const meta = document.createElement('div');
-                meta.className = 'libro-meta';
-
-                const propietario = document.createElement('span');
-                propietario.className = 'libro-propietario';
-                propietario.textContent = `Dueño: ${propietarioNombre}`;
-                meta.appendChild(propietario);
-
-                const estado = document.createElement('span');
-                estado.className = 'libro-estado';
-                estado.textContent = `Estado: ${libro.estado}`;
-                meta.appendChild(estado);
-
-                card.appendChild(meta);
-
-                if (libro.estado === 'prestado') {
-                    const prestamoInfo = document.createElement('p');
-                    prestamoInfo.className = 'libro-info-prestamo';
-                    const nombrePrestadoA = libro.prestado_a ? libro.prestado_a.nickname : 'Alguien';
-                    const fechaDev = libro.fecha_limite_devolucion ? new Date(libro.fecha_limite_devolucion).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Fecha no definida';
-                    prestamoInfo.append(`Prestado a: ${nombrePrestadoA}`);
-                    prestamoInfo.appendChild(document.createElement('br'));
-                    prestamoInfo.append(`Devolver el: ${fechaDev}`);
-                    card.appendChild(prestamoInfo);
-                }
 
                 if (currentUser && currentUser.id !== libro.propietario_id && (libro.estado === 'disponible' || libro.estado === 'solicitado')) {
                     const btn = document.createElement('button');
@@ -105,6 +78,12 @@ async function cargarYMostrarLibros() {
                     btn.textContent = 'Gestionar (Mío)';
                     card.appendChild(btn);
                 }
+
+                card.addEventListener('click', (e) => {
+                    if (!e.target.closest('button')) {
+                        renderizarVistaDetalleLibro(libro.id);
+                    }
+                });
 
                 listaLibrosDiv.appendChild(card);
             });
@@ -150,6 +129,12 @@ function delegarClicksLibros(event) {
         const tituloConfirm = tituloElement ? tituloElement.textContent : "este libro";
         if (confirm(`¿Confirmas que el libro "${tituloConfirm}" ha sido devuelto?`)) {
             marcarLibroComoDevuelto(libroId);
+        }
+    } else if (event.target.closest("#lista-libros-disponibles .libro-card") && !event.target.closest('button')) {
+        const libroCard = event.target.closest('.libro-card');
+        if (libroCard) {
+            const libroId = libroCard.dataset.libroId;
+            renderizarVistaDetalleLibro(libroId);
         }
     } else if (event.target.closest("#lista-novedades .btn-aceptar-solicitud")) {
         const itemSolicitud = event.target.closest(".item-solicitud");

@@ -292,10 +292,10 @@ form button[type="button"]:hover {
 
 /* Tarjetas de Libros (para la lista general "Libros Disponibles") */
 .libro-card {
-    background-color: rgba(255, 255, 255, 0.98); border: 1px solid #e2e8f0; 
-    border-radius: 8px; padding: 10px; margin: 8px; width: 190px; min-height: 300px; 
+    background-color: rgba(255, 255, 255, 0.98); border: 1px solid #e2e8f0;
+    border-radius: 8px; padding: 10px; margin: 8px; width: 190px; min-height: 300px;
     display: flex; flex-direction: column; justify-content: space-between;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); 
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
     text-align: center; transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 .libro-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); }
@@ -310,6 +310,11 @@ form button[type="button"]:hover {
 .libro-info-prestamo { font-size: 0.8em; color: #c05621; background-color: #fffaf0; padding: 6px; border-radius: 4px; margin-top: 5px; margin-bottom: 6px; line-height: 1.3; border: 1px dashed #dd6b20; }
 .libro-card button { margin-top: auto; width: 100%; box-sizing: border-box; }
 /* Los botones btn-pedir-prestado, btn-gestionar-libro, btn-marcar-devuelto en .libro-card USARÁN .boton-accion-base y su modificador de color */
+
+.libro-card.no-disponible {
+    filter: grayscale(1);
+    opacity: 0.6;
+}
 
 #lista-libros-disponibles { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding-top: 15px; }
 
