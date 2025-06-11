@@ -46,6 +46,20 @@ window.agregarNotificacion = agregarNotificacion;
 window.cargarNotificacionesUsuario = cargarNotificacionesUsuario;
 window.marcarNotificacionesLeidas = marcarNotificacionesLeidas;
 
+async function eliminarNotificacion(id) {
+    if (!supabaseClientInstance) return;
+    try {
+        await supabaseClientInstance
+            .from('notificaciones')
+            .delete()
+            .eq('id', id);
+    } catch (e) {
+        console.error('DEBUG: notificaciones.js - Error al eliminar notificación:', e);
+    }
+}
+
+window.eliminarNotificacion = eliminarNotificacion;
+
 async function refrescarNotificaciones() {
     if (!currentUser) return;
     notificaciones = await cargarNotificacionesUsuario(currentUser.id);
