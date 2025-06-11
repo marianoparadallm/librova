@@ -222,7 +222,8 @@ form button[type="submit"]:hover {
 .item-lista-libro .acciones button.btn-marcar-devuelto:hover {
     background-color: #2B6CB0;
 }
-
+.boton-accion-base.info { background-color: #3182CE; }
+.boton-accion-base.info:hover { background-color: #2B6CB0; }
 
 /* Botones secundarios de formulario (grises, como "Volver", "Cancelar") */
 form button[type="button"] { 

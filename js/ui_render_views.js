@@ -482,7 +482,7 @@ async function renderizarVistaDetalleLibro(libroId) {
             acciones.appendChild(btn);
         }
         const btnInfo = document.createElement('button');
-        btnInfo.className = 'boton-accion-base gestionar';
+        btnInfo.className = 'boton-accion-base info';
         btnInfo.textContent = '+info';
         btnInfo.onclick = () => { if (libro.google_link) window.open(libro.google_link, '_blank'); };
         acciones.appendChild(btnInfo);
