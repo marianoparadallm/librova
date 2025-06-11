@@ -293,20 +293,21 @@ form button[type="button"]:hover {
 /* Tarjetas de Libros (para la lista general "Libros Disponibles") */
 .libro-card {
     background-color: rgba(255, 255, 255, 0.98); border: 1px solid #e2e8f0; 
-    border-radius: 8px; padding: 15px; margin: 10px; width: 190px; min-height: 340px; 
+    border-radius: 8px; padding: 10px; margin: 8px; width: 190px; min-height: 300px; 
     display: flex; flex-direction: column; justify-content: space-between;
     box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); 
     text-align: center; transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 .libro-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); }
-.libro-portada { width: 100%; height: 200px; object-fit: cover; border-radius: 4px; margin-bottom: 12px; background-color: #e2e8f0; }
+.libro-portada { width: 100%; height: 180px; object-fit: cover; border-radius: 4px; margin-bottom: 8px; background-color: #e2e8f0; }
 .libro-titulo {
     font-size: 1.05em; font-weight: 600; color: #1A202C; margin-bottom: 8px;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     overflow: hidden; text-overflow: ellipsis; height: 2.5em; line-height: 1.25em;
 }
-.libro-propietario, .libro-estado { font-size: 0.8em; color: #4A5568; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.libro-info-prestamo { font-size: 0.8em; color: #c05621; background-color: #fffaf0; padding: 6px; border-radius: 4px; margin-top: 5px; margin-bottom: 8px; line-height: 1.3; border: 1px dashed #dd6b20; }
+.libro-propietario, .libro-estado { font-size: 0.8em; color: #4A5568; margin-bottom: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.libro-meta { display:flex; justify-content:space-between; align-items:center; gap:4px; margin-bottom:6px; }
+.libro-info-prestamo { font-size: 0.8em; color: #c05621; background-color: #fffaf0; padding: 6px; border-radius: 4px; margin-top: 5px; margin-bottom: 6px; line-height: 1.3; border: 1px dashed #dd6b20; }
 .libro-card button { margin-top: auto; width: 100%; box-sizing: border-box; }
 /* Los botones btn-pedir-prestado, btn-gestionar-libro, btn-marcar-devuelto en .libro-card USARÁN .boton-accion-base y su modificador de color */
 
@@ -369,37 +370,12 @@ form button[type="button"]:hover {
     nav#menu-principal.mobile-open span { display: block; margin: 8px 0; text-align: left; }
 }
 
+
 @media (max-width: 480px) {
+    .libro-meta { flex-direction: column; align-items: flex-start; }
     .libro-card { width: 100%; }
-    .item-lista-libro, .item-solicitud {
-        display: grid;
-        grid-template-columns: 60px 1fr;
-        grid-template-areas:
-            "img detalles"
-            "acciones acciones";
-        padding: 8px;
-        text-align: left;
-    }
-    .item-lista-libro img.thumbnail, .item-solicitud img.thumbnail {
-        grid-area: img;
-        margin-right: 0;
-    }
-    .item-lista-libro .detalles, .item-solicitud .detalles {
-        grid-area: detalles;
-    }
-    .item-lista-libro .acciones, .item-solicitud .acciones {
-        grid-area: acciones;
-        flex-direction: row;
-        justify-content: center;
-        margin-left: 0;
-        margin-top: 5px;
-        gap: 5px;
-    }
-    .item-lista-libro .acciones button, .item-solicitud .acciones button {
-        width: auto;
-        flex: 1 1 auto;
-    }
 }
+
 
 .lista-ranking { list-style: decimal; padding-left: 20px; }
 .lista-ranking li { margin-bottom: 5px; }
