@@ -22,7 +22,7 @@ function renderizarVistaBienvenida() {
     contenedorPrincipal.innerHTML = `
         <div id="vista-bienvenida" class="vista">
             <div class="texto-bienvenida">
-                <p>¡ Bienvenido/a a LibreVa ! 👋</p>
+                <p>¡ Bienvenido/a a LibroVa ! 👋</p>
                 <p>Compartí cuentos y descubrí nuevas aventuras</p>
                 <p>Empecemos ;)</p>
             </div>
