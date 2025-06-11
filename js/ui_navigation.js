@@ -97,8 +97,13 @@ function actualizarMenuPrincipal() {
         }
         const btnNotificaciones = document.createElement('button');
         btnNotificaciones.id = 'btn-notificaciones';
-        const cont = notificacionesNuevas > 0 ? ` (${notificacionesNuevas})` : '';
-        btnNotificaciones.textContent = '🔔' + cont;
+        btnNotificaciones.textContent = '🔔';
+        if (notificacionesNuevas > 0) {
+            const badge = document.createElement('span');
+            badge.className = 'contador-notificaciones';
+            badge.textContent = notificacionesNuevas;
+            btnNotificaciones.appendChild(badge);
+        }
         btnNotificaciones.onclick = togglePopupNotificaciones;
         menuPrincipal.appendChild(btnNotificaciones);
         const btnCerrarSesion = document.createElement('button');
