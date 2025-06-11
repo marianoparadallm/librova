@@ -79,7 +79,7 @@ function asignarEventListenersGlobales() {
             const nick=document.getElementById('admin-alias').value;
             const pn=document.getElementById('admin-pin').value;
             const ad=await loginAdmin(nick,pn);
-            if(ad){renderizarDashboard();await refrescarNotificaciones();actualizarMenuPrincipal();}
+            if(ad){renderizarPanelAdmin();await refrescarNotificaciones();actualizarMenuPrincipal();}
         });
         document.getElementById('form-login-alumno-pin').addEventListener('submit', async (e)=>{e.preventDefault();const nA=e.target.dataset.nombreAvatar;const pn=document.getElementById('alumno-pin-login').value;if(!nA){alert('Selecciona avatar');document.getElementById('btn-cambiar-avatar').click();return;}const al=await loginAlumno(nA,pn);if(al){renderizarDashboard();await refrescarNotificaciones();actualizarMenuPrincipal();e.target.dataset.nombreAvatar='';document.getElementById('alumno-pin-login').value='';document.getElementById('selector-avatares-login').style.display='flex';document.getElementById('form-login-alumno-pin').style.display='none';}});
         document.getElementById('form-registro-alumno').addEventListener('submit', async (e)=>{e.preventDefault();const nick=document.getElementById('alumno-nickname-registro').value;const idAv=document.getElementById('alumno-avatar-registro').value;const pn=document.getElementById('alumno-pin-registro').value;const pnC=document.getElementById('alumno-pin-confirmar').value;if(pn!==pnC){alert('PINs no coinciden');return;}let pV=false;if(pn.length===4){if(/^[0-9]+$/.test(pn)){pV=true;}}if(!pV){alert('PIN debe ser 4 números');return;}const al=await registrarAlumno(nick,idAv,pn);if(al){renderizarDashboard();await refrescarNotificaciones();actualizarMenuPrincipal();}});
@@ -152,18 +152,26 @@ async function appInit() {
         }
 
         if (authStateChangedUser) {
-            if (currentUser) { 
-                await refrescarNotificaciones(); 
+            if (currentUser) {
+                await refrescarNotificaciones();
                 iniciarMonitoreoNotificaciones();
-                renderizarDashboard(); 
+                if(currentUser.rol === 'admin') {
+                    renderizarPanelAdmin();
+                } else {
+                    renderizarDashboard();
+                }
             }
-            else { 
+            else {
                 detenerMonitoreoNotificaciones();
-                cambiarVista(idVistaActivaPrevia || 'vista-dashboard', 'vista-bienvenida'); 
+                cambiarVista(idVistaActivaPrevia || 'vista-dashboard', 'vista-bienvenida');
             }
         } else if (currentUser) {
             await refrescarNotificaciones();
-            renderizarDashboard();
+            if(currentUser.rol === 'admin') {
+                renderizarPanelAdmin();
+            } else {
+                renderizarDashboard();
+            }
         } else {
             // Si no hubo cambio por auth y no hay currentUser, asegurar que se muestre bienvenida
             // Esto es importante si el localStorage estaba vacío y no hay sesión de admin.
@@ -173,10 +181,14 @@ async function appInit() {
     });
 
     if (currentUser) {
-        console.log("DEBUG: main.js - appInit: Hay currentUser (localStorage), renderizando dashboard.");
+        console.log("DEBUG: main.js - appInit: Hay currentUser (localStorage).");
         await refrescarNotificaciones();
         iniciarMonitoreoNotificaciones();
-        renderizarDashboard();
+        if(currentUser.rol === 'admin') {
+            renderizarPanelAdmin();
+        } else {
+            renderizarDashboard();
+        }
     } else {
          console.log("DEBUG: main.js - appInit: No hay currentUser (localStorage), onAuthStateChange o bienvenida inicial determinará.");
          detenerMonitoreoNotificaciones();
