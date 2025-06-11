@@ -61,15 +61,20 @@ async function cargarYMostrarLibros() {
                 titulo.textContent = libro.titulo;
                 card.appendChild(titulo);
 
-                const propietario = document.createElement('p');
+                const meta = document.createElement('div');
+                meta.className = 'libro-meta';
+
+                const propietario = document.createElement('span');
                 propietario.className = 'libro-propietario';
                 propietario.textContent = `Dueño: ${propietarioNombre}`;
-                card.appendChild(propietario);
+                meta.appendChild(propietario);
 
-                const estado = document.createElement('p');
+                const estado = document.createElement('span');
                 estado.className = 'libro-estado';
                 estado.textContent = `Estado: ${libro.estado}`;
-                card.appendChild(estado);
+                meta.appendChild(estado);
+
+                card.appendChild(meta);
 
                 if (libro.estado === 'prestado') {
                     const prestamoInfo = document.createElement('p');
