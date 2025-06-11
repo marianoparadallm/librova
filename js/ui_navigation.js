@@ -33,6 +33,16 @@ document.addEventListener('click', (e) => {
 
 window.togglePopupNotificaciones = togglePopupNotificaciones;
 
+function toggleHamburgerMenu() {
+    const nav = document.getElementById('menu-principal');
+    if (!nav) return;
+    nav.classList.toggle('mobile-open');
+}
+
+// Asignar listener al botón de menú hamburguesa si existe
+const hbBtn = document.getElementById('hamburger-btn');
+if (hbBtn) hbBtn.addEventListener('click', toggleHamburgerMenu);
+
 function cambiarVista(idVistaActual, idVistaNueva) {
     // ... (Misma función cambiarVista que tenías en tu app.js funcional)
     console.log(`DEBUG: ui_navigation.js - Intentando cambiar de vista: ${idVistaActual || 'ninguna'} a ${idVistaNueva}`);

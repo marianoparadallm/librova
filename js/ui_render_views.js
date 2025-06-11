@@ -127,6 +127,7 @@ function renderizarListaDashboard(divId, libros, tipoLista) {
     const div = document.getElementById(divId); if (!div) { console.error(`DEBUG: ui_render_views.js - Div ${divId} no encontrado.`); return; }
     div.innerHTML = '';
     if (!libros || libros.length === 0) { div.innerHTML = `<p>No tienes libros en esta categoría.</p>`; return; }
+    const isSmallScreen = window.innerWidth <= 480;
     libros.forEach(libro => {
         const item = document.createElement('div');
         item.className = 'item-lista-libro';
@@ -147,20 +148,34 @@ function renderizarListaDashboard(divId, libros, tipoLista) {
         const fechaDev = libro.fecha_limite_devolucion ? new Date(libro.fecha_limite_devolucion).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'N/A';
         if (tipoLista === 'prestadosPorMi') {
             const prestatario = libro.prestado_a ? libro.prestado_a.nickname : 'Alguien';
-            const span1 = document.createElement('span');
-            span1.textContent = `Prestado a: ${prestatario}`;
-            const span2 = document.createElement('span');
-            span2.textContent = `Devolver el: ${fechaDev}`;
-            detalles.appendChild(span1);
-            detalles.appendChild(span2);
+            if (isSmallScreen) {
+                const span = document.createElement('span');
+                span.textContent = `Prestado a: ${prestatario} - Dev: ${fechaDev}`;
+                span.style.fontSize = '0.75em';
+                detalles.appendChild(span);
+            } else {
+                const span1 = document.createElement('span');
+                span1.textContent = `Prestado a: ${prestatario}`;
+                const span2 = document.createElement('span');
+                span2.textContent = `Devolver el: ${fechaDev}`;
+                detalles.appendChild(span1);
+                detalles.appendChild(span2);
+            }
         } else if (tipoLista === 'prestadosAMi') {
             const dueno = libro.propietario ? libro.propietario.nickname : 'Desconocido';
-            const span1 = document.createElement('span');
-            span1.textContent = `Dueño: ${dueno}`;
-            const span2 = document.createElement('span');
-            span2.textContent = `Devolver el: ${fechaDev}`;
-            detalles.appendChild(span1);
-            detalles.appendChild(span2);
+            if (isSmallScreen) {
+                const span = document.createElement('span');
+                span.textContent = `Due\u00f1o: ${dueno} - Dev: ${fechaDev}`;
+                span.style.fontSize = '0.75em';
+                detalles.appendChild(span);
+            } else {
+                const span1 = document.createElement('span');
+                span1.textContent = `Due\u00f1o: ${dueno}`;
+                const span2 = document.createElement('span');
+                span2.textContent = `Devolver el: ${fechaDev}`;
+                detalles.appendChild(span1);
+                detalles.appendChild(span2);
+            }
         }
         item.appendChild(detalles);
 
