@@ -74,6 +74,8 @@ footer { text-align: center; padding: 20px; background: rgba(26, 32, 44, 0.85); 
     box-shadow: 0 8px 25px rgba(0,0,0,0.2);
     text-align: center;
     box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
     /* Por defecto, un div es display: block, lo cual está bien para un ítem flex en una columna */
 }
 
@@ -86,6 +88,8 @@ footer { text-align: center; padding: 20px; background: rgba(26, 32, 44, 0.85); 
     /* Los estilos de padding, font-size, etc. se mantienen */
     /* display: inline-block; ya lo tenías y está bien para este botón en sí mismo,
        pero su centrado lo maneja el align-items: center del padre #vista-bienvenida */
+    margin-left: auto;
+    margin-right: auto;
 }
 #vista-bienvenida .boton-grande:hover {
     background-color: #2F855A; transform: translateY(-3px) scale(1.02); 
