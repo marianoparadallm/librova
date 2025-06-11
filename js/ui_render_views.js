@@ -190,7 +190,7 @@ function renderizarListaDashboard(divId, libros, tipoLista) {
             const btn = document.createElement('button');
             btn.className = 'btn-marcar-devuelto boton-accion-base devolver';
             btn.dataset.libroId = libro.id;
-            btn.textContent = 'Marcar Devuelto';
+            btn.textContent = 'Devolver';
             acciones.appendChild(btn);
         }
         item.appendChild(acciones);
@@ -463,14 +463,14 @@ async function renderizarVistaDetalleLibro(libroId) {
         if (currentUser && currentUser.id !== libro.propietario_id && (libro.estado === 'disponible' || libro.estado === 'solicitado')) {
             const btn = document.createElement('button');
             btn.className = 'btn-pedir-prestamo boton-accion-base pedir';
-            btn.textContent = 'Pedir Prestamo';
+            btn.textContent = 'Pedir';
             btn.onclick = () => pedirLibroPrestado(libro.id, libro.propietario_id, libro.titulo);
             acciones.appendChild(btn);
         }
         if (currentUser && currentUser.id === libro.propietario_id && libro.estado === 'prestado' && libro.esta_con_usuario_id) {
             const btn = document.createElement('button');
             btn.className = 'btn-marcar-devuelto boton-accion-base devolver';
-            btn.textContent = 'Marcar como Devuelto';
+            btn.textContent = 'Devolver';
             btn.onclick = () => marcarLibroComoDevuelto(libro.id);
             acciones.appendChild(btn);
         }

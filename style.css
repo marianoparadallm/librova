@@ -203,7 +203,7 @@ form button[type="submit"]:hover {
     background-color: #C53030;
 }
 
-.boton-accion-base.pedir, /* Para "Pedir Prestado" */
+.boton-accion-base.pedir, /* Para "Pedir" */
 .libro-card button.btn-pedir-prestado {
      background-color: #38A169; /* Verde */
 }
@@ -212,7 +212,7 @@ form button[type="submit"]:hover {
     background-color: #2F855A;
 }
 
-.boton-accion-base.devolver, /* Para "Marcar como Devuelto" */
+.boton-accion-base.devolver, /* Para "Devolver" */
 .libro-card button.btn-marcar-devuelto,
 .item-lista-libro .acciones button.btn-marcar-devuelto {
     background-color: #3182CE; /* Azul */

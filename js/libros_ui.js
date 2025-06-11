@@ -63,13 +63,13 @@ async function cargarYMostrarLibros() {
                 if (currentUser && currentUser.id !== libro.propietario_id && (libro.estado === 'disponible' || libro.estado === 'solicitado')) {
                     const btn = document.createElement('button');
                     btn.className = 'btn-pedir-prestamo boton-accion-base pedir';
-                    btn.textContent = 'Pedir Prestamo';
+                    btn.textContent = 'Pedir';
                     card.appendChild(btn);
                 }
                 if (currentUser && currentUser.id === libro.propietario_id && libro.estado === 'prestado' && libro.esta_con_usuario_id) {
                     const btn = document.createElement('button');
                     btn.className = 'btn-marcar-devuelto boton-accion-base devolver';
-                    btn.textContent = 'Marcar como Devuelto';
+                    btn.textContent = 'Devolver';
                     card.appendChild(btn);
                 }
                 if (currentUser && currentUser.id === libro.propietario_id && (libro.estado === 'disponible' || libro.estado === 'solicitado')) {
