@@ -233,6 +233,19 @@ form button[type="button"]:hover {
 .lista-notificaciones { display: flex; flex-direction: column; gap: 10px; }
 .item-notificacion { background-color: #edf2f7; padding: 8px 12px; border-radius: 5px; }
 .item-notificacion.nueva { font-weight: bold; }
+.boton-visto-notificacion {
+    background-color: #E2E8F0;
+    color: #2D3748;
+    border: none;
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 0.75em;
+    margin-left: 8px;
+    cursor: pointer;
+}
+.boton-visto-notificacion:hover {
+    background-color: #CBD5E0;
+}
 .lista-novedades { display: flex; flex-direction: column; gap: 15px; }
 .item-novedad { display: flex; align-items: flex-start; }
 .item-novedad .icono-novedad { margin-right: 8px; }

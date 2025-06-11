@@ -385,6 +385,17 @@ function renderizarListaNotificaciones(divId, notas) {
         span.textContent = new Date(n.created_at).toLocaleDateString('es-AR');
 
         item.appendChild(span);
+
+        const btnVisto = document.createElement('button');
+        btnVisto.className = 'boton-visto-notificacion';
+        btnVisto.textContent = 'Visto';
+        btnVisto.onclick = async () => {
+            await eliminarNotificacion(n.id);
+            await refrescarNotificaciones();
+            renderizarListaNotificaciones(divId, notificaciones);
+        };
+        item.appendChild(btnVisto);
+
         div.appendChild(item);
     }
 }
@@ -413,6 +424,17 @@ function renderizarNovedadesPendientes(divId, notas, solicitudes) {
             span.style.color = '#4A5568';
             span.textContent = new Date(n.created_at).toLocaleDateString('es-AR');
             item.appendChild(span);
+
+            const btnVisto = document.createElement('button');
+            btnVisto.className = 'boton-visto-notificacion';
+            btnVisto.textContent = 'Visto';
+            btnVisto.onclick = async () => {
+                await eliminarNotificacion(n.id);
+                await refrescarNotificaciones();
+                renderizarNovedadesPendientes(divId, notificaciones, solicitudes);
+            };
+            item.appendChild(btnVisto);
+
             div.appendChild(item);
         });
     }
