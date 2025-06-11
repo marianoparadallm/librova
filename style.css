@@ -343,6 +343,34 @@ form button[type="button"]:hover {
 
 @media (max-width: 480px) {
     .libro-card { width: 100%; }
+    .item-lista-libro, .item-solicitud {
+        display: grid;
+        grid-template-columns: 60px 1fr;
+        grid-template-areas:
+            "img detalles"
+            "acciones acciones";
+        padding: 8px;
+        text-align: left;
+    }
+    .item-lista-libro img.thumbnail, .item-solicitud img.thumbnail {
+        grid-area: img;
+        margin-right: 0;
+    }
+    .item-lista-libro .detalles, .item-solicitud .detalles {
+        grid-area: detalles;
+    }
+    .item-lista-libro .acciones, .item-solicitud .acciones {
+        grid-area: acciones;
+        flex-direction: row;
+        justify-content: center;
+        margin-left: 0;
+        margin-top: 5px;
+        gap: 5px;
+    }
+    .item-lista-libro .acciones button, .item-solicitud .acciones button {
+        width: auto;
+        flex: 1 1 auto;
+    }
 }
 
 .lista-ranking { list-style: decimal; padding-left: 20px; }
