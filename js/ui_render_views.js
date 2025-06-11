@@ -94,6 +94,11 @@ function renderizarVistaBienvenida() {
             <div id="lista-libros-disponibles">Cargando libros...</div>
         </div>
 
+        <div id="vista-detalle-libro" class="vista">
+            <div id="detalle-libro-info">Cargando...</div>
+            <button type="button" id="btn-volver-busqueda-desde-detalle" class="boton-accion-base gestionar">Volver</button>
+        </div>
+
         <div id="vista-ranking" class="vista">
             <h3>Ranking de Usuarios</h3>
             <div id="lista-ranking">Cargando...</div>
@@ -412,6 +417,79 @@ function renderizarListaNotificaciones(divId, notas) {
         item.appendChild(btnVisto);
 
         div.appendChild(item);
+    }
+}
+
+async function renderizarVistaDetalleLibro(libroId) {
+    const vistaDetalle = document.getElementById('vista-detalle-libro');
+    const cont = document.getElementById('detalle-libro-info');
+    if (!vistaDetalle || !cont) return;
+    cont.innerHTML = '<p>Cargando detalles...</p>';
+    const vistaActiva = document.querySelector('.vista.activa');
+    cambiarVista(vistaActiva ? vistaActiva.id : null, 'vista-detalle-libro');
+    if (!supabaseClientInstance) { cont.innerHTML = '<p>Error de conexión.</p>'; return; }
+    try {
+        const { data: libro, error } = await supabaseClientInstance.from('libros')
+            .select(`id, titulo, foto_url, estado, google_link, propietario_id, fecha_limite_devolucion, esta_con_usuario_id, propietario:usuarios!propietario_id ( nickname ), prestado_a:usuarios!esta_con_usuario_id ( nickname )`)
+            .eq('id', libroId).single();
+        if (error) throw error;
+        if (!libro) { cont.innerHTML = '<p>Libro no encontrado.</p>'; return; }
+        cont.innerHTML = '';
+        const h3 = document.createElement('h3');
+        h3.textContent = libro.titulo;
+        const img = document.createElement('img');
+        img.src = libro.foto_url;
+        img.alt = `Portada de ${libro.titulo}`;
+        img.style.maxWidth = '200px';
+        img.style.borderRadius = '4px';
+        img.style.marginBottom = '10px';
+        cont.appendChild(h3);
+        cont.appendChild(img);
+        const propietarioNombre = libro.propietario ? libro.propietario.nickname : 'Desconocido';
+        const pProp = document.createElement('p');
+        pProp.textContent = `Dueño: ${propietarioNombre}`;
+        const pEstado = document.createElement('p');
+        pEstado.textContent = `Estado: ${libro.estado}`;
+        cont.appendChild(pProp);
+        cont.appendChild(pEstado);
+        if (libro.estado === 'prestado') {
+            const nombrePrestadoA = libro.prestado_a ? libro.prestado_a.nickname : 'Alguien';
+            const fechaDev = libro.fecha_limite_devolucion ? new Date(libro.fecha_limite_devolucion).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Fecha no definida';
+            const pPrest = document.createElement('p');
+            pPrest.textContent = `Prestado a: ${nombrePrestadoA} - Devolver el: ${fechaDev}`;
+            cont.appendChild(pPrest);
+        }
+        const acciones = document.createElement('div');
+        if (currentUser && currentUser.id !== libro.propietario_id && (libro.estado === 'disponible' || libro.estado === 'solicitado')) {
+            const btn = document.createElement('button');
+            btn.className = 'btn-pedir-prestamo boton-accion-base pedir';
+            btn.textContent = 'Pedir Prestamo';
+            btn.onclick = () => pedirLibroPrestado(libro.id, libro.propietario_id, libro.titulo);
+            acciones.appendChild(btn);
+        }
+        if (currentUser && currentUser.id === libro.propietario_id && libro.estado === 'prestado' && libro.esta_con_usuario_id) {
+            const btn = document.createElement('button');
+            btn.className = 'btn-marcar-devuelto boton-accion-base devolver';
+            btn.textContent = 'Marcar como Devuelto';
+            btn.onclick = () => marcarLibroComoDevuelto(libro.id);
+            acciones.appendChild(btn);
+        }
+        if (currentUser && currentUser.id === libro.propietario_id && (libro.estado === 'disponible' || libro.estado === 'solicitado')) {
+            const btn = document.createElement('button');
+            btn.className = 'btn-gestionar-libro boton-accion-base gestionar';
+            btn.textContent = 'Gestionar (Mío)';
+            btn.onclick = () => renderizarDetallesGestionLibro(libro.id);
+            acciones.appendChild(btn);
+        }
+        const btnInfo = document.createElement('button');
+        btnInfo.className = 'boton-accion-base gestionar';
+        btnInfo.textContent = '+info';
+        btnInfo.onclick = () => { if (libro.google_link) window.open(libro.google_link, '_blank'); };
+        acciones.appendChild(btnInfo);
+        cont.appendChild(acciones);
+    } catch (err) {
+        console.error('DEBUG: ui_render_views.js - Error cargando libro detalle', err);
+        cont.innerHTML = '<p style="color:red;">Error al cargar libro.</p>';
     }
 }
 
@@ -747,3 +825,4 @@ window.renderizarVistaRanking = renderizarVistaRanking;
 window.renderizarListaNotificaciones = renderizarListaNotificaciones;
 window.renderizarNovedadesPendientes = renderizarNovedadesPendientes;
 window.renderizarPanelAdmin = renderizarPanelAdmin;
+window.renderizarVistaDetalleLibro = renderizarVistaDetalleLibro;
