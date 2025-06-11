@@ -50,6 +50,16 @@ nav#menu-principal button, nav#menu-principal span {
 nav#menu-principal button:hover { background-color: #2D3748; transform: translateY(-1px); }
 nav#menu-principal span { background-color: transparent; color: #E2E8F0; cursor: default; font-weight: bold; padding-right: 0; }
 
+/* Botón para menú hamburguesa */
+#hamburger-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.6em;
+    cursor: pointer;
+}
+
 #btn-notificaciones { position: relative; }
 .contador-notificaciones {
     position: absolute;
@@ -339,6 +349,24 @@ form button[type="button"]:hover {
     .item-lista-libro, .item-solicitud { flex-direction: column; align-items: center; text-align: center; }
     .item-lista-libro .acciones, .item-solicitud .acciones { flex-direction: row; margin-left: 0; margin-top: 10px; }
     .libro-card { width: 45%; }
+
+    /* Navegación responsive */
+    nav#menu-principal button,
+    nav#menu-principal span { display: none; }
+    #hamburger-btn { display: block; }
+    nav#menu-principal.mobile-open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        right: 20px;
+        top: 60px;
+        background: rgba(45, 55, 72, 0.95);
+        padding: 10px;
+        border-radius: 8px;
+        width: 160px;
+    }
+    nav#menu-principal.mobile-open button,
+    nav#menu-principal.mobile-open span { display: block; margin: 8px 0; text-align: left; }
 }
 
 @media (max-width: 480px) {
