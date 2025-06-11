@@ -22,9 +22,9 @@ function renderizarVistaBienvenida() {
     contenedorPrincipal.innerHTML = `
         <div id="vista-bienvenida" class="vista">
             <div class="texto-bienvenida">
-                <p>¡Hola, explorador de historias! 👋</p>
-                <p>Bienvenido a LibroVa, ¡nuestra biblioteca mágica! Acá vas a poder compartir cuentos y libros que ya leíste y descubrir nuevas aventuras que tus compañeros tienen para vos. Sumate agregando tus libros y pidiendo prestamos e intercambialos en tu clase!</p>
-                <p>¿Listo para empezar a compartir y leer?</p>
+                <p>¡ Bienvenido/a a LibreVa ! 👋</p>
+                <p>Compartí cuentos y descubrí nuevas aventuras</p>
+                <p>Empecemos ;)</p>
             </div>
             <button id="btn-ingresar-crear-usuario" class="boton-accion-base submit boton-grande">Ingresar o Crear Usuario</button>
             <button id="btn-acceso-admin" class="boton-accion-base gestionar boton-admin">ADMIN</button>
