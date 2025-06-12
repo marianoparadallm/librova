@@ -238,6 +238,16 @@ form button[type="submit"]:hover {
 .item-lista-libro .acciones button.btn-marcar-devuelto:hover {
     background-color: #2B6CB0;
 }
+
+/* Para "Solicitar Devolución" reutiliza el color del botón ".pedir" */
+.boton-accion-base.solicitar-devolucion,
+.btn-solicitar-devolucion {
+    background-color: #38A169; /* Verde */
+}
+.boton-accion-base.solicitar-devolucion:hover,
+.btn-solicitar-devolucion:hover {
+    background-color: #2F855A;
+}
 .boton-accion-base.info { background-color: #3182CE; }
 .boton-accion-base.info:hover { background-color: #2B6CB0; }
 
