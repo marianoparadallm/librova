@@ -131,11 +131,8 @@ async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, p
     } catch (err) {
         console.error("DEBUG: libros_ops.js - Error procesando solicitud:", err);
     } finally {
-        const solicitudes = await cargarSolicitudesRecibidas(currentUser.id);
-        renderizarNovedadesPendientes("lista-novedades", notificaciones, solicitudes);
-        asignarEventListenersLibros();
+        await recargarSeccionesPrestamosDashboard();
         cargarYMostrarLibros();
-        recargarSeccionesPrestamosDashboard();
         actualizarMenuPrincipal();
     }
 }
@@ -164,23 +161,20 @@ async function handleAnadirLibroSubmit(event) {
     } finally { submitButton.disabled = false; submitButton.textContent = 'Guardar Libro'; }
 }
 
-function recargarSeccionesPrestamosDashboard() {
+async function recargarSeccionesPrestamosDashboard() {
     if (!currentUser) return;
     if (document.getElementById('mis-libros-en-prestamo')) {
-        cargarMisLibrosEnPrestamo(currentUser.id).then(libros => {
-            renderizarListaDashboard('mis-libros-en-prestamo', libros, 'prestadosPorMi');
-            asignarEventListenersLibros();
-        });
+        const libros = await cargarMisLibrosEnPrestamo(currentUser.id);
+        renderizarListaDashboard('mis-libros-en-prestamo', libros, 'prestadosPorMi');
+        asignarEventListenersLibros();
     }
     if (document.getElementById('libros-que-me-prestaron')) {
-        cargarLibrosQueMePrestaron(currentUser.id).then(libros => {
-            renderizarListaDashboard('libros-que-me-prestaron', libros, 'prestadosAMi');
-        });
+        const libros = await cargarLibrosQueMePrestaron(currentUser.id);
+        renderizarListaDashboard('libros-que-me-prestaron', libros, 'prestadosAMi');
     }
     if (document.getElementById('lista-novedades')) {
-        cargarSolicitudesRecibidas(currentUser.id).then(s => {
-            renderizarNovedadesPendientes('lista-novedades', notificaciones, s);
-            asignarEventListenersLibros();
-        });
+        const solicitudes = await cargarSolicitudesRecibidas(currentUser.id);
+        renderizarNovedadesPendientes('lista-novedades', notificaciones, solicitudes);
+        asignarEventListenersLibros();
     }
 }
