@@ -127,7 +127,7 @@ function asignarEventListenersLibros() {
     document.addEventListener("click", delegarClicksLibros);
 }
 
-function delegarClicksLibros(event) {
+async function delegarClicksLibros(event) {
     if (event.target.closest("#lista-libros-disponibles .btn-pedir-prestamo")) {
         const libroCard = event.target.closest(".libro-card");
         if (!currentUser) { console.error("Login requerido"); renderizarVistaBienvenida(); return; }
@@ -169,7 +169,8 @@ function delegarClicksLibros(event) {
         const solicitanteNicknameElement = itemSolicitud.querySelector(".detalles span:nth-child(2)");
         const solicitanteNickname = solicitanteNicknameElement ? solicitanteNicknameElement.textContent.replace("Solicitado por: ", "").trim() : "Alguien";
         console.log(`DEBUG: libros_ui.js - Aceptar solicitud ID: ${solicitudId}`);
-        responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, propietarioId, "aceptada", libroTitulo, solicitanteNickname);
+        await responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, propietarioId, "aceptada", libroTitulo, solicitanteNickname);
+        if (itemSolicitud) itemSolicitud.remove();
     } else if (event.target.closest("#lista-novedades .btn-rechazar-solicitud")) {
         const itemSolicitud = event.target.closest(".item-solicitud");
         const solicitudId = itemSolicitud.dataset.solicitudId;
@@ -179,7 +180,8 @@ function delegarClicksLibros(event) {
         const solicitanteNicknameElement = itemSolicitud.querySelector(".detalles span:nth-child(2)");
         const solicitanteNickname = solicitanteNicknameElement ? solicitanteNicknameElement.textContent.replace("Solicitado por: ", "").trim() : "Alguien";
         console.log(`DEBUG: libros_ui.js - Rechazar solicitud ID: ${solicitudId}`);
-        responderSolicitudPrestamo(solicitudId, null, solicitanteId, propietarioId, "rechazada", libroTitulo, solicitanteNickname);
+        await responderSolicitudPrestamo(solicitudId, null, solicitanteId, propietarioId, "rechazada", libroTitulo, solicitanteNickname);
+        if (itemSolicitud) itemSolicitud.remove();
 
     }
 }
