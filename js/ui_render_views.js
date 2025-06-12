@@ -26,7 +26,7 @@ function renderizarVistaBienvenida() {
                 <p>Compartí cuentos y descubrí nuevas aventuras</p>
                 <p>Empecemos ;)</p>
             </div>
-            <button id="btn-ingresar-crear-usuario" class="boton-accion-base submit boton-grande">Ingresar o Crear Usuario</button>
+            <button id="btn-ingresar-crear-usuario" class="boton-accion-base submit boton-grande">INGRESAR</button>
             <button id="btn-acceso-admin" class="boton-accion-base gestionar boton-admin">ADMIN</button>
         </div>
         <div id="vista-login-admin" class="vista">
@@ -41,10 +41,10 @@ function renderizarVistaBienvenida() {
             </form>
         </div>
         <div id="vista-login-alumno" class="vista">
-            <h3>Acceso Alumnos</h3>
+            <h3>Bienvenido/a 😊</h3>
             <div id="seleccion-login-registro-alumno" style="text-align:center;margin-bottom:20px;">
-                <button id="btn-mostrar-form-login-avatar" class="boton-grande-secundario">Ya tengo Usuario (Ingresar)</button>
-                <button id="btn-mostrar-form-registro-alumno" class="boton-grande-secundario">Soy Nuevo (Registrarme)</button>
+                <button id="btn-mostrar-form-login-avatar" class="boton-grande-secundario">Tengo usuario</button>
+                <button id="btn-mostrar-form-registro-alumno" class="boton-grande-secundario">Crear usuario</button>
             </div>
             <div id="contenedor-login-avatar" style="display:none;">
                 <h4>Elige tu Avatar para Ingresar</h4>
@@ -53,7 +53,7 @@ function renderizarVistaBienvenida() {
                     <h4 id="avatar-seleccionado-nombre"></h4>
                     <label for="alumno-pin-login">Tu PIN (4 dígitos):</label>
                     <input type="password" id="alumno-pin-login" maxlength="4" pattern="\\d{4}" required inputmode="numeric" autocomplete="current-password"><br><br>
-                    <button type="submit">Ingresar</button>
+                    <button type="submit" class="boton-accion-base submit">Ingresar</button>
                     <button type="button" id="btn-cambiar-avatar">Cambiar Avatar</button>
                 </form>
             </div>
@@ -62,7 +62,7 @@ function renderizarVistaBienvenida() {
             </div>
         </div>
         <div id="vista-registro-alumno" class="vista">
-            <h3>Registro de Alumno Nuevo</h3>
+            <h3>Nuevo usuario</h3>
             <form id="form-registro-alumno">
                 <label for="alumno-nickname-registro">Elige tu Nickname (único, min. 3 caracteres):</label>
                 <input type="text" id="alumno-nickname-registro" required minlength="3"><br><br>
@@ -72,8 +72,8 @@ function renderizarVistaBienvenida() {
                 <input type="password" id="alumno-pin-registro" maxlength="4" pattern="\\d{4}" required inputmode="numeric"><br><br>
                 <label for="alumno-pin-confirmar">Confirma tu PIN:</label>
                 <input type="password" id="alumno-pin-confirmar" maxlength="4" pattern="\\d{4}" required inputmode="numeric"><br><br>
-                <button type="submit">Registrarme</button>
-                <button type="button" id="btn-volver-a-seleccion-login-registro" class="link-button">Ya tengo cuenta / Volver</button>
+                <button type="submit" class="boton-accion-base submit">Registrarme</button>
+                <button type="button" id="btn-volver-login-alumno-desde-registro" class="link-button">Volver</button>
             </form>
         </div>
         <div id="vista-dashboard" class="vista"></div>
@@ -355,7 +355,7 @@ function renderizarDashboard() {
         `;
 
     const tituloDash = document.getElementById('titulo-dashboard');
-    if (tituloDash) tituloDash.textContent = `Dashboard de ${nombreUsuario}`;
+    if (tituloDash) tituloDash.textContent = `Hola ${nombreUsuario} 😊`;
     const repDash = document.getElementById('reputacion-dashboard');
     if (repDash) repDash.textContent = `Tu reputación: ${reputacionMostrar}`;
 
