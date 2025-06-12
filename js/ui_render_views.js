@@ -186,9 +186,12 @@ function renderizarListaDashboard(divId, libros, tipoLista) {
         acciones.className = 'acciones';
         if (tipoLista === 'prestadosPorMi') {
             const btn = document.createElement('button');
-            btn.className = 'btn-marcar-devuelto boton-accion-base devolver';
+            btn.className = 'btn-solicitar-devolucion boton-accion-base pedir';
             btn.dataset.libroId = libro.id;
-            btn.textContent = 'Devolver';
+            btn.dataset.prestatarioId = libro.esta_con_usuario_id || '';
+            btn.dataset.prestatarioNick = libro.prestado_a ? libro.prestado_a.nickname : '';
+            btn.dataset.fechaDev = fechaDev;
+            btn.textContent = 'Solicitar devolución';
             acciones.appendChild(btn);
         }
         item.appendChild(acciones);

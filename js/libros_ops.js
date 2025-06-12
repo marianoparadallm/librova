@@ -84,6 +84,23 @@ async function marcarLibroComoDevuelto(libroId) {
     }
 }
 
+async function solicitarDevolucionAnticipada(libroId, prestatarioId, tituloLibro, fechaDev) {
+    console.log(`DEBUG: libros_ops.js - Solicitar devolución anticipada libro ID: ${libroId} para prestatario ID: ${prestatarioId}`);
+    if (!supabaseClientInstance || !currentUser) {
+        console.error("DEBUG: libros_ops.js - Supabase o usuario no inicializado.");
+        return;
+    }
+    try {
+        const mensaje = `${currentUser.nickname} ha solicitado la devolución del libro. Coordina la entrega.`;
+        await agregarNotificacion(prestatarioId, mensaje);
+    } catch (error) {
+        console.error("DEBUG: libros_ops.js - Error solicitando devolución anticipada:", error);
+    } finally {
+        cargarYMostrarLibros();
+        recargarSeccionesPrestamosDashboard();
+    }
+}
+
 async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, propietarioId, nuevoEstado, libroTitulo, solicitanteNickname) {
     console.log(`DEBUG: libros_ops.js - Respondiendo solicitud ${solicitudId} con estado ${nuevoEstado}`);
     if (!supabaseClientInstance || !currentUser) { console.error("DEBUG: libros_ops.js - Supabase o usuario no inicializado."); return; }
@@ -161,20 +178,24 @@ async function handleAnadirLibroSubmit(event) {
     } finally { submitButton.disabled = false; submitButton.textContent = 'Guardar Libro'; }
 }
 
-async function recargarSeccionesPrestamosDashboard() {
+function recargarSeccionesPrestamosDashboard() {
     if (!currentUser) return;
     if (document.getElementById('mis-libros-en-prestamo')) {
-        const libros = await cargarMisLibrosEnPrestamo(currentUser.id);
-        renderizarListaDashboard('mis-libros-en-prestamo', libros, 'prestadosPorMi');
-        asignarEventListenersLibros();
+        cargarMisLibrosEnPrestamo(currentUser.id).then(libros => {
+            renderizarListaDashboard('mis-libros-en-prestamo', libros, 'prestadosPorMi');
+            asignarEventListenersLibros();
+        });
     }
     if (document.getElementById('libros-que-me-prestaron')) {
-        const libros = await cargarLibrosQueMePrestaron(currentUser.id);
-        renderizarListaDashboard('libros-que-me-prestaron', libros, 'prestadosAMi');
+        cargarLibrosQueMePrestaron(currentUser.id).then(libros => {
+            renderizarListaDashboard('libros-que-me-prestaron', libros, 'prestadosAMi');
+        });
     }
+
     if (document.getElementById('lista-novedades')) {
         const solicitudes = await cargarSolicitudesRecibidas(currentUser.id);
         renderizarNovedadesPendientes('lista-novedades', notificaciones, solicitudes);
         asignarEventListenersLibros();
     }
 }
+

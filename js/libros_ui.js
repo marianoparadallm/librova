@@ -153,6 +153,17 @@ async function delegarClicksLibros(event) {
         if (confirm(`¿Confirmas que el libro "${tituloConfirm}" ha sido devuelto?`)) {
             marcarLibroComoDevuelto(libroId);
         }
+    } else if (event.target.closest(".btn-solicitar-devolucion")) {
+        const cardElement = event.target.closest(".libro-card") || event.target.closest(".item-lista-libro");
+        if (!cardElement) return;
+        const libroId = cardElement.dataset.libroId;
+        const prestatarioId = event.target.dataset.prestatarioId || '';
+        const tituloElement = cardElement.querySelector("strong, .libro-titulo");
+        const tituloLibro = tituloElement ? tituloElement.textContent : "este libro";
+        const fechaDev = event.target.dataset.fechaDev || 'N/A';
+        if (confirm(`¿Solicitar la devolución de "${tituloLibro}"?\nFecha límite: ${fechaDev}`)) {
+            solicitarDevolucionAnticipada(libroId, prestatarioId, tituloLibro, fechaDev);
+        }
     } else if (event.target.closest("#lista-libros-disponibles .libro-card") && !event.target.closest('button')) {
         const libroCard = event.target.closest('.libro-card');
         if (libroCard) {
@@ -190,7 +201,7 @@ async function cargarMisLibrosEnPrestamo(userId) {
     console.log("DEBUG: libros_ui.js - Cargando Mis Libros Prestados a Otros para usuario:", userId);
     if (!supabaseClientInstance) return [];
     const { data, error } = await supabaseClientInstance.from('libros')
-        .select(`id, titulo, foto_url, fecha_limite_devolucion, prestado_a:usuarios!esta_con_usuario_id ( nickname )`)
+        .select(`id, titulo, foto_url, fecha_limite_devolucion, esta_con_usuario_id, prestado_a:usuarios!esta_con_usuario_id ( nickname )`)
         .eq('propietario_id', userId)
         .eq('estado', 'prestado');
     if (error) { console.error("Error cargando mis libros prestados:", error); return []; }
