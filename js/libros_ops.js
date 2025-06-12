@@ -84,6 +84,7 @@ async function marcarLibroComoDevuelto(libroId) {
     }
 }
 
+
 async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, propietarioId, nuevoEstado, libroTitulo, solicitanteNickname) {
     console.log(`DEBUG: libros_ops.js - Respondiendo solicitud ${solicitudId} con estado ${nuevoEstado}`);
     if (!supabaseClientInstance || !currentUser) { console.error("DEBUG: libros_ops.js - Supabase o usuario no inicializado."); return; }
@@ -138,6 +139,7 @@ async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, p
         recargarSeccionesPrestamosDashboard();
         actualizarMenuPrincipal();
     }
+
 }
 
 
@@ -164,7 +166,7 @@ async function handleAnadirLibroSubmit(event) {
     } finally { submitButton.disabled = false; submitButton.textContent = 'Guardar Libro'; }
 }
 
-function recargarSeccionesPrestamosDashboard() {
+async function recargarSeccionesPrestamosDashboard() {
     if (!currentUser) return;
     if (document.getElementById('mis-libros-en-prestamo')) {
         cargarMisLibrosEnPrestamo(currentUser.id).then(libros => {
@@ -177,10 +179,11 @@ function recargarSeccionesPrestamosDashboard() {
             renderizarListaDashboard('libros-que-me-prestaron', libros, 'prestadosAMi');
         });
     }
+
     if (document.getElementById('lista-novedades')) {
-        cargarSolicitudesRecibidas(currentUser.id).then(s => {
-            renderizarNovedadesPendientes('lista-novedades', notificaciones, s);
-            asignarEventListenersLibros();
-        });
+        const solicitudes = await cargarSolicitudesRecibidas(currentUser.id);
+        renderizarNovedadesPendientes('lista-novedades', notificaciones, solicitudes);
+        asignarEventListenersLibros();
     }
 }
+

@@ -220,11 +220,13 @@ form button[type="submit"]:hover {
 }
 
 .boton-accion-base.pedir, /* Para "Pedir" */
-.libro-card button.btn-pedir-prestado {
+.libro-card button.btn-pedir-prestado,
+.item-lista-libro .acciones button.btn-solicitar-devolucion {
      background-color: #38A169; /* Verde */
 }
 .boton-accion-base.pedir:hover,
-.libro-card button.btn-pedir-prestado:hover {
+.libro-card button.btn-pedir-prestado:hover,
+.item-lista-libro .acciones button.btn-solicitar-devolucion:hover {
     background-color: #2F855A;
 }
 
@@ -237,6 +239,16 @@ form button[type="submit"]:hover {
 .libro-card button.btn-marcar-devuelto:hover,
 .item-lista-libro .acciones button.btn-marcar-devuelto:hover {
     background-color: #2B6CB0;
+}
+
+/* Para "Solicitar Devolución" reutiliza el color del botón ".pedir" */
+.boton-accion-base.solicitar-devolucion,
+.btn-solicitar-devolucion {
+    background-color: #38A169; /* Verde */
+}
+.boton-accion-base.solicitar-devolucion:hover,
+.btn-solicitar-devolucion:hover {
+    background-color: #2F855A;
 }
 .boton-accion-base.info { background-color: #3182CE; }
 .boton-accion-base.info:hover { background-color: #2B6CB0; }
