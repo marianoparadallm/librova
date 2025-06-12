@@ -334,6 +334,7 @@ form button[type="button"]:hover {
 }
 
 #lista-libros-disponibles { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding-top: 15px; }
+#btn-ver-mas { margin: 20px auto; display: block; }
 
 .filtros-libros { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; align-items: center; }
 .filtros-libros input,.filtros-libros select { padding: 6px; }

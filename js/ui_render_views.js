@@ -80,18 +80,16 @@ function renderizarVistaBienvenida() {
         <div id="vista-buscar-libros" class="vista">
             <h3>Búsqueda de Libros</h3>
             <div id="filtros-busqueda" class="filtros-libros">
-                <label for="filtro-dueno">Dueño:</label>
-                <input type="text" id="filtro-dueno" placeholder="Nickname">
-                <label for="filtro-fecha-dev">Fecha devolución antes de:</label>
-                <input type="date" id="filtro-fecha-dev">
-                <label for="filtro-orden">Ordenar:</label>
+                <label for="filtro-orden">Ordenar por:</label>
                 <select id="filtro-orden">
                     <option value="nuevos">Más nuevos</option>
                     <option value="antiguos">Más antiguos</option>
+                    <option value="fechadev">Fecha de devolución</option>
+                    <option value="usuario">Usuario</option>
                 </select>
-                <button id="btn-aplicar-filtros" class="boton-accion-base submit">Filtrar</button>
             </div>
             <div id="lista-libros-disponibles">Cargando libros...</div>
+            <button id="btn-ver-mas" class="boton-accion-base cargar" style="display:none;">Ver +</button>
         </div>
 
         <div id="vista-detalle-libro" class="vista">
