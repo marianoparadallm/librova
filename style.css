@@ -220,11 +220,13 @@ form button[type="submit"]:hover {
 }
 
 .boton-accion-base.pedir, /* Para "Pedir" */
-.libro-card button.btn-pedir-prestado {
+.libro-card button.btn-pedir-prestado,
+.item-lista-libro .acciones button.btn-solicitar-devolucion {
      background-color: #38A169; /* Verde */
 }
 .boton-accion-base.pedir:hover,
-.libro-card button.btn-pedir-prestado:hover {
+.libro-card button.btn-pedir-prestado:hover,
+.item-lista-libro .acciones button.btn-solicitar-devolucion:hover {
     background-color: #2F855A;
 }
 

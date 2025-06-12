@@ -84,6 +84,23 @@ async function marcarLibroComoDevuelto(libroId) {
     }
 }
 
+async function solicitarDevolucionAnticipada(libroId, prestatarioId, tituloLibro, fechaDev) {
+    console.log(`DEBUG: libros_ops.js - Solicitar devolución anticipada libro ID: ${libroId} para prestatario ID: ${prestatarioId}`);
+    if (!supabaseClientInstance || !currentUser) {
+        console.error("DEBUG: libros_ops.js - Supabase o usuario no inicializado.");
+        return;
+    }
+    try {
+        const mensaje = `${currentUser.nickname} ha solicitado la devolución del libro. Coordina la entrega.`;
+        await agregarNotificacion(prestatarioId, mensaje);
+    } catch (error) {
+        console.error("DEBUG: libros_ops.js - Error solicitando devolución anticipada:", error);
+    } finally {
+        cargarYMostrarLibros();
+        recargarSeccionesPrestamosDashboard();
+    }
+}
+
 async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, propietarioId, nuevoEstado, libroTitulo, solicitanteNickname) {
     console.log(`DEBUG: libros_ops.js - Respondiendo solicitud ${solicitudId} con estado ${nuevoEstado}`);
     if (!supabaseClientInstance || !currentUser) { console.error("DEBUG: libros_ops.js - Supabase o usuario no inicializado."); return; }
@@ -185,3 +202,4 @@ function recargarSeccionesPrestamosDashboard() {
         });
     }
 }
+
