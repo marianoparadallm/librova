@@ -87,8 +87,10 @@ function asignarEventListenersGlobales() {
         document.getElementById('form-registro-alumno').addEventListener('submit', async (e)=>{e.preventDefault();const nick=document.getElementById('alumno-nickname-registro').value;const idAv=document.getElementById('alumno-avatar-registro').value;const pn=document.getElementById('alumno-pin-registro').value;const pnC=document.getElementById('alumno-pin-confirmar').value;if(pn!==pnC){alert('PINs no coinciden');return;}let pV=false;if(pn.length===4){if(/^[0-9]+$/.test(pn)){pV=true;}}if(!pV){alert('PIN debe ser 4 números');return;}const al=await registrarAlumno(nick,idAv,pn);if(al){renderizarDashboard();await refrescarNotificaciones();actualizarMenuPrincipal();}});
         const formAnL=document.getElementById('form-anadir-libro');if(formAnL)formAnL.addEventListener('submit',handleAnadirLibroSubmit);
         const inF=document.getElementById('libro-foto');const prF=document.getElementById('libro-foto-preview');if(inF&&prF){inF.addEventListener('change',function(ev){const fl=ev.target.files[0];if(fl){const r=new FileReader();r.onload=function(eR){prF.src=eR.target.result;prF.style.display='block';};r.readAsDataURL(fl);}else{prF.src='#';prF.style.display='none';}}); }
-        const btnAplicarFiltros=document.getElementById('btn-aplicar-filtros');
-        if(btnAplicarFiltros) btnAplicarFiltros.onclick=()=>cargarYMostrarLibros();
+        const selectOrden=document.getElementById('filtro-orden');
+        if(selectOrden) selectOrden.onchange=()=>cargarYMostrarLibros();
+        const btnVerMas=document.getElementById('btn-ver-mas');
+        if(btnVerMas) btnVerMas.onclick=()=>cargarYMostrarLibros(true);
         console.log("DEBUG: main.js - Todos los event listeners globales asignados.");
     } catch (err) {
         console.error("DEBUG: main.js - Error al asignar algunos event listeners globales:", err);

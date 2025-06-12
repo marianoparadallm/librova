@@ -1,53 +1,70 @@
 // js/libros_ui.js
 console.log("DEBUG: libros_ui.js - Cargado.");
 
-async function cargarYMostrarLibros() {
+async function cargarYMostrarLibros(append = false) {
     console.log("DEBUG: libros_ui.js - Cargando y mostrando libros (lista general)...");
     if (!supabaseClientInstance) { console.error("DEBUG: libros_ui.js - Supabase no inicializado."); return; }
     const listaLibrosDiv = document.getElementById('lista-libros-disponibles');
     if (!listaLibrosDiv) { console.error("DEBUG: libros_ui.js - Div 'lista-libros-disponibles' no encontrado."); return; }
-    listaLibrosDiv.innerHTML = 'Buscando libros en la biblioteca...';
+    const btnVerMas = document.getElementById('btn-ver-mas');
     try {
-        const { data: libros, error } = await supabaseClientInstance.from('libros')
-            .select(`
-                id, 
-                titulo, 
-                foto_url, 
-                estado, 
-                propietario_id,
-                fecha_limite_devolucion,
-                created_at,
-                esta_con_usuario_id,
-                propietario:usuarios!propietario_id ( nickname ), 
-                prestado_a:usuarios!esta_con_usuario_id ( nickname )
-            `)
-            .order('created_at', { ascending: false });
-        if (error) { throw error; }
-        let filtrados = libros || [];
-        const filtroDueno = document.getElementById('filtro-dueno');
-        const filtroFechaDev = document.getElementById('filtro-fecha-dev');
+        if (!append) {
+            listaLibrosDiv.innerHTML = 'Buscando libros en la biblioteca...';
+            paginaLibros = 0;
+            const { data: libros, error } = await supabaseClientInstance.from('libros')
+                .select(`
+                    id,
+                    titulo,
+                    foto_url,
+                    estado,
+                    propietario_id,
+                    fecha_limite_devolucion,
+                    created_at,
+                    esta_con_usuario_id,
+                    propietario:usuarios!propietario_id ( nickname ),
+                    prestado_a:usuarios!esta_con_usuario_id ( nickname )
+                `)
+                .order('created_at', { ascending: false });
+            if (error) { throw error; }
+            librosFiltrados = libros || [];
+        }
+
         const filtroOrden = document.getElementById('filtro-orden');
-        if (filtroDueno && filtroDueno.value) {
-            const d = filtroDueno.value.toLowerCase();
-            filtrados = filtrados.filter(l => l.propietario && l.propietario.nickname.toLowerCase().includes(d));
+        if (filtroOrden) {
+            switch(filtroOrden.value) {
+                case 'antiguos':
+                    librosFiltrados.sort((a,b)=> new Date(a.created_at) - new Date(b.created_at));
+                    break;
+                case 'fechadev':
+                    librosFiltrados.sort((a,b)=>{
+                        const ad = a.fecha_limite_devolucion || '';
+                        const bd = b.fecha_limite_devolucion || '';
+                        return ad.localeCompare(bd);
+                    });
+                    break;
+                case 'usuario':
+                    librosFiltrados.sort((a,b)=>{
+                        const an = a.propietario?.nickname?.toLowerCase() || '';
+                        const bn = b.propietario?.nickname?.toLowerCase() || '';
+                        return an.localeCompare(bn);
+                    });
+                    break;
+                default:
+                    librosFiltrados.sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
+            }
         }
-        if (filtroFechaDev && filtroFechaDev.value) {
-            const f = filtroFechaDev.value;
-            filtrados = filtrados.filter(l => l.fecha_limite_devolucion && l.fecha_limite_devolucion.slice(0,10) <= f);
-        }
-        if (filtroOrden && filtroOrden.value === 'antiguos') {
-            filtrados.sort((a,b)=> new Date(a.created_at) - new Date(b.created_at));
-        } else {
-            filtrados.sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
-        }
-        if (filtrados.length > 0) {
-            listaLibrosDiv.innerHTML = '';
-            filtrados.forEach(libro => {
-                const card = document.createElement('div');
-                card.className = 'libro-card';
-                if (libro.estado !== 'disponible') card.classList.add('no-disponible');
-                card.dataset.libroId = libro.id;
-                card.dataset.propietarioId = libro.propietario_id;
+
+        const inicio = paginaLibros * TAMANO_PAGINA_LIBROS;
+        const fin = inicio + TAMANO_PAGINA_LIBROS;
+        const aMostrar = librosFiltrados.slice(inicio, fin);
+
+        if (!append) listaLibrosDiv.innerHTML = '';
+        aMostrar.forEach(libro => {
+            const card = document.createElement('div');
+            card.className = 'libro-card';
+            if (libro.estado !== 'disponible') card.classList.add('no-disponible');
+            card.dataset.libroId = libro.id;
+            card.dataset.propietarioId = libro.propietario_id;
 
                 const img = document.createElement('img');
                 img.src = libro.foto_url;
@@ -86,15 +103,21 @@ async function cargarYMostrarLibros() {
                 });
 
                 listaLibrosDiv.appendChild(card);
-            });
-            asignarEventListenersLibros();
-        } else {
-            listaLibrosDiv.innerHTML = '<p>Aún no hay libros en la biblioteca. ¡Sé el primero en cargar uno!</p>';
+        });
+        asignarEventListenersLibros();
+        paginaLibros++;
+        if (btnVerMas) {
+            if (fin >= librosFiltrados.length) {
+                btnVerMas.style.display = 'none';
+            } else {
+                btnVerMas.style.display = 'block';
+            }
         }
 
     } catch (error) {
         console.error("DEBUG: libros_ui.js - Error al cargar libros:", error);
         listaLibrosDiv.innerHTML = '<p style="color:red;">Error al cargar los libros.</p>';
+        if (btnVerMas) btnVerMas.style.display = 'none';
     }
 }
 
