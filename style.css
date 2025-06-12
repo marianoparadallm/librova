@@ -73,7 +73,14 @@ nav#menu-principal span { background-color: transparent; color: #E2E8F0; cursor:
     line-height: 1;
 }
 
-main#contenedor-principal { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+main#contenedor-principal {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centrado vertical */
+    align-items: center;    /* Centrado horizontal */
+}
 footer { text-align: center; padding: 20px; background: rgba(26, 32, 44, 0.85); color: #A0AEC0; flex-shrink: 0; }
 
 .vista { display: none; padding: 25px; background-color: rgba(255, 255, 255, 0.97); border-radius: 8px; box-shadow: 0 6px 25px rgba(0,0,0,0.25); margin-bottom: 25px; width: 100%; box-sizing: border-box; }
@@ -122,9 +129,18 @@ footer { text-align: center; padding: 20px; background: rgba(26, 32, 44, 0.85); 
 #vista-bienvenida .boton-admin:hover { background-color: rgba(26, 32, 44, 0.9); color: white; }
 
 /* Vistas de Formularios y Dashboard (general) */
-#vista-login-admin, #vista-login-alumno, #vista-registro-alumno, 
-#vista-anadir-libro, #vista-gestionar-libro-propio, #vista-dashboard { 
-    max-width: 700px; margin-left: auto; margin-right: auto;
+#vista-login-admin, #vista-login-alumno, #vista-registro-alumno,
+#vista-anadir-libro, #vista-gestionar-libro-propio, #vista-dashboard {
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#vista-login-alumno, #vista-registro-alumno {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 #vista-dashboard { max-width: 980px; }
 
