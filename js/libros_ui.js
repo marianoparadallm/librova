@@ -180,8 +180,21 @@ async function delegarClicksLibros(event) {
         const solicitanteNicknameElement = itemSolicitud.querySelector(".detalles span:nth-child(2)");
         const solicitanteNickname = solicitanteNicknameElement ? solicitanteNicknameElement.textContent.replace("Solicitado por: ", "").trim() : "Alguien";
         console.log(`DEBUG: libros_ui.js - Aceptar solicitud ID: ${solicitudId}`);
-        await responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, propietarioId, "aceptada", libroTitulo, solicitanteNickname);
-        if (itemSolicitud) itemSolicitud.remove();
+
+        await responderSolicitudPrestamo(
+            solicitudId,
+            libroId,
+            solicitanteId,
+            propietarioId,
+            "aceptada",
+            libroTitulo,
+            solicitanteNickname
+        );
+        if (itemSolicitud) {
+            itemSolicitud.remove();
+            recargarSeccionesPrestamosDashboard();
+        }
+
     } else if (event.target.closest("#lista-novedades .btn-rechazar-solicitud")) {
         const itemSolicitud = event.target.closest(".item-solicitud");
         const solicitudId = itemSolicitud.dataset.solicitudId;
@@ -191,8 +204,20 @@ async function delegarClicksLibros(event) {
         const solicitanteNicknameElement = itemSolicitud.querySelector(".detalles span:nth-child(2)");
         const solicitanteNickname = solicitanteNicknameElement ? solicitanteNicknameElement.textContent.replace("Solicitado por: ", "").trim() : "Alguien";
         console.log(`DEBUG: libros_ui.js - Rechazar solicitud ID: ${solicitudId}`);
-        await responderSolicitudPrestamo(solicitudId, null, solicitanteId, propietarioId, "rechazada", libroTitulo, solicitanteNickname);
-        if (itemSolicitud) itemSolicitud.remove();
+
+        await responderSolicitudPrestamo(
+            solicitudId,
+            null,
+            solicitanteId,
+            propietarioId,
+            "rechazada",
+            libroTitulo,
+            solicitanteNickname
+        );
+        if (itemSolicitud) {
+            itemSolicitud.remove();
+            recargarSeccionesPrestamosDashboard();
+        }
 
     }
 }
