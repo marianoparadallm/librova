@@ -178,7 +178,7 @@ async function handleAnadirLibroSubmit(event) {
     } finally { submitButton.disabled = false; submitButton.textContent = 'Guardar Libro'; }
 }
 
-function recargarSeccionesPrestamosDashboard() {
+async function recargarSeccionesPrestamosDashboard() {
     if (!currentUser) return;
     if (document.getElementById('mis-libros-en-prestamo')) {
         cargarMisLibrosEnPrestamo(currentUser.id).then(libros => {
