@@ -178,7 +178,7 @@ async function handleAnadirLibroSubmit(event) {
         if (errorSubida) { throw errorSubida; }
         const { data: dataUrlPublica } = supabaseClientInstance.storage.from('portadas-libros').getPublicUrl(nombreArchivoFoto);
         const urlFotoPublica = dataUrlPublica.publicUrl; console.log("DEBUG: libros_ops.js - Foto subida, URL pública:", urlFotoPublica);
-        const { error: errorLibro } = await supabaseClientInstance.from('libros').insert([{ titulo: titulo, foto_url: urlFotoPublica, google_link: `https://www.google.com/search?q=${encodeURIComponent(titulo)}`, propietario_id: currentUser.id, propietario_avatar: currentUser.nombre_avatar, estado: 'disponible' }]).select();
+        const { error: errorLibro } = await supabaseClientInstance.from('libros').insert([{ titulo: titulo, foto_url: urlFotoPublica, google_link: `https://www.google.com/search?q=${encodeURIComponent(titulo)}`, propietario_id: currentUser.id, estado: 'disponible' }]).select();
         if (errorLibro) { throw errorLibro; }
         console.log("Libro añadido exitosamente."); document.getElementById('form-anadir-libro').reset();
         const previewFoto = document.getElementById('libro-foto-preview'); if(previewFoto) { previewFoto.src = '#'; previewFoto.style.display = 'none'; }

@@ -19,6 +19,7 @@ estado           - "activo" o "devuelto"
 ```
 
 Antes esta información se guardaba parcialmente en la tabla `libros` mediante los campos `esta_con_usuario_id` y `fecha_limite_devolucion`. Ahora dichos campos se han eliminado de `libros` y sólo se usa la tabla `prestamos`.
+El campo `propietario_avatar` también dejó de existir porque el avatar se lee directamente desde la tabla `usuarios`.
 
 ## Ejecución local
 
