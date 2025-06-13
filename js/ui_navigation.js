@@ -120,5 +120,7 @@ function actualizarMenuPrincipal() {
         btnCerrarSesion.textContent = 'Cerrar Sesión';
         btnCerrarSesion.onclick = cerrarSesion; // Asume que cerrarSesion es global
         menuPrincipal.appendChild(btnCerrarSesion);
+
     }
 }
+

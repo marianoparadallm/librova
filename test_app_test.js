@@ -1,3 +1,4 @@
+
 console.log("app_test.js: Script iniciado.");
 
 const statusDiv = document.getElementById('status');

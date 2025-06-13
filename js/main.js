@@ -204,6 +204,7 @@ async function appInit() {
          }
     }
     actualizarMenuPrincipal();
+
 }
 
 // Listener DOMContentLoaded
@@ -217,3 +218,4 @@ if (document.readyState === 'loading') {
     appInit();
 }
 console.log("DEBUG: main.js - Script finalizado (configuración de inicialización hecha o pendiente).");
+
