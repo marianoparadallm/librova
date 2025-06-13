@@ -135,6 +135,7 @@ async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, p
                 if (currentUser.id === propietarioId) currentUser.reputacion = nRP;
             }
             agregarNotificacion(solicitanteId, `Tu solicitud para "${libroTitulo}" fue aceptada`);
+            await refrescarNotificaciones();
         } else if (nuevoEstado === 'rechazada' && libroId) {
             const { data: pendientes } = await supabaseClientInstance
                 .from('solicitudes_prestamo')
@@ -148,6 +149,7 @@ async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, p
                     .eq('propietario_id', propietarioId);
             }
             agregarNotificacion(solicitanteId, `Tu solicitud para "${libroTitulo}" fue rechazada`);
+            await refrescarNotificaciones();
         }
         console.log(`DEBUG: libros_ops.js - Solicitud ${solicitudId} actualizada a ${nuevoEstado}.`);
     } catch (err) {
