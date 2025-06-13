@@ -1,7 +1,24 @@
 # LibroVa
 
 
-LibroVa es una sencilla aplicación web pensada para que estudiantes compartan y pidan prestados libros entre compañeros. Utiliza **Supabase** como plataforma backend para el manejo de usuarios y del catálogo de libros.
+LibroVa es una sencilla aplicación web pensada para que estudiantes compartan y piden prestados libros entre compañeros. Utiliza **Supabase** como plataforma backend para el manejo de usuarios y del catálogo de libros.
+
+## Tabla de préstamos
+
+La aplicación utiliza una tabla `prestamos` para registrar cada vez que un libro es prestado. Su estructura principal es:
+
+```
+id               - identificador autoincremental
+libro_id         - referencia al libro prestado
+propietario_id   - usuario dueño del libro
+prestatario_id   - usuario que recibe el préstamo
+fecha_prestamo   - fecha en que se aceptó la solicitud
+fecha_limite_devolucion - fecha pactada para devolverlo
+fecha_devolucion - fecha real de devolución
+estado           - "activo" o "devuelto"
+```
+
+Antes esta información se guardaba parcialmente en la tabla `libros` mediante los campos `esta_con_usuario_id` y `fecha_limite_devolucion`. Ahora dichos campos se han eliminado de `libros` y sólo se usa la tabla `prestamos`.
 
 ## Ejecución local
 

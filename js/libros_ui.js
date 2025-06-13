@@ -18,12 +18,11 @@ async function cargarYMostrarLibros(append = false) {
                     foto_url,
                     estado,
                     propietario_id,
-                    fecha_limite_devolucion,
                     created_at,
-                    esta_con_usuario_id,
                     propietario:usuarios!propietario_id ( nickname ),
-                    prestado_a:usuarios!esta_con_usuario_id ( nickname )
+                    prestamo:prestamos!libro_id ( prestatario_id, fecha_limite_devolucion, estado, prestatario:usuarios!prestatario_id ( nickname ) )
                 `)
+                .eq('prestamo.estado', 'activo')
                 .order('created_at', { ascending: false });
             if (error) { throw error; }
             librosFiltrados = libros || [];
@@ -37,8 +36,8 @@ async function cargarYMostrarLibros(append = false) {
                     break;
                 case 'fechadev':
                     librosFiltrados.sort((a,b)=>{
-                        const ad = a.fecha_limite_devolucion || '';
-                        const bd = b.fecha_limite_devolucion || '';
+                        const ad = a.prestamo?.fecha_limite_devolucion || '';
+                        const bd = b.prestamo?.fecha_limite_devolucion || '';
                         return ad.localeCompare(bd);
                     });
                     break;
@@ -83,7 +82,7 @@ async function cargarYMostrarLibros(append = false) {
                     btn.textContent = 'Pedir';
                     card.appendChild(btn);
                 }
-                if (currentUser && currentUser.id === libro.propietario_id && libro.estado === 'prestado' && libro.esta_con_usuario_id) {
+                if (currentUser && currentUser.id === libro.propietario_id && libro.estado === 'prestado' && libro.prestamo?.prestatario_id) {
                     const btn = document.createElement('button');
                     btn.className = 'btn-marcar-devuelto boton-accion-base devolver';
                     btn.textContent = 'Devolver';
@@ -225,25 +224,38 @@ async function delegarClicksLibros(event) {
 async function cargarMisLibrosEnPrestamo(userId) {
     console.log("DEBUG: libros_ui.js - Cargando Mis Libros Prestados a Otros para usuario:", userId);
     if (!supabaseClientInstance) return [];
-    const { data, error } = await supabaseClientInstance.from('libros')
-        .select(`id, titulo, foto_url, fecha_limite_devolucion, esta_con_usuario_id, prestado_a:usuarios!esta_con_usuario_id ( nickname )`)
+    const { data, error } = await supabaseClientInstance.from('prestamos')
+        .select(`libro_id, fecha_limite_devolucion, prestatario_id, libros ( titulo, foto_url ), prestatario:usuarios!prestatario_id ( nickname )`)
         .eq('propietario_id', userId)
-        .eq('estado', 'prestado');
+        .eq('estado', 'activo');
     if (error) { console.error("Error cargando mis libros prestados:", error); return []; }
     console.log("DEBUG: libros_ui.js - Mis Libros Prestados a Otros:", data);
-    return data || [];
+    return (data || []).map(p => ({
+        id: p.libro_id,
+        titulo: p.libros ? p.libros.titulo : '',
+        foto_url: p.libros ? p.libros.foto_url : '',
+        fecha_limite_devolucion: p.fecha_limite_devolucion,
+        prestatario_id: p.prestatario_id,
+        prestado_a: { nickname: p.prestatario ? p.prestatario.nickname : '' }
+    }));
 }
 
 async function cargarLibrosQueMePrestaron(userId) {
     console.log("DEBUG: libros_ui.js - Cargando Libros que me Prestaron para usuario:", userId);
     if (!supabaseClientInstance) return [];
-    const { data, error } = await supabaseClientInstance.from('libros')
-        .select(`id, titulo, foto_url, fecha_limite_devolucion, propietario:usuarios!propietario_id ( nickname )`)
-        .eq('esta_con_usuario_id', userId)
-        .eq('estado', 'prestado');
+    const { data, error } = await supabaseClientInstance.from('prestamos')
+        .select(`libro_id, fecha_limite_devolucion, propietario_id, libros ( titulo, foto_url ), propietario:usuarios!propietario_id ( nickname )`)
+        .eq('prestatario_id', userId)
+        .eq('estado', 'activo');
     if (error) { console.error("Error cargando libros que me prestaron:", error); return []; }
     console.log("DEBUG: libros_ui.js - Libros que me Prestaron:", data);
-    return data || [];
+    return (data || []).map(p => ({
+        id: p.libro_id,
+        titulo: p.libros ? p.libros.titulo : '',
+        foto_url: p.libros ? p.libros.foto_url : '',
+        fecha_limite_devolucion: p.fecha_limite_devolucion,
+        propietario: { nickname: p.propietario ? p.propietario.nickname : '' }
+    }));
 }
 
 async function cargarSolicitudesRecibidas(userId) {
