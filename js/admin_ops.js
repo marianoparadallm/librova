@@ -82,6 +82,33 @@ async function eliminarSolicitudAdmin(id) {
     if (error) console.error('DEBUG: admin_ops.js - Error eliminar solicitud:', error);
 }
 
+async function listarPrestamosAdmin() {
+    if (!supabaseClientInstance) return [];
+    const { data, error } = await supabaseClientInstance.from('prestamos').select('*').order('id', { ascending: true });
+    if (error) { console.error('DEBUG: admin_ops.js - Error listar prestamos:', error); return []; }
+    return data || [];
+}
+
+async function crearPrestamoAdmin(prestamo) {
+    if (!supabaseClientInstance) return null;
+    const { data, error } = await supabaseClientInstance.from('prestamos').insert(prestamo).select().single();
+    if (error) { console.error('DEBUG: admin_ops.js - Error crear prestamo:', error); return null; }
+    return data;
+}
+
+async function editarPrestamoAdmin(id, campos) {
+    if (!supabaseClientInstance) return null;
+    const { data, error } = await supabaseClientInstance.from('prestamos').update(campos).eq('id', id).select().single();
+    if (error) { console.error('DEBUG: admin_ops.js - Error editar prestamo:', error); return null; }
+    return data;
+}
+
+async function eliminarPrestamoAdmin(id) {
+    if (!supabaseClientInstance) return;
+    const { error } = await supabaseClientInstance.from('prestamos').delete().eq('id', id);
+    if (error) console.error('DEBUG: admin_ops.js - Error eliminar prestamo:', error);
+}
+
 async function listarNotificacionesAdmin() {
     if (!supabaseClientInstance) return [];
     const { data, error } = await supabaseClientInstance.from('notificaciones').select('*').order('id', { ascending: true });
@@ -123,6 +150,11 @@ window.listarSolicitudesAdmin = listarSolicitudesAdmin;
 window.crearSolicitudAdmin = crearSolicitudAdmin;
 window.editarSolicitudAdmin = editarSolicitudAdmin;
 window.eliminarSolicitudAdmin = eliminarSolicitudAdmin;
+
+window.listarPrestamosAdmin = listarPrestamosAdmin;
+window.crearPrestamoAdmin = crearPrestamoAdmin;
+window.editarPrestamoAdmin = editarPrestamoAdmin;
+window.eliminarPrestamoAdmin = eliminarPrestamoAdmin;
 
 window.listarNotificacionesAdmin = listarNotificacionesAdmin;
 window.crearNotificacionAdmin = crearNotificacionAdmin;

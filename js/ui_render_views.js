@@ -188,7 +188,7 @@ function renderizarListaDashboard(divId, libros, tipoLista) {
             const btn = document.createElement('button');
             btn.className = 'btn-solicitar-devolucion boton-accion-base pedir';
             btn.dataset.libroId = libro.id;
-            btn.dataset.prestatarioId = libro.esta_con_usuario_id || '';
+            btn.dataset.prestatarioId = libro.prestatario_id || '';
             btn.dataset.prestatarioNick = libro.prestado_a ? libro.prestado_a.nickname : '';
             btn.dataset.fechaDev = fechaDev;
             btn.textContent = 'Solicitar devolución';
@@ -431,7 +431,7 @@ async function renderizarVistaDetalleLibro(libroId) {
     if (!supabaseClientInstance) { cont.innerHTML = '<p>Error de conexión.</p>'; return; }
     try {
         const { data: libro, error } = await supabaseClientInstance.from('libros')
-            .select(`id, titulo, foto_url, estado, google_link, propietario_id, fecha_limite_devolucion, esta_con_usuario_id, propietario:usuarios!propietario_id ( nickname ), prestado_a:usuarios!esta_con_usuario_id ( nickname )`)
+            .select(`id, titulo, foto_url, estado, google_link, propietario_id, propietario:usuarios!propietario_id ( nickname )`)
             .eq('id', libroId).single();
         if (error) throw error;
         if (!libro) { cont.innerHTML = '<p>Libro no encontrado.</p>'; return; }
@@ -453,9 +453,17 @@ async function renderizarVistaDetalleLibro(libroId) {
         pEstado.textContent = `Estado: ${libro.estado}`;
         cont.appendChild(pProp);
         cont.appendChild(pEstado);
+        let prestamoDetalle = null;
         if (libro.estado === 'prestado') {
-            const nombrePrestadoA = libro.prestado_a ? libro.prestado_a.nickname : 'Alguien';
-            const fechaDev = libro.fecha_limite_devolucion ? new Date(libro.fecha_limite_devolucion).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Fecha no definida';
+            const { data: prestamoInfo } = await supabaseClientInstance
+                .from('prestamos')
+                .select('fecha_limite_devolucion, prestatario:usuarios!prestatario_id ( nickname ), prestatario_id')
+                .eq('libro_id', libroId)
+                .eq('estado', 'activo')
+                .single();
+            prestamoDetalle = prestamoInfo || null;
+            const nombrePrestadoA = prestamoDetalle && prestamoDetalle.prestatario ? prestamoDetalle.prestatario.nickname : 'Alguien';
+            const fechaDev = prestamoDetalle && prestamoDetalle.fecha_limite_devolucion ? new Date(prestamoDetalle.fecha_limite_devolucion).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Fecha no definida';
             const pPrest = document.createElement('p');
             pPrest.textContent = `Prestado a: ${nombrePrestadoA} - Devolver el: ${fechaDev}`;
             cont.appendChild(pPrest);
@@ -468,7 +476,7 @@ async function renderizarVistaDetalleLibro(libroId) {
             btn.onclick = () => pedirLibroPrestado(libro.id, libro.propietario_id, libro.titulo);
             acciones.appendChild(btn);
         }
-        if (currentUser && currentUser.id === libro.propietario_id && libro.estado === 'prestado' && libro.esta_con_usuario_id) {
+        if (currentUser && currentUser.id === libro.propietario_id && libro.estado === 'prestado' && prestamoDetalle?.prestatario_id) {
             const btn = document.createElement('button');
             btn.className = 'btn-marcar-devuelto boton-accion-base devolver';
             btn.textContent = 'Devolver';

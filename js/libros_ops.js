@@ -47,14 +47,21 @@ async function marcarLibroComoDevuelto(libroId) {
     try {
         const { data: libroActual, error: fetchErr } = await supabaseClientInstance
             .from('libros')
-            .select('titulo, esta_con_usuario_id')
+            .select('titulo, propietario_id')
             .eq('id', libroId)
             .single();
         if (fetchErr) throw fetchErr;
 
+        const { data: prestamoActivo } = await supabaseClientInstance
+            .from('prestamos')
+            .select('id, prestatario_id')
+            .eq('libro_id', libroId)
+            .eq('estado', 'activo')
+            .single();
+
         const { data, error } = await supabaseClientInstance
             .from('libros')
-            .update({ estado: 'disponible', esta_con_usuario_id: null, fecha_limite_devolucion: null })
+            .update({ estado: 'disponible' })
             .eq('id', libroId)
             .eq('propietario_id', currentUser.id)
             .eq('estado', 'prestado')
@@ -65,15 +72,19 @@ async function marcarLibroComoDevuelto(libroId) {
         } else {
             console.log(`DEBUG: libros_ops.js - Libro ID: ${libroId} marcado como 'disponible'.`);
         }
+        if (prestamoActivo && prestamoActivo.prestatario_id) {
+            await supabaseClientInstance
+                .from('prestamos')
+                .update({ fecha_devolucion: new Date().toISOString(), estado: 'devuelto' })
+                .eq('id', prestamoActivo.id);
 
-        if (libroActual && libroActual.esta_con_usuario_id) {
-            const { data: repPrest } = await supabaseClientInstance.from('usuarios').select('reputacion').eq('id', libroActual.esta_con_usuario_id).single();
+            const { data: repPrest } = await supabaseClientInstance.from('usuarios').select('reputacion').eq('id', prestamoActivo.prestatario_id).single();
             if (repPrest) {
                 const nuevaRep = (repPrest.reputacion || 0) + 1;
-                await supabaseClientInstance.from('usuarios').update({ reputacion: nuevaRep }).eq('id', libroActual.esta_con_usuario_id);
-                if (currentUser.id === libroActual.esta_con_usuario_id) currentUser.reputacion = nuevaRep;
+                await supabaseClientInstance.from('usuarios').update({ reputacion: nuevaRep }).eq('id', prestamoActivo.prestatario_id);
+                if (currentUser.id === prestamoActivo.prestatario_id) currentUser.reputacion = nuevaRep;
             }
-            agregarNotificacion(libroActual.esta_con_usuario_id, `Se registró la devolución de "${libroActual.titulo}"`);
+            agregarNotificacion(prestamoActivo.prestatario_id, `Se registró la devolución de "${libroActual.titulo}"`);
         }
     } catch (error) {
         console.error("DEBUG: libros_ops.js - Error al marcar devuelto:", error);
@@ -97,8 +108,18 @@ async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, p
         if (nuevoEstado === "aceptada" && libroId) {
             const fechaDev = new Date();
             fechaDev.setDate(fechaDev.getDate() + 14);
+
+            await supabaseClientInstance.from('prestamos').insert({
+                libro_id: libroId,
+                propietario_id: propietarioId,
+                prestatario_id: solicitanteId,
+                fecha_prestamo: new Date().toISOString(),
+                fecha_limite_devolucion: fechaDev.toISOString(),
+                estado: 'activo'
+            });
+
             await supabaseClientInstance.from("libros")
-                .update({ estado: "prestado", esta_con_usuario_id: solicitanteId, fecha_limite_devolucion: fechaDev.toISOString() })
+                .update({ estado: "prestado" })
                 .eq("id", libroId)
                 .eq("propietario_id", propietarioId);
             const { data: repSol } = await supabaseClientInstance.from('usuarios').select('reputacion').eq('id', solicitanteId).single();

@@ -90,5 +90,33 @@ window.addEventListener('load', () => {
     }
 });
 
-// La llave extra al final de tu app_test.js también estaba aquí, la he eliminado.
-console.log("app_test.js: Script finalizado (asignación de listeners).");
+async function testPrestamoCrud() {
+    if (!supabaseClientInstance) {
+        updateStatus('Supabase no inicializado para pruebas', 'error');
+        return;
+    }
+    try {
+        const { data: prestamo, error } = await supabaseClientInstance
+            .from('prestamos')
+            .insert({
+                libro_id: -1,
+                propietario_id: -1,
+                prestatario_id: -1,
+                fecha_prestamo: new Date().toISOString(),
+                estado: 'activo'
+            })
+            .select()
+            .single();
+        if (error) throw error;
+        await supabaseClientInstance
+            .from('prestamos')
+            .update({ fecha_devolucion: new Date().toISOString(), estado: 'devuelto' })
+            .eq('id', prestamo.id);
+        updateStatus('Prueba de prestamos ejecutada', 'success');
+    } catch (err) {
+        console.error('Prueba de prestamos falló', err);
+        updateStatus('Error prueba prestamos: ' + err.message, 'error');
+    }
+}
+
+console.log("app_test.js: Script finalizado (asignación de listeners).\n");
