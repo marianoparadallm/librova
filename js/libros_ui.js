@@ -22,7 +22,7 @@ async function cargarYMostrarLibros(append = false) {
                     propietario:usuarios!propietario_id ( nickname ),
                     prestamo:prestamos!libro_id ( prestatario_id, fecha_limite_devolucion, estado, prestatario:usuarios!prestatario_id ( nickname ) )
                 `)
-                .eq('prestamo.estado', 'activo')
+                .or('prestamo.estado.eq.activo,prestamo.estado.is.null')
                 .order('created_at', { ascending: false });
             if (error) { throw error; }
             librosFiltrados = libros || [];
