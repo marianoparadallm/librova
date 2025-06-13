@@ -105,22 +105,27 @@ function actualizarMenuPrincipal() {
             };
             menuPrincipal.appendChild(btnPanelAdmin);
         }
-        const btnNotificaciones = document.createElement('button');
-        btnNotificaciones.id = 'btn-notificaciones';
-        btnNotificaciones.textContent = '🔔';
-        if (notificacionesNuevas > 0) {
-            const badge = document.createElement('span');
-            badge.className = 'contador-notificaciones';
-            badge.textContent = notificacionesNuevas;
-            btnNotificaciones.appendChild(badge);
+
+        const btnNotificaciones = document.getElementById('btn-notificaciones');
+        if (btnNotificaciones) {
+            btnNotificaciones.style.display = 'inline-block';
+            btnNotificaciones.innerHTML = '🔔';
+            if (notificacionesNuevas > 0) {
+                const badge = document.createElement('span');
+                badge.className = 'contador-notificaciones';
+                badge.textContent = notificacionesNuevas;
+                btnNotificaciones.appendChild(badge);
+            }
+            btnNotificaciones.onclick = togglePopupNotificaciones;
         }
-        btnNotificaciones.onclick = togglePopupNotificaciones;
-        menuPrincipal.appendChild(btnNotificaciones);
         const btnCerrarSesion = document.createElement('button');
         btnCerrarSesion.textContent = 'Cerrar Sesión';
         btnCerrarSesion.onclick = cerrarSesion; // Asume que cerrarSesion es global
         menuPrincipal.appendChild(btnCerrarSesion);
 
+    } else {
+        const btnNotificaciones = document.getElementById('btn-notificaciones');
+        if (btnNotificaciones) btnNotificaciones.style.display = 'none';
     }
 }
 

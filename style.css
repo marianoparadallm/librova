@@ -25,29 +25,46 @@ body {
 }
 
 header {
-    background: rgba(45, 55, 72, 0.9); 
+    background: rgba(45, 55, 72, 0.9);
     color: #fff;
-    padding: 10px 20px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: space-between; 
-    position: sticky; 
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    position: sticky;
     top: 0;
-    z-index: 1000; 
-    min-height: 60px; 
+    z-index: 1000;
+    min-height: 60px;
     box-sizing: border-box;
-    flex-shrink: 0; 
+    flex-shrink: 0;
+}
+
+#header-actions {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
 }
 
 #logo-container {}
 #logo-img { height: 45px; width: auto; display: block; }
 nav#menu-principal { text-align: right; position: relative; }
-nav#menu-principal button, nav#menu-principal span {
-    margin: 5px 0 5px 10px; padding: 8px 15px; background-color: #4A5568;
-    color: white; border: none; cursor: pointer; border-radius: 5px;
-    font-size: 0.9em; transition: background-color 0.3s ease, transform 0.2s ease;
+nav#menu-principal button, nav#menu-principal span,
+#btn-notificaciones {
+    margin: 5px 0 5px 10px;
+    padding: 8px 15px;
+    background-color: #4A5568;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
-nav#menu-principal button:hover { background-color: #2D3748; transform: translateY(-1px); }
+nav#menu-principal button:hover,
+#btn-notificaciones:hover {
+    background-color: #2D3748;
+    transform: translateY(-1px);
+}
 nav#menu-principal span { background-color: transparent; color: #E2E8F0; cursor: default; font-weight: bold; padding-right: 0; }
 
 /* Botón para menú hamburguesa */
@@ -58,9 +75,13 @@ nav#menu-principal span { background-color: transparent; color: #E2E8F0; cursor:
     color: #fff;
     font-size: 1.6em;
     cursor: pointer;
+    margin-left: 10px;
 }
 
-#btn-notificaciones { position: relative; }
+#btn-notificaciones {
+    position: relative;
+    margin-left: 10px;
+}
 .contador-notificaciones {
     position: absolute;
     top: -6px;
@@ -387,6 +408,7 @@ form button[type="button"]:hover {
     .libro-card { width: 45%; }
 
     /* Navegación responsive */
+    nav#menu-principal { display: none; }
     nav#menu-principal button,
     nav#menu-principal span { display: none; }
     #hamburger-btn { display: block; }
