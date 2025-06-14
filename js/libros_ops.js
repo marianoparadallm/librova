@@ -83,6 +83,11 @@ async function marcarLibroComoDevuelto(libroId) {
                 const nuevaRep = (repPrest.reputacion || 0) + 1;
                 await supabaseClientInstance.from('usuarios').update({ reputacion: nuevaRep }).eq('id', prestamoActivo.prestatario_id);
                 if (currentUser.id === prestamoActivo.prestatario_id) currentUser.reputacion = nuevaRep;
+                actualizarMenuPrincipal();
+                const dash = document.getElementById('vista-dashboard');
+                if (dash && dash.classList.contains('activa')) {
+                    renderizarDashboard();
+                }
             }
             agregarNotificacion(prestamoActivo.prestatario_id, `Se registró la devolución de "${libroActual.titulo}"`);
         }
@@ -127,12 +132,22 @@ async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, p
                 const nRS = (repSol.reputacion || 0) - 1;
                 await supabaseClientInstance.from('usuarios').update({ reputacion: nRS }).eq('id', solicitanteId);
                 if (currentUser.id === solicitanteId) currentUser.reputacion = nRS;
+                actualizarMenuPrincipal();
+                const dash = document.getElementById('vista-dashboard');
+                if (dash && dash.classList.contains('activa')) {
+                    renderizarDashboard();
+                }
             }
             const { data: repProp } = await supabaseClientInstance.from('usuarios').select('reputacion').eq('id', propietarioId).single();
             if (repProp) {
                 const nRP = (repProp.reputacion || 0) + 1;
                 await supabaseClientInstance.from('usuarios').update({ reputacion: nRP }).eq('id', propietarioId);
                 if (currentUser.id === propietarioId) currentUser.reputacion = nRP;
+                actualizarMenuPrincipal();
+                const dash = document.getElementById('vista-dashboard');
+                if (dash && dash.classList.contains('activa')) {
+                    renderizarDashboard();
+                }
             }
             agregarNotificacion(solicitanteId, `Tu solicitud para "${libroTitulo}" fue aceptada`);
             await refrescarNotificaciones();
@@ -163,6 +178,30 @@ async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, p
         actualizarMenuPrincipal();
     }
 
+}
+
+async function solicitarDevolucionAnticipada(libroId, prestatarioId, tituloLibro, fechaDev) {
+    console.log(`DEBUG: libros_ops.js - Solicitando devolución anticipada libro ${libroId}`);
+    if (!supabaseClientInstance || !currentUser) return;
+    try {
+        if (prestatarioId && tituloLibro) {
+            agregarNotificacion(prestatarioId, `${currentUser.nickname} solicita la devolución de "${tituloLibro}" (límite: ${fechaDev})`);
+            const { data: repPrest } = await supabaseClientInstance.from('usuarios').select('reputacion').eq('id', prestatarioId).single();
+            if (repPrest) {
+                const nuevaRep = (repPrest.reputacion || 0) - 1;
+                await supabaseClientInstance.from('usuarios').update({ reputacion: nuevaRep }).eq('id', prestatarioId);
+                if (currentUser.id === prestatarioId) currentUser.reputacion = nuevaRep;
+                actualizarMenuPrincipal();
+                const dash = document.getElementById('vista-dashboard');
+                if (dash && dash.classList.contains('activa')) {
+                    renderizarDashboard();
+                }
+            }
+            await refrescarNotificaciones();
+        }
+    } catch (err) {
+        console.error('DEBUG: libros_ops.js - Error solicitando devolución anticipada:', err);
+    }
 }
 
 
