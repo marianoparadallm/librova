@@ -231,7 +231,7 @@ async function handleAnadirLibroSubmit(event) {
     // ... (Misma función handleAnadirLibroSubmit que tenías)
     event.preventDefault(); console.log("DEBUG: libros_ops.js - Guardando nuevo libro...");
     if (!supabaseClientInstance) { alert('Error: Supabase no está inicializado.'); return; }
-    const titulo = document.getElementById('libro-titulo').value; const fotoInput = document.getElementById('libro-foto'); const fotoFile = fotoInput.files[0];
+    const titulo = document.getElementById('libro-titulo').value; const fotoInput = document.getElementById('libro-foto'); const fotoFile = fotoInput.files[0]; const archivoInput = document.getElementById('libro-digital'); const archivoFile = archivoInput ? archivoInput.files[0] : null;
     if (!titulo || !fotoFile) { alert("Por favor, completa el título y selecciona una foto."); return; }
     if (!currentUser || !currentUser.id) { alert("Error: No se pudo identificar al usuario."); renderizarVistaBienvenida(); return; } // Asume renderizarVistaBienvenida es global
     const submitButton = event.target.querySelector('button[type="submit"]'); submitButton.disabled = true; submitButton.textContent = 'Guardando...';
@@ -241,7 +241,15 @@ async function handleAnadirLibroSubmit(event) {
         if (errorSubida) { throw errorSubida; }
         const { data: dataUrlPublica } = supabaseClientInstance.storage.from('portadas-libros').getPublicUrl(nombreArchivoFoto);
         const urlFotoPublica = dataUrlPublica.publicUrl; console.log("DEBUG: libros_ops.js - Foto subida, URL pública:", urlFotoPublica);
-        const { error: errorLibro } = await supabaseClientInstance.from('libros').insert([{ titulo: titulo, foto_url: urlFotoPublica, google_link: `https://www.google.com/search?q=${encodeURIComponent(titulo)}`, propietario_id: currentUser.id, estado: 'disponible' }]).select();
+        let urlArchivoPublico = null;
+        if (archivoFile) {
+            const nombreArchivoDigital = `${currentUser.id}_${Date.now()}_${archivoFile.name}`;
+            const { error: errArchivo } = await supabaseClientInstance.storage.from('libros-digitales').upload(nombreArchivoDigital, archivoFile, { cacheControl: '3600', upsert: false });
+            if (errArchivo) throw errArchivo;
+            const { data: dataArchivo } = supabaseClientInstance.storage.from('libros-digitales').getPublicUrl(nombreArchivoDigital);
+            urlArchivoPublico = dataArchivo.publicUrl;
+        }
+        const { error: errorLibro } = await supabaseClientInstance.from('libros').insert([{ titulo: titulo, foto_url: urlFotoPublica, archivo_url: urlArchivoPublico, google_link: `https://www.google.com/search?q=${encodeURIComponent(titulo)}`, propietario_id: currentUser.id, estado: 'disponible' }]).select();
         if (errorLibro) { throw errorLibro; }
         console.log("Libro añadido exitosamente."); document.getElementById('form-anadir-libro').reset();
         const previewFoto = document.getElementById('libro-foto-preview'); if(previewFoto) { previewFoto.src = '#'; previewFoto.style.display = 'none'; }

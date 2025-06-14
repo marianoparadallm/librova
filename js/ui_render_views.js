@@ -109,7 +109,7 @@ function renderizarVistaBienvenida() {
             <button id="btn-admin-gestionar-notificaciones">Notificaciones</button>
             <button type="button" id="btn-volver-dashboard-desde-admin">Volver al Dashboard</button>
         </div>
-        <div id="vista-anadir-libro" class="vista"><h3>Añadir Nuevo Libro</h3><form id="form-anadir-libro"><label for="libro-titulo">Título del Libro:</label><input type="text" id="libro-titulo" required><br><br><label for="libro-foto">Foto de la Portada:</label><input type="file" id="libro-foto" accept="image/*" capture="environment" required><br><br><img id="libro-foto-preview" src="#" alt="Vista previa de la portada" style="max-width: 200px; max-height: 200px; display: none; margin-bottom:15px;"><br><button type="submit">Guardar Libro</button><button type="button" id="btn-volver-dashboard-desde-anadir">Cancelar y Volver al Dashboard</button></form></div>
+        <div id="vista-anadir-libro" class="vista"><h3>Añadir Nuevo Libro</h3><form id="form-anadir-libro"><label for="libro-titulo">Título del Libro:</label><input type="text" id="libro-titulo" required><br><br><label for="libro-foto">Foto de la Portada:</label><input type="file" id="libro-foto" accept="image/*" capture="environment" required><br><br><label for="libro-digital">Archivo digital (opcional):</label><input type="file" id="libro-digital" accept=".pdf,.epub"><br><br><img id="libro-foto-preview" src="#" alt="Vista previa de la portada" style="max-width: 200px; max-height: 200px; display: none; margin-bottom:15px;"><br><button type="submit">Guardar Libro</button><button type="button" id="btn-volver-dashboard-desde-anadir">Cancelar y Volver al Dashboard</button></form></div>
         <div id="vista-gestionar-libro-propio" class="vista"><h3>Gestionar Mi Libro</h3><p>Aquí podrás editar o eliminar tu libro que esté disponible.</p><div id="detalles-libro-gestion"></div><button type="button" id="btn-volver-dashboard-desde-gestion">Volver al Dashboard</button></div>
     `;
     const selectAvatarRegistro = document.getElementById('alumno-avatar-registro');
@@ -436,7 +436,7 @@ async function renderizarVistaDetalleLibro(libroId) {
     if (!supabaseClientInstance) { cont.innerHTML = '<p>Error de conexión.</p>'; return; }
     try {
         const { data: libro, error } = await supabaseClientInstance.from('libros')
-            .select(`id, titulo, foto_url, estado, google_link, propietario_id, propietario:usuarios!propietario_id ( nickname )`)
+            .select(`id, titulo, foto_url, archivo_url, estado, google_link, propietario_id, propietario:usuarios!propietario_id ( nickname )`)
             .eq('id', libroId).single();
         if (error) throw error;
         if (!libro) { cont.innerHTML = '<p>Libro no encontrado.</p>'; return; }
@@ -458,6 +458,21 @@ async function renderizarVistaDetalleLibro(libroId) {
         pEstado.textContent = `Estado: ${libro.estado}`;
         cont.appendChild(pProp);
         cont.appendChild(pEstado);
+        if (libro.archivo_url) {
+            const btnLeer = document.createElement('button');
+            btnLeer.className = 'boton-accion-base info';
+            btnLeer.textContent = 'Leer/Descargar';
+            btnLeer.onclick = () => window.open(libro.archivo_url, '_blank');
+            cont.appendChild(btnLeer);
+            if (libro.archivo_url.toLowerCase().endsWith('.pdf')) {
+                const iframe = document.createElement('iframe');
+                iframe.src = libro.archivo_url;
+                iframe.style.width = '100%';
+                iframe.style.height = '500px';
+                iframe.style.marginTop = '10px';
+                cont.appendChild(iframe);
+            }
+        }
         let prestamoDetalle = null;
         if (libro.estado === 'prestado') {
             const { data: prestamoInfo } = await supabaseClientInstance
@@ -474,7 +489,7 @@ async function renderizarVistaDetalleLibro(libroId) {
             cont.appendChild(pPrest);
         }
         const acciones = document.createElement('div');
-        if (currentUser && currentUser.id !== libro.propietario_id && (libro.estado === 'disponible' || libro.estado === 'solicitado')) {
+        if (currentUser && currentUser.id !== libro.propietario_id && !libro.archivo_url && (libro.estado === 'disponible' || libro.estado === 'solicitado')) {
             const btn = document.createElement('button');
             btn.className = 'btn-pedir-prestamo boton-accion-base pedir';
             btn.textContent = 'Pedir';
