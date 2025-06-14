@@ -181,26 +181,35 @@ async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, p
 }
 
 async function solicitarDevolucionAnticipada(libroId, prestatarioId, tituloLibro, fechaDev) {
-    console.log(`DEBUG: libros_ops.js - Solicitando devolución anticipada libro ${libroId}`);
-    if (!supabaseClientInstance || !currentUser) return;
+
+    console.log(`DEBUG: libros_ops.js - Solicitar devolución anticipada para libro ${libroId}`);
+    if (!supabaseClientInstance || !currentUser) {
+        console.error("DEBUG: libros_ops.js - Supabase o usuario no inicializado.");
+        return;
+    }
     try {
-        if (prestatarioId && tituloLibro) {
-            agregarNotificacion(prestatarioId, `${currentUser.nickname} solicita la devolución de "${tituloLibro}" (límite: ${fechaDev})`);
-            const { data: repPrest } = await supabaseClientInstance.from('usuarios').select('reputacion').eq('id', prestatarioId).single();
-            if (repPrest) {
-                const nuevaRep = (repPrest.reputacion || 0) - 1;
-                await supabaseClientInstance.from('usuarios').update({ reputacion: nuevaRep }).eq('id', prestatarioId);
-                if (currentUser.id === prestatarioId) currentUser.reputacion = nuevaRep;
-                actualizarMenuPrincipal();
-                const dash = document.getElementById('vista-dashboard');
-                if (dash && dash.classList.contains('activa')) {
-                    renderizarDashboard();
-                }
-            }
-            await refrescarNotificaciones();
+        const { data: repData } = await supabaseClientInstance
+            .from('usuarios')
+            .select('reputacion')
+            .eq('id', prestatarioId)
+            .single();
+        if (repData) {
+            const nuevaRep = (repData.reputacion || 0) - 1;
+            await supabaseClientInstance
+                .from('usuarios')
+                .update({ reputacion: nuevaRep })
+                .eq('id', prestatarioId);
+            if (currentUser.id === prestatarioId) currentUser.reputacion = nuevaRep;
         }
-    } catch (err) {
-        console.error('DEBUG: libros_ops.js - Error solicitando devolución anticipada:', err);
+
+        if (prestatarioId) {
+            agregarNotificacion(prestatarioId, `${currentUser.nickname} solicitó la devolución anticipada de '${tituloLibro}'`);
+        }
+    } catch (error) {
+        console.error('DEBUG: libros_ops.js - Error solicitando devolución anticipada:', error);
+    } finally {
+        recargarSeccionesPrestamosDashboard();
+        actualizarMenuPrincipal();
     }
 }
 
