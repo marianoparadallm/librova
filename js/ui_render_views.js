@@ -393,7 +393,12 @@ function renderizarListaNotificaciones(divId, notas) {
     const div = document.getElementById(divId);
     if (!div) { console.error(`DEBUG: ui_render_views.js - Div ${divId} no encontrado para notificaciones.`); return; }
     div.innerHTML = '';
-    if (!notas || notas.length === 0) { div.innerHTML = '<p>No hay mensajes nuevos.</p>'; return; }
+
+    if (!notas || notas.length === 0) {
+        div.innerHTML = '<div class="item-notificacion">No hay mensajes nuevos.</div>';
+        return;
+    }
+
     for (const n of notas) {
         const item = document.createElement('div');
         item.className = n.leida ? 'item-notificacion' : 'item-notificacion nueva';
