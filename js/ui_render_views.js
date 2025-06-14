@@ -611,6 +611,7 @@ async function renderizarVistaRanking() {
         const { data, error } = await supabaseClientInstance
             .from('usuarios')
             .select('nickname, reputacion')
+            .eq('rol', 'alumno')
             .order('reputacion', { ascending: false })
             .limit(20);
         if (error) throw error;
