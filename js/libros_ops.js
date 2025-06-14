@@ -20,6 +20,18 @@ async function pedirLibroPrestado(libroId, propietarioIdLibro, tituloLibro) {
         });
         if (insErr) throw insErr;
 
+        const { data: repData, error: repErr } = await supabaseClientInstance
+            .from('usuarios')
+            .select('reputacion')
+            .eq('id', currentUser.id)
+            .single();
+        if (repErr) throw repErr;
+        const nuevaRep = (repData?.reputacion || 0) - 1;
+        await supabaseClientInstance.from('usuarios')
+            .update({ reputacion: nuevaRep })
+            .eq('id', currentUser.id);
+        currentUser.reputacion = nuevaRep;
+
         await supabaseClientInstance.from('libros')
             .update({ estado: 'solicitado' })
             .eq('id', libroId)
@@ -34,6 +46,7 @@ async function pedirLibroPrestado(libroId, propietarioIdLibro, tituloLibro) {
         cargarYMostrarLibros();
         recargarSeccionesPrestamosDashboard();
         botonesLibro.forEach(b => b.disabled = false);
+        actualizarMenuPrincipal();
     }
 
 }
