@@ -150,6 +150,15 @@ async function delegarClicksLibros(event) {
         const libroId = libroCard.dataset.libroId;
         console.log(`DEBUG: libros_ui.js - Gestionar libro ID: ${libroId} desde lista general.`);
         renderizarDetallesGestionLibro(libroId);
+    } else if (event.target.closest("#libros-que-me-prestaron .btn-marcar-devuelto")) {
+        const cardElement = event.target.closest(".item-lista-libro");
+        if (!cardElement) return;
+        const libroId = cardElement.dataset.libroId;
+        const tituloElement = cardElement.querySelector("strong, .libro-titulo");
+        const tituloConfirm = tituloElement ? tituloElement.textContent : "este libro";
+        if (confirm(`¿Confirmas que el libro "${tituloConfirm}" ha sido devuelto?`)) {
+            marcarLibroComoDevuelto(libroId);
+        }
     } else if (event.target.closest(".btn-marcar-devuelto")) {
         const cardElement = event.target.closest(".libro-card") || event.target.closest(".item-lista-libro");
         if (!cardElement) return;
