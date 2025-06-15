@@ -380,16 +380,7 @@ form button[type="button"]:hover {
 .avatar-seleccionable .avatar-nombre-display { font-size: 0.9em; color: #2D3748; font-weight: 500; }
 #vista-login-alumno #avatar-seleccionado-nombre { text-align: center; font-size: 1.5em; font-weight: bold; margin-bottom: 20px; color: #1A202C; }
 #vista-login-alumno #form-login-alumno-pin { border-top: 1px solid #e2e8f0; padding-top: 25px; margin-top: 20px; }
-#vista-login-alumno #seleccion-login-registro-alumno button { margin-bottom: 10px;} 
-
-.boton-grande-secundario { /* Para "Ya tengo Usuario" y "Soy Nuevo" */
-    padding: 12px 25px; font-size: 1.1em; font-weight: 600;
-    background-color: #4A5568; color: white; border: none;
-    border-radius: 6px; cursor: pointer; margin: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-.boton-grande-secundario:hover { background-color: #2D3748; transform: translateY(-2px); }
+#vista-login-alumno #seleccion-login-registro-alumno button { margin-bottom: 10px;}
 
 .link-button { 
     background: none!important; border: none; padding: 5px !important; 

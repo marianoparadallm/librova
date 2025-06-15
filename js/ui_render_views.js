@@ -36,15 +36,15 @@ function renderizarVistaBienvenida() {
                 <input type="text" id="admin-alias" required><br><br>
                 <label for="admin-pin">PIN:</label>
                 <input type="password" id="admin-pin" maxlength="4" pattern="\\d{4}" required inputmode="numeric"><br><br>
-                <button type="submit">Ingresar como Admin</button>
-                <button type="button" id="btn-volver-bienvenida-admin">Volver</button>
+                <button type="submit" class="boton-accion-base submit">Ingresar como Admin</button>
+                <button type="button" id="btn-volver-bienvenida-admin" class="boton-accion-base gestionar">Volver</button>
             </form>
         </div>
         <div id="vista-login-alumno" class="vista">
             <h3>Bienvenido/a 😊</h3>
             <div id="seleccion-login-registro-alumno" style="text-align:center;margin-bottom:20px;">
-                <button id="btn-mostrar-form-login-avatar" class="boton-grande-secundario">Tengo usuario</button>
-                <button id="btn-mostrar-form-registro-alumno" class="boton-grande-secundario">Crear usuario</button>
+                <button id="btn-mostrar-form-login-avatar" class="boton-accion-base submit">Tengo usuario</button>
+                <button id="btn-mostrar-form-registro-alumno" class="boton-accion-base submit">Crear usuario</button>
             </div>
             <div id="contenedor-login-avatar" style="display:none;">
                 <h4>Elige tu Avatar para Ingresar</h4>
@@ -54,7 +54,7 @@ function renderizarVistaBienvenida() {
                     <label for="alumno-pin-login">Tu PIN (4 dígitos):</label>
                     <input type="password" id="alumno-pin-login" maxlength="4" pattern="\\d{4}" required inputmode="numeric" autocomplete="current-password"><br><br>
                     <button type="submit" class="boton-accion-base submit">Ingresar</button>
-                    <button type="button" id="btn-cambiar-avatar">Cambiar Avatar</button>
+                    <button type="button" id="btn-cambiar-avatar" class="boton-accion-base gestionar">Cambiar Avatar</button>
                 </form>
             </div>
             <div style="text-align:center; margin-top: 20px;">
@@ -103,11 +103,11 @@ function renderizarVistaBienvenida() {
         </div>
         <div id="vista-admin-panel" class="vista">
             <h3>Panel de Administración</h3>
-            <button id="btn-admin-gestionar-libros">Libros</button>
-            <button id="btn-admin-gestionar-usuarios">Usuarios</button>
-            <button id="btn-admin-gestionar-prestamos">Préstamos</button>
-            <button id="btn-admin-gestionar-notificaciones">Notificaciones</button>
-            <button type="button" id="btn-volver-dashboard-desde-admin">Volver al Dashboard</button>
+            <button id="btn-admin-gestionar-libros" class="boton-accion-base gestionar">Libros</button>
+            <button id="btn-admin-gestionar-usuarios" class="boton-accion-base gestionar">Usuarios</button>
+            <button id="btn-admin-gestionar-prestamos" class="boton-accion-base gestionar">Préstamos</button>
+            <button id="btn-admin-gestionar-notificaciones" class="boton-accion-base gestionar">Notificaciones</button>
+            <button type="button" id="btn-volver-dashboard-desde-admin" class="boton-accion-base gestionar">Volver al Dashboard</button>
         </div>
         <div id="vista-elegir-tipo-libro" class="vista">
             <h3>¿Libro digital o para prestar?</h3>
@@ -116,7 +116,7 @@ function renderizarVistaBienvenida() {
             <br><br>
             <button type="button" id="btn-volver-dashboard-desde-elegir">Cancelar y Volver al Dashboard</button>
         </div>
-        <div id="vista-anadir-libro" class="vista"><h3>Añadir Nuevo Libro</h3><form id="form-anadir-libro"><input type="hidden" id="libro-tipo" value=""><label for="libro-titulo">Título del Libro:</label><input type="text" id="libro-titulo" required><br><br><label for="libro-foto">Foto de la Portada:</label><input type="file" id="libro-foto" accept="image/*" capture="environment" required><br><br><div id="grupo-libro-digital" style="display:none;"><label for="libro-digital">Archivo digital (opcional):</label><input type="file" id="libro-digital" accept=".pdf,.epub"></div><br><br><img id="libro-foto-preview" src="#" alt="Vista previa de la portada" style="max-width: 200px; max-height: 200px; display: none; margin-bottom:15px;"><br><button type="submit">Guardar Libro</button><button type="button" id="btn-volver-dashboard-desde-anadir">Cancelar y Volver al Dashboard</button></form></div>
+        <div id="vista-anadir-libro" class="vista"><h3>Añadir Nuevo Libro</h3><form id="form-anadir-libro"><input type="hidden" id="libro-tipo" value=""><label for="libro-titulo">Título del Libro:</label><input type="text" id="libro-titulo" required><br><br><label for="libro-foto">Foto de la Portada:</label><input type="file" id="libro-foto" accept="image/*" capture="environment" required><br><br><div id="grupo-libro-digital" style="display:none;"><label for="libro-digital">Archivo digital (opcional):</label><input type="file" id="libro-digital" accept=".pdf,.epub"></div><br><br><img id="libro-foto-preview" src="#" alt="Vista previa de la portada" style="max-width: 200px; max-height: 200px; display: none; margin-bottom:15px;"><br><button type="submit" class="boton-accion-base submit">Guardar Libro</button><button type="button" id="btn-volver-dashboard-desde-anadir">Cancelar y Volver al Dashboard</button></form></div>
         <div id="vista-gestionar-libro-propio" class="vista"><h3>Gestionar Mi Libro</h3><p>Aquí podrás editar o eliminar tu libro que esté disponible.</p><div id="detalles-libro-gestion"></div><button type="button" id="btn-volver-dashboard-desde-gestion">Volver al Dashboard</button></div>
     `;
     const selectAvatarRegistro = document.getElementById('alumno-avatar-registro');
