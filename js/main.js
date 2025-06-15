@@ -76,6 +76,11 @@ function asignarEventListenersGlobales() {
         const btnVolverDashAdmin = document.getElementById('btn-volver-dashboard-desde-admin'); if(btnVolverDashAdmin)btnVolverDashAdmin.onclick=()=>renderizarDashboard();
         const btnVolverDetalle = document.getElementById('btn-volver-busqueda-desde-detalle');
         if(btnVolverDetalle) btnVolverDetalle.onclick = () => cambiarVista('vista-detalle-libro','vista-buscar-libros');
+        const btnElegirDigital=document.getElementById('btn-elegir-digital');
+        if(btnElegirDigital) btnElegirDigital.onclick=()=>{const t=document.getElementById('libro-tipo');if(t)t.value='digital';const g=document.getElementById('grupo-libro-digital');if(g)g.style.display='block';const lbl=g?g.querySelector('label'):null;if(lbl)lbl.textContent='Archivo digital (obligatorio):';const inp=document.getElementById('libro-digital');if(inp){inp.required=true;inp.value='';}cambiarVista('vista-elegir-tipo-libro','vista-anadir-libro');};
+        const btnElegirFisico=document.getElementById('btn-elegir-fisico');
+        if(btnElegirFisico) btnElegirFisico.onclick=()=>{const t=document.getElementById('libro-tipo');if(t)t.value='fisico';const g=document.getElementById('grupo-libro-digital');if(g)g.style.display='none';const inp=document.getElementById('libro-digital');if(inp){inp.required=false;inp.value='';}cambiarVista('vista-elegir-tipo-libro','vista-anadir-libro');};
+        const btnVolverElegir=document.getElementById('btn-volver-dashboard-desde-elegir'); if(btnVolverElegir)btnVolverElegir.onclick=()=>renderizarDashboard();
         document.getElementById('form-login-admin').addEventListener('submit', async (e)=>{
             e.preventDefault();
             const nick=document.getElementById('admin-alias').value;

@@ -231,8 +231,9 @@ async function handleAnadirLibroSubmit(event) {
     // ... (Misma función handleAnadirLibroSubmit que tenías)
     event.preventDefault(); console.log("DEBUG: libros_ops.js - Guardando nuevo libro...");
     if (!supabaseClientInstance) { alert('Error: Supabase no está inicializado.'); return; }
-    const titulo = document.getElementById('libro-titulo').value; const fotoInput = document.getElementById('libro-foto'); const fotoFile = fotoInput.files[0]; const archivoInput = document.getElementById('libro-digital'); const archivoFile = archivoInput ? archivoInput.files[0] : null;
+    const titulo = document.getElementById('libro-titulo').value; const fotoInput = document.getElementById('libro-foto'); const fotoFile = fotoInput.files[0]; const archivoInput = document.getElementById('libro-digital'); const archivoFile = archivoInput ? archivoInput.files[0] : null; const tipoLibro=document.getElementById('libro-tipo')?document.getElementById('libro-tipo').value:'fisico';
     if (!titulo || !fotoFile) { alert("Por favor, completa el título y selecciona una foto."); return; }
+    if(tipoLibro==='digital' && !archivoFile){alert('Debes subir el archivo digital del libro.');return;}
     if (!currentUser || !currentUser.id) { alert("Error: No se pudo identificar al usuario."); renderizarVistaBienvenida(); return; } // Asume renderizarVistaBienvenida es global
     const submitButton = event.target.querySelector('button[type="submit"]'); submitButton.disabled = true; submitButton.textContent = 'Guardando...';
     try {
