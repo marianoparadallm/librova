@@ -62,7 +62,12 @@ function asignarEventListenersGlobales() {
         if(btnMostrarLoginAvatar) { btnMostrarLoginAvatar.onclick = () => { if(document.getElementById('seleccion-login-registro-alumno')) document.getElementById('seleccion-login-registro-alumno').style.display = 'none'; if(document.getElementById('contenedor-login-avatar')) document.getElementById('contenedor-login-avatar').style.display = 'block'; if(document.getElementById('selector-avatares-login')) document.getElementById('selector-avatares-login').style.display = 'flex'; if(document.getElementById('form-login-alumno-pin')) document.getElementById('form-login-alumno-pin').style.display = 'none'; };
         } else { console.error("DEBUG: main.js - Botón 'btn-mostrar-form-login-avatar' NO ENCONTRADO."); }
         const btnMostrarFormRegistro = document.getElementById('btn-mostrar-form-registro-alumno');
-        if(btnMostrarFormRegistro) { btnMostrarFormRegistro.onclick = () => cambiarVista('vista-login-alumno', 'vista-registro-alumno');
+        if(btnMostrarFormRegistro) {
+            btnMostrarFormRegistro.onclick = () => {
+                mostrarPopupAceptacion(MENSAJE_INTRO_REGISTRO, () => {
+                    cambiarVista('vista-login-alumno', 'vista-registro-alumno');
+                });
+            };
         } else { console.error("DEBUG: main.js - Botón 'btn-mostrar-form-registro-alumno' NO ENCONTRADO."); }
         const btnVolverBienvenidaAlumno = document.getElementById('btn-volver-bienvenida-alumno');
         if (btnVolverBienvenidaAlumno) { btnVolverBienvenidaAlumno.onclick = () => { const sel = document.getElementById('seleccion-login-registro-alumno'); const cla = document.getElementById('contenedor-login-avatar'); if(sel) sel.style.display = 'block'; if(cla) cla.style.display = 'none'; cambiarVista('vista-login-alumno', 'vista-bienvenida'); };

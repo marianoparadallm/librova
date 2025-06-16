@@ -138,6 +138,18 @@ function mostrarPopupMensaje(texto) {
     if (btnCerrar) btnCerrar.onclick = ocultarPopupMensaje;
 }
 
+function mostrarPopupAceptacion(texto, onAceptar) {
+    const popup = document.getElementById('popup-mensaje');
+    if (!popup) return;
+    popup.innerHTML = `<div class="contenido"><p>${texto}</p><button id="btn-aceptar-popup-mensaje">Aceptar</button></div>`;
+    popup.style.display = 'flex';
+    const btnAceptar = document.getElementById('btn-aceptar-popup-mensaje');
+    if (btnAceptar) btnAceptar.onclick = () => {
+        ocultarPopupMensaje();
+        if (typeof onAceptar === 'function') onAceptar();
+    };
+}
+
 function ocultarPopupMensaje() {
     const popup = document.getElementById('popup-mensaje');
     if (!popup) return;
@@ -147,4 +159,5 @@ function ocultarPopupMensaje() {
 
 window.mostrarPopupMensaje = mostrarPopupMensaje;
 window.ocultarPopupMensaje = ocultarPopupMensaje;
+window.mostrarPopupAceptacion = mostrarPopupAceptacion;
 
