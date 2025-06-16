@@ -259,6 +259,52 @@ async function handleAnadirLibroSubmit(event) {
     } finally { submitButton.disabled = false; submitButton.textContent = 'Guardar Libro'; }
 }
 
+async function editarLibroPropio(libroId, { titulo, fotoFile, archivoFile }) {
+    if (!supabaseClientInstance || !currentUser) {
+        alert('Error: sesión no disponible.');
+        return null;
+    }
+    const campos = {};
+    if (titulo) campos.titulo = titulo;
+    try {
+        if (fotoFile) {
+            const nombreArchivoFoto = `${currentUser.id}_${Date.now()}_${fotoFile.name}`;
+            const { error: errorSubida } = await supabaseClientInstance.storage
+                .from('portadas-libros')
+                .upload(nombreArchivoFoto, fotoFile, { cacheControl: '3600', upsert: false });
+            if (errorSubida) throw errorSubida;
+            const { data } = supabaseClientInstance.storage
+                .from('portadas-libros')
+                .getPublicUrl(nombreArchivoFoto);
+            campos.foto_url = data.publicUrl;
+        }
+        if (archivoFile) {
+            const nombreArchivoDigital = `${currentUser.id}_${Date.now()}_${archivoFile.name}`;
+            const { error: errArchivo } = await supabaseClientInstance.storage
+                .from('libros-digitales')
+                .upload(nombreArchivoDigital, archivoFile, { cacheControl: '3600', upsert: false });
+            if (errArchivo) throw errArchivo;
+            const { data: dataArchivo } = supabaseClientInstance.storage
+                .from('libros-digitales')
+                .getPublicUrl(nombreArchivoDigital);
+            campos.archivo_url = dataArchivo.publicUrl;
+        }
+        if (Object.keys(campos).length === 0) return null;
+        const { data: libroEditado, error } = await supabaseClientInstance
+            .from('libros')
+            .update(campos)
+            .eq('id', libroId)
+            .eq('propietario_id', currentUser.id)
+            .select()
+            .single();
+        if (error) throw error;
+        return libroEditado;
+    } catch (err) {
+        console.error('DEBUG: libros_ops.js - Error editar libro:', err);
+        return null;
+    }
+}
+
 async function recargarSeccionesPrestamosDashboard() {
     if (!currentUser) return;
     if (document.getElementById('mis-libros-en-prestamo')) {
