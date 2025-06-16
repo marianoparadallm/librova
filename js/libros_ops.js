@@ -164,6 +164,7 @@ async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, p
             }
             agregarNotificacion(solicitanteId, `Tu solicitud para "${libroTitulo}" fue aceptada`);
             await refrescarNotificaciones();
+            mostrarPopupMensaje(`Recuerda llevarle \"${libroTitulo}\" a ${solicitanteNickname} mañana al aula.`);
         } else if (nuevoEstado === 'rechazada' && libroId) {
             const { data: pendientes } = await supabaseClientInstance
                 .from('solicitudes_prestamo')
@@ -178,6 +179,7 @@ async function responderSolicitudPrestamo(solicitudId, libroId, solicitanteId, p
             }
             agregarNotificacion(solicitanteId, `Tu solicitud para "${libroTitulo}" fue rechazada`);
             await refrescarNotificaciones();
+            mostrarPopupMensaje(`Has rechazado la solicitud para \"${libroTitulo}\".`);
         }
         console.log(`DEBUG: libros_ops.js - Solicitud ${solicitudId} actualizada a ${nuevoEstado}.`);
     } catch (err) {

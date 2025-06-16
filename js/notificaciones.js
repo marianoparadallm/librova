@@ -62,9 +62,13 @@ window.eliminarNotificacion = eliminarNotificacion;
 
 async function refrescarNotificaciones() {
     if (!currentUser) return;
+    const idsPrevios = notificaciones.map(n => n.id);
     notificaciones = await cargarNotificacionesUsuario(currentUser.id);
-    notificacionesNuevas = notificaciones.filter(n => !n.leida).length;
+    const noLeidas = notificaciones.filter(n => !n.leida);
+    notificacionesNuevas = noLeidas.length;
+    const nuevasEntradas = noLeidas.filter(n => !idsPrevios.includes(n.id));
     actualizarMenuPrincipal();
+    nuevasEntradas.forEach(nueva => mostrarPopupMensaje(nueva.mensaje));
 }
 
 window.refrescarNotificaciones = refrescarNotificaciones;
