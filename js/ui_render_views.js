@@ -323,8 +323,27 @@ async function renderizarDetallesGestionLibro(libroId) {
             detallesDiv.appendChild(infoDiv);
             detallesDiv.appendChild(accionesDiv);
 
-            document.getElementById('btn-editar-libro-info').onclick = () => alert(`Editar Libro ID: ${libro.id} (no implementado).`);
-            document.getElementById('btn-eliminar-libro').onclick = async () => alert(`Eliminar Libro ID: ${libro.id} (no implementado).`);
+            document.getElementById('btn-editar-libro-info').onclick = async () => {
+                const nuevoTitulo = prompt('Nuevo título', libro.titulo);
+                if (nuevoTitulo !== null) {
+                    await actualizarLibroPropio(libro.id, { titulo: nuevoTitulo });
+                    cargarYMostrarLibros();
+                    recargarSeccionesPrestamosDashboard();
+                    renderizarDashboard();
+                    actualizarMenuPrincipal();
+                }
+            };
+            document.getElementById('btn-eliminar-libro').onclick = async () => {
+                if (confirm('¿Eliminar libro?')) {
+                    const ok = await eliminarLibroPropio(libro.id);
+                    if (ok) {
+                        cargarYMostrarLibros();
+                        recargarSeccionesPrestamosDashboard();
+                        renderizarDashboard();
+                        actualizarMenuPrincipal();
+                    }
+                }
+            };
 
         } else { detallesDiv.innerHTML = "<p>No se encontraron detalles o no tienes permiso.</p>"; }
     } catch (error) { console.error("DEBUG: ui_render_views.js - Error cargando detalles para gestionar:", error); detallesDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`; }
