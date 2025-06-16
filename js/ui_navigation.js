@@ -76,7 +76,7 @@ function actualizarMenuPrincipal() {
         // infoUsuario.style.marginRight = '20px'; // El estilo se maneja en CSS
         menuPrincipal.appendChild(infoUsuario);
         const btnDashboard = document.createElement('button');
-        btnDashboard.textContent = 'Dashboard';
+        btnDashboard.textContent = 'Inicio';
         btnDashboard.onclick = () => renderizarDashboard(); // Asume que renderizarDashboard es global
         menuPrincipal.appendChild(btnDashboard);
 
