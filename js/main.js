@@ -74,6 +74,8 @@ function asignarEventListenersGlobales() {
         const btnVolverDashAnadir = document.getElementById('btn-volver-dashboard-desde-anadir'); if(btnVolverDashAnadir)btnVolverDashAnadir.onclick=()=>renderizarDashboard();
         const btnVolverDashGestion = document.getElementById('btn-volver-dashboard-desde-gestion'); if(btnVolverDashGestion)btnVolverDashGestion.onclick=()=>renderizarDashboard();
         const btnVolverDashAdmin = document.getElementById('btn-volver-dashboard-desde-admin'); if(btnVolverDashAdmin)btnVolverDashAdmin.onclick=()=>renderizarDashboard();
+        const btnGestionarPrestamos = document.getElementById('btn-admin-gestionar-prestamos');
+        if(btnGestionarPrestamos) btnGestionarPrestamos.onclick = () => renderizarPanelAdmin();
         const btnVolverDetalle = document.getElementById('btn-volver-busqueda-desde-detalle');
         if(btnVolverDetalle) btnVolverDetalle.onclick = () => cambiarVista('vista-detalle-libro','vista-buscar-libros');
         const btnElegirDigital=document.getElementById('btn-elegir-digital');

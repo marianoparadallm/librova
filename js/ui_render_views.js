@@ -715,6 +715,16 @@ async function renderizarPanelAdmin() {
             </form>
         </div>
         <div class="seccion-dashboard">
+            <h4>Préstamos</h4>
+            <div id="admin-lista-prestamos">Cargando...</div>
+            <form id="form-admin-prestamo">
+                <input type="number" id="admin-prestamo-libro-id" placeholder="Libro ID">
+                <input type="number" id="admin-prestamo-propietario-id" placeholder="Propietario ID">
+                <input type="number" id="admin-prestamo-prestatario-id" placeholder="Prestatario ID">
+                <button type="submit" class="boton-accion-base submit">Crear Préstamo</button>
+            </form>
+        </div>
+        <div class="seccion-dashboard">
             <h4>Solicitudes</h4>
             <div id="admin-lista-solicitudes">Cargando...</div>
         </div>
@@ -745,6 +755,20 @@ async function renderizarPanelAdmin() {
             renderizarPanelAdmin();
         }
     });
+
+    const formPrestamo = document.getElementById('form-admin-prestamo');
+    if (formPrestamo) {
+        formPrestamo.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const libroId = parseInt(document.getElementById('admin-prestamo-libro-id').value, 10);
+            const propId = parseInt(document.getElementById('admin-prestamo-propietario-id').value, 10);
+            const prestId = parseInt(document.getElementById('admin-prestamo-prestatario-id').value, 10);
+            if (libroId && propId && prestId) {
+                await crearPrestamoAdmin({ libro_id: libroId, propietario_id: propId, prestatario_id: prestId, estado: 'activo' });
+                renderizarPanelAdmin();
+            }
+        });
+    }
 
     document.getElementById('btn-volver-dashboard-desde-admin').onclick = renderizarDashboard;
 }
@@ -822,6 +846,43 @@ async function cargarDatosPanelAdmin() {
         acciones.appendChild(bD);
         item.appendChild(acciones);
         divUsuarios.appendChild(item);
+    });
+
+    const divPrestamos = document.getElementById('admin-lista-prestamos');
+    const prestamos = await listarPrestamosAdmin();
+    divPrestamos.innerHTML = '';
+    prestamos.forEach(p => {
+        const item = document.createElement('div');
+        item.className = 'item-lista-libro';
+        const detalles = document.createElement('div');
+        detalles.className = 'detalles';
+        detalles.textContent = `[${p.id}] libro ${p.libro_id} - ${p.estado}`;
+        item.appendChild(detalles);
+        const acciones = document.createElement('div');
+        acciones.className = 'acciones';
+        const bE = document.createElement('button');
+        bE.className = 'boton-accion-base gestionar';
+        bE.textContent = 'Editar';
+        bE.onclick = async () => {
+            const nuevo = prompt('Nuevo estado', p.estado);
+            if (nuevo !== null) {
+                await editarPrestamoAdmin(p.id, { estado: nuevo });
+                renderizarPanelAdmin();
+            }
+        };
+        const bD = document.createElement('button');
+        bD.className = 'boton-accion-base eliminar';
+        bD.textContent = 'Eliminar';
+        bD.onclick = async () => {
+            if (confirm('¿Eliminar préstamo?')) {
+                await eliminarPrestamoAdmin(p.id);
+                renderizarPanelAdmin();
+            }
+        };
+        acciones.appendChild(bE);
+        acciones.appendChild(bD);
+        item.appendChild(acciones);
+        divPrestamos.appendChild(item);
     });
 
     const divSol = document.getElementById('admin-lista-solicitudes');
