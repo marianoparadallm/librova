@@ -95,6 +95,12 @@ async function cargarYMostrarLibros(append = false) {
                     btn.textContent = 'Devolver';
                     card.appendChild(btn);
                 }
+                if (currentUser && libro.prestamo?.prestatario_id && currentUser.id === libro.prestamo.prestatario_id && libro.estado === 'prestado') {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-marcar-devuelto boton-accion-base devolver';
+                    btn.textContent = 'Devolver';
+                    card.appendChild(btn);
+                }
                 if (currentUser && currentUser.id === libro.propietario_id && (libro.estado === 'disponible' || libro.estado === 'solicitado')) {
                     const btn = document.createElement('button');
                     btn.className = 'btn-gestionar-libro boton-accion-base gestionar';
