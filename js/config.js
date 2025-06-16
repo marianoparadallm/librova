@@ -12,9 +12,9 @@ const AVATARES_DISPONIBLES = [
 ];
 
 // Texto introductorio que se muestra antes de crear un usuario
-const MENSAJE_INTRO_REGISTRO = `¡Hola! LibroVa es una app para que compartas libros con tus compañeros.<br>
-Puedes prestar tus propios libros y pedir prestados los de los demás.<br>
-Cada vez que devuelves un libro a tiempo tu reputación mejora y subes en el ranking.<br>
-También puedes subir libros digitales para que otros los lean.<br>
-Para entrar elige un avatar, un apodo y un PIN de 4 números.<br>
-Si estás de acuerdo, presiona “Aceptar” y empieza a disfrutar de la lectura.`;
+const MENSAJE_INTRO_REGISTRO = `Hola! LibroVa es un proyecto que nació para que compartas libros con tus compañeros y lean más.<br>
+Podes prestar tus propios libros y pedir prestados los de los demás.<br>
+Cada vez que prestas un libro, tu puntaje suma +1 y cuando pedís, resta -1. La idea es valorar a los que + comparten.<br>
+También podés subir libros digitales (en PDF) para que otros los lean directamente.<br>
+Para entrar, elegí un avatar, un apodo y un PIN de 4 números.<br>
+Si estás de acuerdo, presioná “Aceptar” y empezá a disfrutar de la lectura.`;
