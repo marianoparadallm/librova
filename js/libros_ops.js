@@ -58,25 +58,29 @@ async function marcarLibroComoDevuelto(libroId) {
     if (!supabaseClientInstance) { console.error("Error de conexión."); return; }
     console.log(`DEBUG: libros_ops.js - ID del usuario (propietario devolviendo): ${currentUser.id}`);
     try {
-        const { data: libroActual, error: fetchErr } = await supabaseClientInstance
-            .from('libros')
-            .select('titulo, propietario_id')
-            .eq('id', libroId)
-            .single();
-        if (fetchErr) throw fetchErr;
-
-        const { data: prestamoActivo } = await supabaseClientInstance
+        const { data: prestamoActivo, error: prestErr } = await supabaseClientInstance
             .from('prestamos')
-            .select('id, prestatario_id')
+            .select('id, propietario_id, prestatario_id')
             .eq('libro_id', libroId)
             .eq('estado', 'activo')
             .single();
+        if (prestErr) throw prestErr;
+        if (!prestamoActivo || (currentUser.id !== prestamoActivo.propietario_id && currentUser.id !== prestamoActivo.prestatario_id)) {
+            console.warn('DEBUG: libros_ops.js - Usuario no autorizado a marcar devolución');
+            return;
+        }
+
+        const { data: libroActual, error: fetchErr } = await supabaseClientInstance
+            .from('libros')
+            .select('titulo')
+            .eq('id', libroId)
+            .single();
+        if (fetchErr) throw fetchErr;
 
         const { data, error } = await supabaseClientInstance
             .from('libros')
             .update({ estado: 'disponible' })
             .eq('id', libroId)
-            .eq('propietario_id', currentUser.id)
             .eq('estado', 'prestado')
             .select();
         if (error) throw error;
@@ -85,23 +89,40 @@ async function marcarLibroComoDevuelto(libroId) {
         } else {
             console.log(`DEBUG: libros_ops.js - Libro ID: ${libroId} marcado como 'disponible'.`);
         }
-        if (prestamoActivo && prestamoActivo.prestatario_id) {
+        if (prestamoActivo) {
             await supabaseClientInstance
                 .from('prestamos')
                 .update({ fecha_devolucion: new Date().toISOString(), estado: 'devuelto' })
                 .eq('id', prestamoActivo.id);
 
-            const { data: repPrest } = await supabaseClientInstance.from('usuarios').select('reputacion').eq('id', prestamoActivo.prestatario_id).single();
+            const { data: repPrest } = await supabaseClientInstance
+                .from('usuarios')
+                .select('reputacion')
+                .eq('id', prestamoActivo.prestatario_id)
+                .single();
             if (repPrest) {
                 const nuevaRep = (repPrest.reputacion || 0) + 1;
                 await supabaseClientInstance.from('usuarios').update({ reputacion: nuevaRep }).eq('id', prestamoActivo.prestatario_id);
                 if (currentUser.id === prestamoActivo.prestatario_id) currentUser.reputacion = nuevaRep;
-                actualizarMenuPrincipal();
-                const dash = document.getElementById('vista-dashboard');
-                if (dash && dash.classList.contains('activa')) {
-                    renderizarDashboard();
-                }
             }
+
+            const { data: repProp } = await supabaseClientInstance
+                .from('usuarios')
+                .select('reputacion')
+                .eq('id', prestamoActivo.propietario_id)
+                .single();
+            if (repProp) {
+                const nuevaRepProp = (repProp.reputacion || 0) + 1;
+                await supabaseClientInstance.from('usuarios').update({ reputacion: nuevaRepProp }).eq('id', prestamoActivo.propietario_id);
+                if (currentUser.id === prestamoActivo.propietario_id) currentUser.reputacion = nuevaRepProp;
+            }
+
+            actualizarMenuPrincipal();
+            const dash = document.getElementById('vista-dashboard');
+            if (dash && dash.classList.contains('activa')) {
+                renderizarDashboard();
+            }
+            agregarNotificacion(prestamoActivo.propietario_id, `Se registró la devolución de "${libroActual.titulo}"`);
             agregarNotificacion(prestamoActivo.prestatario_id, `Se registró la devolución de "${libroActual.titulo}"`);
         }
     } catch (error) {

@@ -200,6 +200,12 @@ function renderizarListaDashboard(divId, libros, tipoLista) {
             btn.dataset.fechaDev = fechaDev;
             btn.textContent = 'Solicitar devolución';
             acciones.appendChild(btn);
+        } else if (tipoLista === 'prestadosAMi') {
+            const btn = document.createElement('button');
+            btn.className = 'btn-marcar-devuelto boton-accion-base devolver';
+            btn.dataset.libroId = libro.id;
+            btn.textContent = 'Devolver';
+            acciones.appendChild(btn);
         }
         item.appendChild(acciones);
 
