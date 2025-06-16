@@ -675,8 +675,7 @@ async function renderizarVistaRanking() {
             .from('usuarios')
             .select('nickname, reputacion')
             .eq('rol', 'alumno')
-            .order('reputacion', { ascending: false })
-            .limit(20);
+            .order('reputacion', { ascending: false });
         if (error) throw error;
         if (!data || data.length === 0) { rankingDiv.innerHTML = '<p>No hay usuarios.</p>'; return; }
         rankingDiv.innerHTML = '<ol class="lista-ranking"></ol>';
