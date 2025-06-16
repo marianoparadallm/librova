@@ -323,27 +323,37 @@ async function renderizarDetallesGestionLibro(libroId) {
             detallesDiv.appendChild(infoDiv);
             detallesDiv.appendChild(accionesDiv);
 
-            document.getElementById('btn-editar-libro-info').onclick = async () => {
-                const nuevoTitulo = prompt('Nuevo título', libro.titulo);
-                if (nuevoTitulo !== null) {
-                    await actualizarLibroPropio(libro.id, { titulo: nuevoTitulo });
-                    cargarYMostrarLibros();
-                    recargarSeccionesPrestamosDashboard();
-                    renderizarDashboard();
-                    actualizarMenuPrincipal();
-                }
+            const formEdit = document.createElement('form');
+            formEdit.id = 'form-editar-libro';
+            formEdit.style.display = 'none';
+            formEdit.innerHTML = `
+                <label for="editar-titulo">Título:</label>
+                <input type="text" id="editar-titulo" value="${libro.titulo}" required><br><br>
+                <label for="editar-foto">Nueva portada (opcional):</label>
+                <input type="file" id="editar-foto" accept="image/*"><br><br>
+                <label for="editar-archivo">Nuevo archivo (opcional):</label>
+                <input type="file" id="editar-archivo" accept=".pdf,.epub"><br><br>
+                <button type="submit" class="boton-accion-base submit">Guardar Cambios</button>
+                <button type="button" id="cancelar-edicion-libro" class="boton-accion-base gestionar">Cancelar</button>
+            `;
+            detallesDiv.appendChild(formEdit);
+
+            document.getElementById('btn-editar-libro-info').onclick = () => {
+                formEdit.style.display = 'block';
             };
-            document.getElementById('btn-eliminar-libro').onclick = async () => {
-                if (confirm('¿Eliminar libro?')) {
-                    const ok = await eliminarLibroPropio(libro.id);
-                    if (ok) {
-                        cargarYMostrarLibros();
-                        recargarSeccionesPrestamosDashboard();
-                        renderizarDashboard();
-                        actualizarMenuPrincipal();
-                    }
-                }
+            document.getElementById('cancelar-edicion-libro').onclick = () => {
+                formEdit.style.display = 'none';
             };
+            formEdit.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const nuevoTitulo = document.getElementById('editar-titulo').value.trim();
+                const fotoFile = document.getElementById('editar-foto').files[0];
+                const archivoFile = document.getElementById('editar-archivo').files[0];
+                await editarLibroPropio(libro.id, { titulo: nuevoTitulo, fotoFile, archivoFile });
+                renderizarDetallesGestionLibro(libro.id);
+            });
+            document.getElementById('btn-eliminar-libro').onclick = async () => alert(`Eliminar Libro ID: ${libro.id} (no implementado).`);
+
 
         } else { detallesDiv.innerHTML = "<p>No se encontraron detalles o no tienes permiso.</p>"; }
     } catch (error) { console.error("DEBUG: ui_render_views.js - Error cargando detalles para gestionar:", error); detallesDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`; }
