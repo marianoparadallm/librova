@@ -129,3 +129,22 @@ function actualizarMenuPrincipal() {
     }
 }
 
+function mostrarPopupMensaje(texto) {
+    const popup = document.getElementById('popup-mensaje');
+    if (!popup) return;
+    popup.innerHTML = `<div class="contenido"><p>${texto}</p><button id="btn-cerrar-popup-mensaje">Cerrar</button></div>`;
+    popup.style.display = 'flex';
+    const btnCerrar = document.getElementById('btn-cerrar-popup-mensaje');
+    if (btnCerrar) btnCerrar.onclick = ocultarPopupMensaje;
+}
+
+function ocultarPopupMensaje() {
+    const popup = document.getElementById('popup-mensaje');
+    if (!popup) return;
+    popup.style.display = 'none';
+    popup.innerHTML = '';
+}
+
+window.mostrarPopupMensaje = mostrarPopupMensaje;
+window.ocultarPopupMensaje = ocultarPopupMensaje;
+

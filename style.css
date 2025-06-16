@@ -445,3 +445,29 @@ form button[type="button"]:hover {
 }
 #popup-notificaciones .item-notificacion { margin-bottom: 8px; }
 #popup-notificaciones .item-notificacion:last-child { margin-bottom: 0; }
+
+#popup-mensaje {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    background-color: rgba(0,0,0,0.6);
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+#popup-mensaje .contenido {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    max-width: 320px;
+    text-align: center;
+    position: relative;
+}
+#popup-mensaje .contenido button {
+    margin-top: 10px;
+}
