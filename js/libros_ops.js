@@ -227,6 +227,44 @@ async function solicitarDevolucionAnticipada(libroId, prestatarioId, tituloLibro
 }
 
 
+async function actualizarLibroPropio(libroId, campos) {
+    console.log(`DEBUG: libros_ops.js - Actualizando libro ID: ${libroId}`, campos);
+    if (!supabaseClientInstance || !currentUser) return null;
+    try {
+        const { data, error } = await supabaseClientInstance
+            .from('libros')
+            .update(campos)
+            .eq('id', libroId)
+            .eq('propietario_id', currentUser.id)
+            .select()
+            .single();
+        if (error) throw error;
+        return data;
+    } catch (err) {
+        console.error('DEBUG: libros_ops.js - Error actualizar libro:', err);
+        return null;
+    }
+}
+
+async function eliminarLibroPropio(libroId) {
+    console.log(`DEBUG: libros_ops.js - Eliminando libro ID: ${libroId}`);
+    if (!supabaseClientInstance || !currentUser) return false;
+    try {
+        const { error } = await supabaseClientInstance
+            .from('libros')
+            .delete()
+            .eq('id', libroId)
+            .eq('propietario_id', currentUser.id)
+            .eq('estado', 'disponible');
+        if (error) throw error;
+        return true;
+    } catch (err) {
+        console.error('DEBUG: libros_ops.js - Error eliminar libro:', err);
+        return false;
+    }
+}
+
+
 async function handleAnadirLibroSubmit(event) {
     // ... (Misma función handleAnadirLibroSubmit que tenías)
     event.preventDefault(); console.log("DEBUG: libros_ops.js - Guardando nuevo libro...");
@@ -325,4 +363,8 @@ async function recargarSeccionesPrestamosDashboard() {
         asignarEventListenersLibros();
     }
 }
+
+// Exponer helpers a nivel global
+window.actualizarLibroPropio = actualizarLibroPropio;
+window.eliminarLibroPropio = eliminarLibroPropio;
 

@@ -354,6 +354,7 @@ async function renderizarDetallesGestionLibro(libroId) {
             });
             document.getElementById('btn-eliminar-libro').onclick = async () => alert(`Eliminar Libro ID: ${libro.id} (no implementado).`);
 
+
         } else { detallesDiv.innerHTML = "<p>No se encontraron detalles o no tienes permiso.</p>"; }
     } catch (error) { console.error("DEBUG: ui_render_views.js - Error cargando detalles para gestionar:", error); detallesDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`; }
 }
