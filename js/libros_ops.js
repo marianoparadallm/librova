@@ -52,11 +52,10 @@ async function pedirLibroPrestado(libroId, propietarioIdLibro, tituloLibro) {
 }
 
 async function marcarLibroComoDevuelto(libroId) {
-    // ... (Misma función marcarLibroComoDevuelto que tenías)
     console.log(`DEBUG: libros_ops.js - Intentando marcar devuelto libro ID: ${libroId}`);
     if (!currentUser || !currentUser.id) { console.error("Error de sesión."); return; }
     if (!supabaseClientInstance) { console.error("Error de conexión."); return; }
-    console.log(`DEBUG: libros_ops.js - ID del usuario (propietario devolviendo): ${currentUser.id}`);
+    console.log(`DEBUG: libros_ops.js - ID usuario marcando devolución: ${currentUser.id}`);
     try {
         const { data: libroActual, error: fetchErr } = await supabaseClientInstance
             .from('libros')
@@ -72,11 +71,17 @@ async function marcarLibroComoDevuelto(libroId) {
             .eq('estado', 'activo')
             .single();
 
+        const propietarioId = libroActual?.propietario_id;
+        const prestatarioId = prestamoActivo?.prestatario_id;
+        if (currentUser.id !== propietarioId && currentUser.id !== prestatarioId) {
+            console.warn('DEBUG: libros_ops.js - Usuario no autorizado para marcar devolución.');
+            return;
+        }
+
         const { data, error } = await supabaseClientInstance
             .from('libros')
             .update({ estado: 'disponible' })
             .eq('id', libroId)
-            .eq('propietario_id', currentUser.id)
             .eq('estado', 'prestado')
             .select();
         if (error) throw error;
@@ -91,10 +96,17 @@ async function marcarLibroComoDevuelto(libroId) {
                 .update({ fecha_devolucion: new Date().toISOString(), estado: 'devuelto' })
                 .eq('id', prestamoActivo.id);
 
-            const { data: repPrest } = await supabaseClientInstance.from('usuarios').select('reputacion').eq('id', prestamoActivo.prestatario_id).single();
+            const { data: repPrest } = await supabaseClientInstance
+                .from('usuarios')
+                .select('reputacion')
+                .eq('id', prestamoActivo.prestatario_id)
+                .single();
             if (repPrest) {
                 const nuevaRep = (repPrest.reputacion || 0) + 1;
-                await supabaseClientInstance.from('usuarios').update({ reputacion: nuevaRep }).eq('id', prestamoActivo.prestatario_id);
+                await supabaseClientInstance
+                    .from('usuarios')
+                    .update({ reputacion: nuevaRep })
+                    .eq('id', prestamoActivo.prestatario_id);
                 if (currentUser.id === prestamoActivo.prestatario_id) currentUser.reputacion = nuevaRep;
                 actualizarMenuPrincipal();
                 const dash = document.getElementById('vista-dashboard');
@@ -102,7 +114,12 @@ async function marcarLibroComoDevuelto(libroId) {
                     renderizarDashboard();
                 }
             }
-            agregarNotificacion(prestamoActivo.prestatario_id, `Se registró la devolución de "${libroActual.titulo}"`);
+
+            if (currentUser.id === prestatarioId) {
+                agregarNotificacion(propietarioId, `${currentUser.nickname} registró la devolución de "${libroActual.titulo}"`);
+            } else {
+                agregarNotificacion(prestatarioId, `Se registró la devolución de "${libroActual.titulo}"`);
+            }
         }
     } catch (error) {
         console.error("DEBUG: libros_ops.js - Error al marcar devuelto:", error);

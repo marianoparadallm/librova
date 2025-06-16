@@ -200,6 +200,11 @@ function renderizarListaDashboard(divId, libros, tipoLista) {
             btn.dataset.fechaDev = fechaDev;
             btn.textContent = 'Solicitar devolución';
             acciones.appendChild(btn);
+        } else if (tipoLista === 'prestadosAMi') {
+            const btn = document.createElement('button');
+            btn.className = 'btn-marcar-devuelto boton-accion-base devolver';
+            btn.textContent = 'Devolver';
+            acciones.appendChild(btn);
         }
         item.appendChild(acciones);
 
@@ -533,6 +538,13 @@ async function renderizarVistaDetalleLibro(libroId) {
             acciones.appendChild(btn);
         }
         if (currentUser && currentUser.id === libro.propietario_id && libro.estado === 'prestado' && prestamoDetalle?.prestatario_id) {
+            const btn = document.createElement('button');
+            btn.className = 'btn-marcar-devuelto boton-accion-base devolver';
+            btn.textContent = 'Devolver';
+            btn.onclick = () => marcarLibroComoDevuelto(libro.id);
+            acciones.appendChild(btn);
+        }
+        if (currentUser && prestamoDetalle && currentUser.id === prestamoDetalle.prestatario_id && libro.estado === 'prestado') {
             const btn = document.createElement('button');
             btn.className = 'btn-marcar-devuelto boton-accion-base devolver';
             btn.textContent = 'Devolver';
