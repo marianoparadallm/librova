@@ -517,6 +517,7 @@ async function renderizarVistaDetalleLibro(libroId) {
                 const epubDiv = document.createElement('div');
                 epubDiv.id = 'epub-viewer';
                 cont.appendChild(epubDiv);
+
                 if (window.ePub) {
                     const book = ePub(libro.archivo_url);
                     const rendition = book.renderTo('epub-viewer', {
@@ -524,6 +525,11 @@ async function renderizarVistaDetalleLibro(libroId) {
                         height: '500px'
                     });
                     rendition.display();
+                } else {
+                    const pError = document.createElement('p');
+                    pError.textContent = 'Error: EPUB.js no disponible';
+                    epubDiv.appendChild(pError);
+                    console.error('DEBUG: ui_render_views.js - window.ePub no definido. No se puede renderizar EPUB.');
                 }
             }
         }
