@@ -48,6 +48,10 @@ Los valores `X_SUPABASE_URL` y `X_SUPABASE_ANON_KEY` se cargan desde variables d
 
 Para verificar que la conexión con Supabase está correctamente configurada puedes abrir [`test_index.html`](test_index.html). Este archivo carga `test_app_test.js` y muestra mensajes básicos de éxito o error.
 
+## Librerías adicionales
+
+La visualización de PDFs se realiza con [PDF.js](https://mozilla.github.io/pdf.js/), distribuida bajo la [licencia Apache 2.0](https://github.com/mozilla/pdf.js/blob/master/LICENSE).
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
