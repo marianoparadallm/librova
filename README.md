@@ -31,6 +31,10 @@ python3 -m http.server
 
 Luego visita `http://localhost:8000/index.html`.
 
+## Lectura de libros digitales
+
+Los archivos EPUB se muestran directamente en la página gracias a [epub.js](https://github.com/futurepress/epub.js). Si un libro digital es EPUB, al hacer clic en **Leer/Descargar** se abrirá un visor integrado para leer sin salir del sitio. Para otros formatos se abre una nueva pestaña.
+
 ## Video de fondo
 
 La página principal muestra el video `fondo.mp4` como fondo animado. Puedes

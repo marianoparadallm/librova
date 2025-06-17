@@ -471,3 +471,9 @@ form button[type="button"]:hover {
 #popup-mensaje .contenido button {
     margin-top: 10px;
 }
+
+#epub-viewer {
+    width: 100%;
+    height: 500px;
+    margin-top: 10px;
+}
