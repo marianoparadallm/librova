@@ -512,6 +512,18 @@ async function renderizarVistaDetalleLibro(libroId) {
                 iframe.style.height = '500px';
                 iframe.style.marginTop = '10px';
                 cont.appendChild(iframe);
+            } else if (libro.archivo_url.toLowerCase().endsWith('.epub')) {
+                const epubDiv = document.createElement('div');
+                epubDiv.id = 'epub-viewer';
+                cont.appendChild(epubDiv);
+                if (window.ePub) {
+                    const book = ePub(libro.archivo_url);
+                    const rendition = book.renderTo('epub-viewer', {
+                        width: '100%',
+                        height: '500px'
+                    });
+                    rendition.display();
+                }
             }
         }
         let prestamoDetalle = null;

@@ -81,7 +81,14 @@ async function cargarYMostrarLibros(append = false) {
                     const btn = document.createElement('button');
                     btn.className = 'btn-leer-libro boton-accion-base info';
                     btn.textContent = 'Leer/Descargar';
-                    btn.addEventListener('click', (ev) => { ev.stopPropagation(); window.open(libro.archivo_url, '_blank'); });
+                    btn.addEventListener('click', (ev) => {
+                        ev.stopPropagation();
+                        if (libro.archivo_url.toLowerCase().endsWith('.epub')) {
+                            renderizarVistaDetalleLibro(libro.id);
+                        } else {
+                            window.open(libro.archivo_url, '_blank');
+                        }
+                    });
                     card.appendChild(btn);
                 } else if (currentUser && currentUser.id !== libro.propietario_id && !libro.archivo_url && (libro.estado === 'disponible' || libro.estado === 'solicitado')) {
                     const btn = document.createElement('button');
