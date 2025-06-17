@@ -506,28 +506,24 @@ async function renderizarVistaDetalleLibro(libroId) {
             btnLeer.onclick = () => window.open(libro.archivo_url, '_blank');
             cont.appendChild(btnLeer);
             if (libro.archivo_url.toLowerCase().endsWith('.pdf')) {
-                const pdfDiv = document.createElement('div');
-                pdfDiv.className = 'pdf-viewer';
-                cont.appendChild(pdfDiv);
-                if (window.pdfjsLib && pdfjsLib.getDocument) {
-                    const loadingTask = pdfjsLib.getDocument(libro.archivo_url);
-                    loadingTask.promise.then(pdf => pdf.getPage(1)).then(page => {
-                        const viewport = page.getViewport({ scale: 1.2 });
-                        const canvas = document.createElement('canvas');
-                        canvas.width = viewport.width;
-                        canvas.height = viewport.height;
-                        pdfDiv.appendChild(canvas);
-                        const ctx = canvas.getContext('2d');
-                        page.render({ canvasContext: ctx, viewport }).promise.catch(err => {
-                            pdfDiv.innerHTML = '<p class="error-pdf">Error al renderizar PDF.</p>';
-                            console.error('PDF render error', err);
-                        });
-                    }).catch(err => {
-                        pdfDiv.innerHTML = '<p class="error-pdf">No se pudo cargar el PDF.</p>';
-                        console.error('PDF loading error', err);
+
+                const iframe = document.createElement('iframe');
+                iframe.src = libro.archivo_url;
+                iframe.style.width = '100%';
+                iframe.style.height = '500px';
+                iframe.style.marginTop = '10px';
+                cont.appendChild(iframe);
+            } else if (libro.archivo_url.toLowerCase().endsWith('.epub')) {
+                const epubDiv = document.createElement('div');
+                epubDiv.id = 'epub-viewer';
+                cont.appendChild(epubDiv);
+                if (window.ePub) {
+                    const book = ePub(libro.archivo_url);
+                    const rendition = book.renderTo('epub-viewer', {
+                        width: '100%',
+                        height: '500px'
                     });
-                } else {
-                    pdfDiv.innerHTML = '<p class="error-pdf">Visualizador de PDF no disponible.</p>';
+                    rendition.display();
                 }
             }
         }

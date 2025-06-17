@@ -472,6 +472,11 @@ form button[type="button"]:hover {
     margin-top: 10px;
 }
 
+#epub-viewer {
+    width: 100%;
+    height: 500px;
+    margin-top: 10px;
+
 /* Visualizador PDF */
 .pdf-viewer {
     width: 100%;
@@ -488,4 +493,5 @@ form button[type="button"]:hover {
 .error-pdf {
     color: red;
     padding: 10px;
+
 }
