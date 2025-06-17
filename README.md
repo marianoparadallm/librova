@@ -45,12 +45,16 @@ fondo estática `fondo.jpg`.
 ## Credenciales de Supabase
 
 
-Los valores `X_SUPABASE_URL` y `X_SUPABASE_ANON_KEY` se cargan desde variables de entorno o desde un archivo `js/config.js` que no está versionado. Para comenzar, copia [`js/config.sample.js`](js/config.sample.js) a `js/config.js` y completa tus credenciales en este nuevo archivo; de forma alternativa puedes definir las variables de entorno `X_SUPABASE_URL` y `X_SUPABASE_ANON_KEY` antes de servir la página.
+Los valores `X_SUPABASE_URL` y `X_SUPABASE_ANON_KEY` se cargan desde variables de entorno o desde un archivo `js/config.js` que **no** se encuentra en este repositorio. Para comenzar, copia [`js/config.sample.js`](js/config.sample.js) a `js/config.js` en tu copia local y completa tus credenciales. **Nunca subas `js/config.js` al control de versiones.** Como alternativa puedes definir las variables de entorno `X_SUPABASE_URL` y `X_SUPABASE_ANON_KEY` antes de servir la página.
 
 
 ## Archivos de prueba
 
 Para verificar que la conexión con Supabase está correctamente configurada puedes abrir [`test_index.html`](test_index.html). Este archivo carga `test_app_test.js` y muestra mensajes básicos de éxito o error.
+
+## Librerías adicionales
+
+La visualización de PDFs se realiza con [PDF.js](https://mozilla.github.io/pdf.js/), distribuida bajo la [licencia Apache 2.0](https://github.com/mozilla/pdf.js/blob/master/LICENSE).
 
 ## License
 

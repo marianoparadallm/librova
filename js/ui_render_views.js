@@ -506,6 +506,7 @@ async function renderizarVistaDetalleLibro(libroId) {
             btnLeer.onclick = () => window.open(libro.archivo_url, '_blank');
             cont.appendChild(btnLeer);
             if (libro.archivo_url.toLowerCase().endsWith('.pdf')) {
+
                 const iframe = document.createElement('iframe');
                 iframe.src = libro.archivo_url;
                 iframe.style.width = '100%';
