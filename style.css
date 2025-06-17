@@ -471,3 +471,21 @@ form button[type="button"]:hover {
 #popup-mensaje .contenido button {
     margin-top: 10px;
 }
+
+/* Visualizador PDF */
+.pdf-viewer {
+    width: 100%;
+    max-height: 500px;
+    overflow: auto;
+    margin-top: 10px;
+    border: 1px solid #CBD5E0;
+}
+.pdf-viewer canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.error-pdf {
+    color: red;
+    padding: 10px;
+}
