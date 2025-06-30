@@ -29,14 +29,18 @@ async function extractFeatures(arrayBuffer) {
     let mfccSum = 0;
     let count = 0;
 
+
     Meyda.bufferSize = bufferSize;
     let prevSlice = null;
+
     for (let i = 0; i + bufferSize <= channelData.length; i += hop) {
         const slice = channelData.slice(i, i + bufferSize);
         const features = Meyda.extract(
             ['rms', 'spectralCentroid', 'spectralFlux', 'zcr', 'mfcc'],
+
             slice,
             prevSlice
+
         );
         centroidSum += features.spectralCentroid || 0;
         rmsSum += features.rms || 0;
