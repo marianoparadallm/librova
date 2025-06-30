@@ -24,16 +24,43 @@ async function extractFeatures(arrayBuffer) {
     const hop = 256;
     let centroidSum = 0;
     let rmsSum = 0;
+    let fluxSum = 0;
+    let zcrSum = 0;
+    let mfccSum = 0;
     let count = 0;
+
+    Meyda.bufferSize = bufferSize;
+    let prevSlice = null;
     for (let i = 0; i + bufferSize <= channelData.length; i += hop) {
         const slice = channelData.slice(i, i + bufferSize);
-        const features = Meyda.extract(['rms', 'spectralCentroid'], slice);
+        const features = Meyda.extract(
+            ['rms', 'spectralCentroid', 'spectralFlux', 'zcr', 'mfcc'],
+            slice,
+            prevSlice
+        );
         centroidSum += features.spectralCentroid || 0;
         rmsSum += features.rms || 0;
+        fluxSum += features.spectralFlux || 0;
+        zcrSum += features.zcr || 0;
+        if (features.mfcc && features.mfcc.length) {
+            const avgMfcc =
+                features.mfcc.reduce((a, b) => a + b, 0) / features.mfcc.length;
+            mfccSum += avgMfcc;
+        }
         count++;
+        prevSlice = slice;
     }
-    if (count === 0) return { centroid: 0, rms: 0 };
-    return { centroid: centroidSum / count, rms: rmsSum / count };
+
+    if (count === 0)
+        return { centroid: 0, rms: 0, spectralFlux: 0, zcr: 0, mfcc: 0 };
+
+    return {
+        centroid: centroidSum / count,
+        rms: rmsSum / count,
+        spectralFlux: fluxSum / count,
+        zcr: zcrSum / count,
+        mfcc: mfccSum / count
+    };
 }
 
 async function train() {
@@ -44,36 +71,88 @@ async function train() {
     }
     let centroidTotal = 0;
     let rmsTotal = 0;
+    let fluxTotal = 0;
+    let zcrTotal = 0;
+    let mfccTotal = 0;
     for (const file of files) {
         const buf = await fileToArrayBuffer(file);
         const f = await extractFeatures(buf);
         centroidTotal += f.centroid;
         rmsTotal += f.rms;
+        fluxTotal += f.spectralFlux;
+        zcrTotal += f.zcr;
+        mfccTotal += f.mfcc;
     }
     trainingProfile = {
         centroid: centroidTotal / files.length,
-        rms: rmsTotal / files.length
+        rms: rmsTotal / files.length,
+        spectralFlux: fluxTotal / files.length,
+        zcr: zcrTotal / files.length,
+        mfcc: mfccTotal / files.length
     };
     M.toast({ html: 'Entrenamiento completado' });
 }
 
 function probabilityFromDistance(d) {
-    const normalized = Math.min(d / (trainingProfile.centroid + 0.0001), 1);
+    const normalized = Math.min(d, 1);
     return Math.max(0, 100 - normalized * 100);
+}
+
+function featureDistance(a, b) {
+    const eps = 0.0001;
+    const diffs = [
+        (a.centroid - b.centroid) / (a.centroid + eps),
+        (a.rms - b.rms) / (a.rms + eps),
+        (a.spectralFlux - b.spectralFlux) / (a.spectralFlux + eps),
+        (a.zcr - b.zcr) / (a.zcr + eps),
+        (a.mfcc - b.mfcc) / (a.mfcc + eps)
+    ];
+    return Math.sqrt(diffs.reduce((s, v) => s + v * v, 0));
 }
 
 function drawChart(train, test) {
     const ctx = document.getElementById('chart');
+    const labels = ['Centroid', 'RMS', 'Flux', 'ZCR', 'MFCC'];
+    const trainData = [
+        train.centroid,
+        train.rms,
+        train.spectralFlux,
+        train.zcr,
+        train.mfcc
+    ];
+    const testData = [
+        test.centroid,
+        test.rms,
+        test.spectralFlux,
+        test.zcr,
+        test.mfcc
+    ];
+
     new Chart(ctx, {
-        type: 'bar',
+        type: 'radar',
         data: {
-            labels: ['Centroid', 'RMS'],
+            labels: labels,
             datasets: [
-                { label: 'Entrenamiento', data: [train.centroid, train.rms], backgroundColor: 'rgba(33,150,243,0.5)' },
-                { label: 'Prueba', data: [test.centroid, test.rms], backgroundColor: 'rgba(244,67,54,0.5)' }
+                {
+                    label: 'Entrenamiento',
+                    data: trainData,
+                    fill: true,
+                    backgroundColor: 'rgba(33,150,243,0.2)',
+                    borderColor: 'rgba(33,150,243,1)'
+                },
+                {
+                    label: 'Prueba',
+                    data: testData,
+                    fill: true,
+                    backgroundColor: 'rgba(244,67,54,0.2)',
+                    borderColor: 'rgba(244,67,54,1)'
+                }
             ]
         },
-        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+        options: {
+            responsive: true,
+            scales: { r: { beginAtZero: true } }
+        }
     });
 }
 
@@ -89,10 +168,7 @@ async function analyze() {
     }
     const buf = await fileToArrayBuffer(file);
     const f = await extractFeatures(buf);
-    const dist = Math.sqrt(
-        Math.pow(f.centroid - trainingProfile.centroid, 2) +
-        Math.pow(f.rms - trainingProfile.rms, 2)
-    );
+    const dist = featureDistance(trainingProfile, f);
     const prob = probabilityFromDistance(dist);
     const clasificacion = prob > 50 ? 'REAL' : 'FAKE';
     document.getElementById('result').innerHTML = `<h5>Resultado: ${clasificacion} (${prob.toFixed(1)}% certeza)</h5>`;
