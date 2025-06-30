@@ -56,6 +56,11 @@ Para verificar que la conexión con Supabase está correctamente configurada pue
 
 La visualización de PDFs se realiza con [PDF.js](https://mozilla.github.io/pdf.js/), distribuida bajo la [licencia Apache 2.0](https://github.com/mozilla/pdf.js/blob/master/LICENSE).
 
+## Detector de audios fake
+
+El panel de administración incluye un enlace a `audio_detector.html`. Esta página permite entrenar un pequeño modelo con audios reales y analizar nuevos archivos para clasificarlos como **REAL** o **FAKE**. El procesamiento se realiza en el navegador utilizando [Meyda](https://meyda.js.org/) para extraer características de audio y [Chart.js](https://www.chartjs.org/) para mostrar gráficos comparativos.
+
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detector de Audios Fake</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+</head>
+<body class="grey lighten-4">
+    <nav>
+        <div class="nav-wrapper blue">
+            <a href="#" class="brand-logo center">Detector de Audios Fake</a>
+            <ul id="nav-mobile" class="left">
+                <li><a href="index.html">Volver</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container" style="margin-top:30px;">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Entrenamiento</span>
+                <div class="file-field input-field">
+                    <div class="btn">
+                        <span>Audios verdaderos</span>
+                        <input type="file" id="train-audios" accept="audio/*" multiple>
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text" placeholder="Sube varios audios reales">
+                    </div>
+                </div>
+                <button class="btn" id="btn-train">Entrenar</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Análisis</span>
+                <div class="file-field input-field">
+                    <div class="btn">
+                        <span>Audio a verificar</span>
+                        <input type="file" id="test-audio" accept="audio/*">
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text">
+                    </div>
+                </div>
+                <button class="btn" id="btn-analyze">Analizar</button>
+                <div id="result" class="section"></div>
+            </div>
+        </div>
+
+        <canvas id="chart" style="max-width:100%;"></canvas>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://unpkg.com/meyda/dist/web/meyda.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/audio_detector.js"></script>
+</body>
+</html>

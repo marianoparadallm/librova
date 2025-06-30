@@ -750,6 +750,10 @@ async function renderizarPanelAdmin() {
             <h4>Notificaciones</h4>
             <div id="admin-lista-notificaciones">Cargando...</div>
         </div>
+        <div class="seccion-dashboard">
+            <h4>Herramientas</h4>
+            <button id="btn-admin-audio-detector" class="boton-accion-base gestionar">Detector de Audios</button>
+        </div>
         <button type="button" id="btn-volver-dashboard-desde-admin" class="boton-accion-base gestionar">Volver a Inicio</button>
     `;
     cambiarVista(vistaActual ? vistaActual.id : null, 'vista-admin-panel');
@@ -789,6 +793,8 @@ async function renderizarPanelAdmin() {
     }
 
     document.getElementById('btn-volver-dashboard-desde-admin').onclick = renderizarDashboard;
+    const btnAudioDetector = document.getElementById('btn-admin-audio-detector');
+    if (btnAudioDetector) btnAudioDetector.onclick = () => { window.location.href = 'audio_detector.html'; };
 }
 
 async function cargarDatosPanelAdmin() {
