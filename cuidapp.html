@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CuidApp</title>
+    <link rel="stylesheet" href="cuidapp.css">
+</head>
+<body>
+    <header>
+        <h1>CuidApp</h1>
+    </header>
+    <main id="view-container">
+        <section id="view-login" class="view active">
+            <h2>Ingresar</h2>
+            <input type="text" id="login-code" placeholder="Código del paciente">
+            <button id="btn-login">Ingresar</button>
+            <p>
+                o <a href="#" id="link-create">crear paciente</a>
+            </p>
+        </section>
+
+        <section id="view-create" class="view">
+            <h2>Registrar Paciente</h2>
+            <input type="text" id="pac-nombre" placeholder="Nombre completo">
+            <input type="text" id="pac-hospital" placeholder="Hospital">
+            <input type="text" id="pac-habitacion" placeholder="Piso/Habitación">
+            <input type="text" id="pac-visitas" placeholder="Horarios de visita">
+            <button id="btn-create">Guardar</button>
+            <button id="btn-cancel-create">Cancelar</button>
+        </section>
+
+        <section id="view-dashboard" class="view">
+            <h2 id="dash-nombre"></h2>
+            <div>
+                <button id="goto-turnos">Turnos</button>
+                <button id="goto-bitacora">Bitácora</button>
+                <button id="goto-info">Información</button>
+            </div>
+            <div id="cover-status"></div>
+            <button id="btn-logout">Salir</button>
+        </section>
+
+        <section id="view-turnos" class="view">
+            <h2>Grilla de Turnos</h2>
+            <table id="tabla-turnos"></table>
+            <button id="btn-volver-dash1">Volver</button>
+        </section>
+
+        <section id="view-bitacora" class="view">
+            <h2>Bitácora</h2>
+            <div id="lista-bitacora"></div>
+            <textarea id="bitacora-text" placeholder="Observación"></textarea>
+            <button id="btn-agregar-bitacora">Agregar</button>
+            <button id="btn-volver-dash2">Volver</button>
+        </section>
+
+        <section id="view-info" class="view">
+            <h2>Información</h2>
+            <div id="info-detalle"></div>
+            <button id="btn-volver-dash3">Volver</button>
+        </section>
+    </main>
+    <script src="cuidapp.js"></script>
+</body>
+</html>
