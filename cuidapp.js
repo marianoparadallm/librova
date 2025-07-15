@@ -7,79 +7,121 @@
         bitacora:document.getElementById('view-bitacora'),
         info:document.getElementById('view-info')
     };
-    let pacientes=JSON.parse(localStorage.getItem('cuidapp_pacientes')||'{}');
-    let current=null;
 
-    function save(){
-        localStorage.setItem('cuidapp_pacientes',JSON.stringify(pacientes));
-    }
+    const supabase = window.supabase.createClient(X_SUPABASE_URL, X_SUPABASE_ANON_KEY);
+    let current=null;
+    let turnosCache={};
+    let bitacoraCache=[];
+
     function show(v){
         Object.values(views).forEach(el=>el.classList.remove('active'));
         views[v].classList.add('active');
     }
 
-    document.getElementById('link-create').onclick=e=>{e.preventDefault();show('create');};
-    document.getElementById('btn-cancel-create').onclick=()=>show('login');
+    async function getPacientePorCodigo(code){
+        const { data, error } = await supabase
+            .from('cuidapp_accesos')
+            .select('paciente_id,cuidapp_pacientes:paciente_id(id,nombre,hospital_id,piso,habitacion,horario_visita)')
+            .eq('codigo_acceso', code)
+            .maybeSingle();
+        if(error||!data) return null;
+        const p=data.cuidapp_pacientes;
+        p.codigo=code;
+        return p;
+    }
 
-    document.getElementById('btn-create').onclick=()=>{
+    async function crearPaciente(){
         const nombre=document.getElementById('pac-nombre').value.trim();
         if(!nombre) return;
+        const hospital=document.getElementById('pac-hospital').value.trim();
+        const piso=document.getElementById('pac-habitacion').value.trim();
+        const horario=document.getElementById('pac-visitas').value.trim();
+        const { data:pac, error } = await supabase
+            .from('cuidapp_pacientes')
+            .insert({nombre,hospital_id:null,piso,habitacion:piso,horario_visita:horario})
+            .select()
+            .single();
+        if(error){ alert('Error al crear paciente'); return; }
         const code=Math.random().toString(36).substr(2,6);
-        pacientes[code]={
-            code,
-            nombre,
-            hospital:document.getElementById('pac-hospital').value.trim(),
-            habitacion:document.getElementById('pac-habitacion').value.trim(),
-            visitas:document.getElementById('pac-visitas').value.trim(),
-            turnos:{},
-            bitacora:[]
-        };
-        save();
+        await supabase.from('cuidapp_accesos').insert({paciente_id:pac.id,codigo_acceso:code});
         alert('Código generado: '+code);
         document.getElementById('login-code').value=code;
         show('login');
-    };
+    }
 
-    document.getElementById('btn-login').onclick=()=>{
-        const code=document.getElementById('login-code').value.trim();
-        if(!pacientes[code]){alert('Código no encontrado');return;}
-        current=pacientes[code];
-        document.getElementById('dash-nombre').textContent=current.nombre;
-        updateInfo();
-        show('dash');
-    };
+    async function cargarTurnos(){
+        turnosCache={};
+        const desde=new Date();
+        const hasta=new Date(desde);hasta.setDate(hasta.getDate()+6);
+        const { data } = await supabase
+            .from('cuidapp_turnos')
+            .select('id,fecha,franja,cuidapp_usuarios(nombre)')
+            .eq('paciente_id', current.id)
+            .gte('fecha', desde.toISOString().slice(0,10))
+            .lte('fecha', hasta.toISOString().slice(0,10));
+        (data||[]).forEach(t=>{
+            const key=t.fecha;
+            if(!turnosCache[key])turnosCache[key]={m:'',t:'',n:''};
+            const map={"mañana":"m","tarde":"t","noche":"n"};
+            const slot=map[t.franja];
+            if(slot)turnosCache[key][slot]=t.cuidapp_usuarios? t.cuidapp_usuarios.nombre : '';
+        });
+        renderTurnos();
+    }
 
-    document.getElementById('btn-logout').onclick=()=>{current=null;show('login');};
-    document.getElementById('goto-turnos').onclick=()=>{renderTurnos();show('turnos');};
-    document.getElementById('goto-bitacora').onclick=()=>{renderBitacora();show('bitacora');};
-    document.getElementById('goto-info').onclick=()=>{updateInfo();show('info');};
-    document.getElementById('btn-volver-dash1').onclick=document.getElementById('btn-volver-dash2').onclick=document.getElementById('btn-volver-dash3').onclick=()=>show('dash');
-
-    document.getElementById('btn-agregar-bitacora').onclick=()=>{
-        const txt=document.getElementById('bitacora-text').value.trim();
-        if(!txt)return;
-        current.bitacora.push({texto:txt,fecha:new Date().toLocaleString()});
-        document.getElementById('bitacora-text').value='';
-        save();
+    async function cargarBitacora(){
+        const { data }= await supabase
+            .from('cuidapp_bitacora')
+            .select('fecha_hora,texto')
+            .eq('paciente_id', current.id)
+            .order('fecha_hora',{ascending:false});
+        bitacoraCache=data||[];
         renderBitacora();
-    };
+    }
+
+    async function obtenerUsuarioId(nombre){
+        if(!nombre) return null;
+        let { data:user }=await supabase.from('cuidapp_usuarios').select('id').eq('nombre',nombre).maybeSingle();
+        if(!user){
+            const ins=await supabase.from('cuidapp_usuarios').insert({nombre}).select().single();
+            user=ins.data;
+        }
+        return user?user.id:null;
+    }
+
+    async function actualizarTurno(fecha,slot,nombre){
+        const franjaMap={m:'mañana',t:'tarde',n:'noche'};
+        const franja=franjaMap[slot];
+        if(!franja) return;
+        const { data:ex }=await supabase.from('cuidapp_turnos')
+            .select('id')
+            .eq('paciente_id',current.id)
+            .eq('fecha',fecha)
+            .eq('franja',franja)
+            .maybeSingle();
+        if(nombre){
+            const uid=await obtenerUsuarioId(nombre);
+            if(ex) await supabase.from('cuidapp_turnos').update({usuario_id:uid}).eq('id',ex.id);
+            else await supabase.from('cuidapp_turnos').insert({paciente_id:current.id,usuario_id:uid,fecha,franja});
+        }else if(ex){
+            await supabase.from('cuidapp_turnos').delete().eq('id',ex.id);
+        }
+        await cargarTurnos();
+    }
+
+    async function agregarBitacora(txt){
+        await supabase.from('cuidapp_bitacora').insert({paciente_id:current.id,texto:txt});
+        await cargarBitacora();
+    }
 
     function renderBitacora(){
         const div=document.getElementById('lista-bitacora');
         div.innerHTML='';
-        current.bitacora.forEach(b=>{
+        bitacoraCache.forEach(b=>{
             const p=document.createElement('p');
-            p.textContent=`[${b.fecha}] ${b.texto}`;
+            p.textContent=`[${new Date(b.fecha_hora).toLocaleString()}] ${b.texto}`;
             div.appendChild(p);
         });
-    }
-
-    function updateInfo(){
-        const info=document.getElementById('info-detalle');
-        info.innerHTML=`<p><strong>Hospital:</strong> ${current.hospital}</p>`+
-            `<p><strong>Habitación:</strong> ${current.habitacion}</p>`+
-            `<p><strong>Visitas:</strong> ${current.visitas}</p>`;
-        updateCoverStatus();
     }
 
     function renderTurnos(){
@@ -92,34 +134,68 @@
         for(let i=0;i<7;i++){
             const d=new Date(now);d.setDate(now.getDate()+i);
             const key=d.toISOString().slice(0,10);
-            if(!current.turnos[key])current.turnos[key]={m:'',t:'',n:''};
+            if(!turnosCache[key])turnosCache[key]={m:'',t:'',n:''};
             const row=document.createElement('tr');
             row.innerHTML=`<td>${key}</td>`+
-            `<td data-slot="m">${current.turnos[key].m}</td>`+
-            `<td data-slot="t">${current.turnos[key].t}</td>`+
-            `<td data-slot="n">${current.turnos[key].n}</td>`;
+            `<td data-slot="m">${turnosCache[key].m}</td>`+
+            `<td data-slot="t">${turnosCache[key].t}</td>`+
+            `<td data-slot="n">${turnosCache[key].n}</td>`;
             row.querySelectorAll('td[data-slot]').forEach(td=>{
-                td.onclick=()=>{
+                td.onclick=async()=>{
                     const slot=td.getAttribute('data-slot');
-                    const name=current.turnos[key][slot];
+                    const name=turnosCache[key][slot];
                     const nuevo=prompt('Nombre del cuidador (vacío para liberar)',name);
                     if(nuevo===null)return;
-                    current.turnos[key][slot]=nuevo.trim();
-                    td.textContent=current.turnos[key][slot];
-                    save();
-                    updateCoverStatus();
+                    await actualizarTurno(key,slot,nuevo.trim());
                 };
             });
             table.appendChild(row);
         }
+        updateCoverStatus();
+    }
+
+    function updateInfo(){
+        const info=document.getElementById('info-detalle');
+        info.innerHTML=`<p><strong>Habitación:</strong> ${current.habitacion||''}</p>`+
+            `<p><strong>Visitas:</strong> ${current.horario_visita||''}</p>`;
+        updateCoverStatus();
     }
 
     function updateCoverStatus(){
         let total=0,ocupados=0;
-        for(const d of Object.values(current.turnos)){
+        for(const d of Object.values(turnosCache)){
             ['m','t','n'].forEach(s=>{total++;if(d[s])ocupados++;});
         }
         const perc=total?Math.round(ocupados*100/total):0;
         document.getElementById('cover-status').textContent=`Cobertura: ${perc}%`;
     }
+
+    document.getElementById('link-create').onclick=e=>{e.preventDefault();show('create');};
+    document.getElementById('btn-cancel-create').onclick=()=>show('login');
+    document.getElementById('btn-create').onclick=crearPaciente;
+
+    document.getElementById('btn-login').onclick=async()=>{
+        const code=document.getElementById('login-code').value.trim();
+        const pac=await getPacientePorCodigo(code);
+        if(!pac){alert('Código no encontrado');return;}
+        current=pac;
+        document.getElementById('dash-nombre').textContent=current.nombre;
+        show('dash');
+        await cargarTurnos();
+        await cargarBitacora();
+        updateInfo();
+    };
+
+    document.getElementById('btn-logout').onclick=()=>{current=null;show('login');};
+    document.getElementById('goto-turnos').onclick=()=>{renderTurnos();show('turnos');};
+    document.getElementById('goto-bitacora').onclick=()=>{renderBitacora();show('bitacora');};
+    document.getElementById('goto-info').onclick=()=>{updateInfo();show('info');};
+    document.getElementById('btn-volver-dash1').onclick=document.getElementById('btn-volver-dash2').onclick=document.getElementById('btn-volver-dash3').onclick=()=>show('dash');
+
+    document.getElementById('btn-agregar-bitacora').onclick=async()=>{
+        const txt=document.getElementById('bitacora-text').value.trim();
+        if(!txt)return;
+        document.getElementById('bitacora-text').value='';
+        await agregarBitacora(txt);
+    };
 })();
