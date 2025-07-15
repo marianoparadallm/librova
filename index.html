@@ -3,59 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LibroVa</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Inicio</title>
+    <link rel="stylesheet" href="launcher.css">
 </head>
 <body>
-    <video id="background-video" autoplay muted loop>
-        <source src="fondo.mp4" type="video/mp4">
-    </video>
-    <header>
-        <div id="logo-container">
-            <img src="header.png" alt="LibroVa Logo" id="logo-img">
-        </div>
-        <nav id="menu-principal"></nav>
-        <div id="header-actions">
-            <button id="hamburger-btn" aria-label="Menú">&#9776;</button>
-            <button id="btn-notificaciones" aria-label="Notificaciones">🔔</button>
-        </div>
-        <div id="popup-notificaciones" class="popup-notificaciones"></div>
-    </header>
-    <div id="popup-mensaje" class="popup-mensaje"></div>
-
-    <main id="contenedor-principal">
-        <p id="parrafo-carga-inicial" style="text-align: center; padding: 20px;">Cargando LibroVa...</p>
+    <main class="launcher">
+        <a href="librova.html" class="app-tile">
+            <img src="header.png" alt="LibroVa">
+            <span>LibroVa</span>
+        </a>
+        <a href="#" class="app-tile disabled">
+            <div class="placeholder"></div>
+            <span>Próximamente</span>
+        </a>
     </main>
-
-    <footer>
-        <p>&copy; 2025 LibroVa - Desarrollado por MP</p>
-    </footer>
-
-    <!-- Modular JS files replace the old app.js, which has been removed -->
-    <script src="js/supabase.js"></script> 
-    <script src="js/config.js"></script>
-    <script src="js/globals.js"></script>
-    <script src="js/ui_navigation.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/libros_ops.js"></script>
-    <script src="js/libros_ui.js"></script>
-    <script src="js/admin_ops.js"></script>
-    <script src="js/notificaciones.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
-
-    <!-- PDF.js desde CDN oficial -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.8.162/pdf.min.js"></script>
-    <script>
-        if (window.pdfjsLib) {
-            window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-                'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.8.162/pdf.worker.min.js';
-        }
-    </script>
-
-    <script src="js/ui_render_views.js"></script>
-    <script src="js/main.js"></script>
-
 </body>
 </html>
-

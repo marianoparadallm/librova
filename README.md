@@ -1,5 +1,7 @@
 # LibroVa
 
+El inicio del sitio actúa como lanzador de aplicaciones. Selecciona **LibroVa** para entrar en la aplicación principal.
+
 
 LibroVa es una sencilla aplicación web pensada para que estudiantes compartan y piden prestados libros entre compañeros. Utiliza **Supabase** como plataforma backend para el manejo de usuarios y del catálogo de libros.
 
@@ -23,13 +25,13 @@ El campo `propietario_avatar` también dejó de existir porque el avatar se lee 
 
 ## Ejecución local
 
-Puedes abrir `index.html` directamente en tu navegador para una prueba rápida. Si prefieres servir los archivos mediante un pequeño servidor local (por ejemplo para evitar restricciones de algunos navegadores), desde esta carpeta puedes lanzar:
+Puedes abrir `librova.html` directamente en tu navegador para una prueba rápida. Si prefieres servir los archivos mediante un pequeño servidor local (por ejemplo para evitar restricciones de algunos navegadores), desde esta carpeta puedes lanzar:
 
 ```bash
 python3 -m http.server
 ```
 
-Luego visita `http://localhost:8000/index.html`.
+Luego visita `http://localhost:8000/librova.html`.
 
 ## Lectura de libros digitales
 
@@ -39,7 +41,7 @@ Los archivos EPUB se muestran directamente en la página gracias a [epub.js](htt
 
 La página principal muestra el video `fondo.mp4` como fondo animado. Puedes
 reemplazar el archivo por otro video o eliminar el elemento
-`<video id="background-video">` en `index.html` si prefieres solo la imagen de
+`<video id="background-video">` en `librova.html` si prefieres solo la imagen de
 fondo estática `fondo.jpg`.
 
 ## Credenciales de Supabase
