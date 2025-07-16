@@ -9,6 +9,7 @@ header{
     background:#fff;
     color:#000;
     padding:12px;
+
     text-align:left;
     box-shadow:0 2px 4px rgba(0,0,0,0.1);
     display:flex;
@@ -16,6 +17,7 @@ header{
 }
 header img{
     height:80px;
+
 }
 .view{ display:none; padding:20px; max-width:600px; margin:0 auto; }
 .view.active{ display:block; }
