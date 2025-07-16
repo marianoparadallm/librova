@@ -25,7 +25,7 @@
     }
 
     let nombreCuidador = obtenerNombreCuidador();
-    if(spanNombre) spanNombre.textContent = nombreCuidador ? `Cuidador: ${nombreCuidador}` : '';
+    if(spanNombre) spanNombre.textContent = nombreCuidador ? `Bienvenido ${nombreCuidador}` : '';
 
     async function cargarListaPacientes(){
         const sel=document.getElementById('login-select');
@@ -69,7 +69,7 @@
         const horario=document.getElementById('pac-visitas').value.trim();
         const { data:pac, error } = await supabase
             .from('cuidapp_pacientes')
-            .insert({nombre,hospital_id:null,piso,habitacion:piso,horario_visita:horario})
+            .insert({nombre,hospital_id:hospital||null,piso,habitacion:piso,horario_visita:horario})
             .select()
             .single();
         if(error){ alert('Error al crear paciente'); return; }
@@ -158,8 +158,20 @@
     }
 
     function renderTurnos(){
-        document.getElementById('turnos-nombre').textContent=current?current.nombre:'';
-        document.getElementById('turnos-ubicacion').textContent=current&&current.habitacion?`Habitación: ${current.habitacion}`:'';
+        if(current){
+            document.getElementById('turnos-nombre').textContent = `🤒 ${current.nombre}`;
+            const hosp = current.hospital_id ? `🏥 ${current.hospital_id}` : '';
+            const info = current.piso || current.habitacion || current.horario_visita ?
+                `🏢 ${current.piso||current.habitacion||''} (${current.horario_visita||''})` : '';
+            const hospEl = document.getElementById('turnos-hospital');
+            if(hospEl) hospEl.textContent = hosp;
+            document.getElementById('turnos-ubicacion').textContent = info;
+        }else{
+            document.getElementById('turnos-nombre').textContent='';
+            const hospEl = document.getElementById('turnos-hospital');
+            if(hospEl) hospEl.textContent='';
+            document.getElementById('turnos-ubicacion').textContent='';
+        }
 
         const table=document.getElementById('tabla-turnos');
         table.innerHTML='';
@@ -198,8 +210,9 @@
 
     function updateInfo(){
         const info=document.getElementById('info-detalle');
-        info.innerHTML=`<p><strong>Habitación:</strong> ${current.habitacion||''}</p>`+
-            `<p><strong>Visitas:</strong> ${current.horario_visita||''}</p>`;
+        const hosp = current && current.hospital_id ? `🏥 ${current.hospital_id}` : '';
+        const ubic = current ? `🏢 ${current.piso||current.habitacion||''} (${current.horario_visita||''})` : '';
+        info.innerHTML=`<p>${hosp}</p><p>${ubic}</p>`;
         updateCoverStatus();
     }
 
