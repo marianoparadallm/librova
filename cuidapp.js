@@ -13,6 +13,23 @@
     let turnosCache={};
     let bitacoraCache=[];
 
+    async function cargarListaPacientes(){
+        const sel=document.getElementById('login-select');
+        if(!sel) return;
+        sel.innerHTML='<option value="">Seleccione paciente...</option>';
+        const { data, error }=await supabase
+            .from('cuidapp_accesos')
+            .select('codigo_acceso,cuidapp_pacientes(nombre)')
+            .order('cuidapp_pacientes(nombre)');
+        if(error) return;
+        (data||[]).forEach(p=>{
+            const opt=document.createElement('option');
+            opt.value=p.codigo_acceso;
+            opt.textContent=p.cuidapp_pacientes?.nombre||p.codigo_acceso;
+            sel.appendChild(opt);
+        });
+    }
+
     function show(v){
         Object.values(views).forEach(el=>el.classList.remove('active'));
         views[v].classList.add('active');
@@ -47,6 +64,7 @@
         alert('Código generado: '+code);
         document.getElementById('login-code').value=code;
         show('login');
+        await cargarListaPacientes();
     }
 
     async function cargarTurnos(){
@@ -175,7 +193,8 @@
     document.getElementById('btn-create').onclick=crearPaciente;
 
     document.getElementById('btn-login').onclick=async()=>{
-        const code=document.getElementById('login-code').value.trim();
+        const sel=document.getElementById('login-select');
+        const code=(sel && sel.value) || document.getElementById('login-code').value.trim();
         const pac=await getPacientePorCodigo(code);
         if(!pac){alert('Código no encontrado');return;}
         current=pac;
@@ -198,4 +217,10 @@
         document.getElementById('bitacora-text').value='';
         await agregarBitacora(txt);
     };
+
+    const sel=document.getElementById('login-select');
+    if(sel){
+        sel.onchange=()=>{ document.getElementById('login-code').value=sel.value; };
+    }
+    cargarListaPacientes();
 })();
