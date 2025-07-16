@@ -25,6 +25,10 @@ header{
     display:flex;
     align-items:center;
 }
+#cuidador-display {
+    margin-left:auto;
+    font-weight:bold;
+}
 header img{
     height:80px;
 

@@ -11,12 +11,21 @@
     let current=null;
     let turnosCache={};
     let bitacoraCache=[];
-    let nombreCuidador = localStorage.getItem('cuidadorNombre') || '';
-    if(!nombreCuidador){
-        nombreCuidador = prompt('¿Cuál es tu nombre?') || '';
-        nombreCuidador = nombreCuidador.trim();
-        if(nombreCuidador) localStorage.setItem('cuidadorNombre', nombreCuidador);
+
+    const spanNombre = document.getElementById('cuidador-display');
+
+    function obtenerNombreCuidador(){
+        let nc = localStorage.getItem('cuidadorNombre') || '';
+        if(!nc){
+            nc = prompt('¿Cuál es tu nombre?') || '';
+            nc = nc.trim();
+            if(nc) localStorage.setItem('cuidadorNombre', nc);
+        }
+        return nc;
     }
+
+    let nombreCuidador = obtenerNombreCuidador();
+    if(spanNombre) spanNombre.textContent = nombreCuidador ? `Cuidador: ${nombreCuidador}` : '';
 
     async function cargarListaPacientes(){
         const sel=document.getElementById('login-select');
