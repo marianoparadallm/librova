@@ -11,6 +11,12 @@
     let current=null;
     let turnosCache={};
     let bitacoraCache=[];
+    let nombreCuidador = localStorage.getItem('cuidadorNombre') || '';
+    if(!nombreCuidador){
+        nombreCuidador = prompt('¿Cuál es tu nombre?') || '';
+        nombreCuidador = nombreCuidador.trim();
+        if(nombreCuidador) localStorage.setItem('cuidadorNombre', nombreCuidador);
+    }
 
     async function cargarListaPacientes(){
         const sel=document.getElementById('login-select');
@@ -88,7 +94,7 @@
     async function cargarBitacora(){
         const { data }= await supabase
             .from('cuidapp_bitacora')
-            .select('fecha_hora,texto')
+            .select('fecha_hora,texto,cuidapp_usuarios(nombre)')
             .eq('paciente_id', current.id)
             .order('fecha_hora',{ascending:false});
         bitacoraCache=data||[];
@@ -126,7 +132,8 @@
     }
 
     async function agregarBitacora(txt){
-        await supabase.from('cuidapp_bitacora').insert({paciente_id:current.id,texto:txt});
+        const uid = await obtenerUsuarioId(nombreCuidador);
+        await supabase.from('cuidapp_bitacora').insert({paciente_id:current.id,usuario_id:uid,texto:txt});
         await cargarBitacora();
     }
 
@@ -135,7 +142,8 @@
         div.innerHTML='';
         bitacoraCache.forEach(b=>{
             const p=document.createElement('p');
-            p.textContent=`[${new Date(b.fecha_hora).toLocaleString()}] ${b.texto}`;
+            const autor = b.cuidapp_usuarios ? b.cuidapp_usuarios.nombre : '';
+            p.textContent = `[${new Date(b.fecha_hora).toLocaleString()}] ${autor ? autor+': ' : ''}${b.texto}`;
             div.appendChild(p);
         });
     }
@@ -165,9 +173,13 @@
                 else td.classList.remove('libre');
                 td.onclick=async()=>{
                     const name=turnosCache[key][slot];
-                    const nuevo=prompt('Nombre del cuidador (vacío para liberar)',name);
-                    if(nuevo===null)return;
-                    await actualizarTurno(key,slot,nuevo.trim());
+                    if(!name && nombreCuidador){
+                        await actualizarTurno(key,slot,nombreCuidador);
+                    }else{
+                        const nuevo=prompt('Nombre del cuidador (vacío para liberar)', name || nombreCuidador || '');
+                        if(nuevo===null)return;
+                        await actualizarTurno(key,slot,nuevo.trim());
+                    }
                 };
             });
             table.appendChild(row);
