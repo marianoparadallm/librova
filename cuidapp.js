@@ -143,7 +143,7 @@
         bitacoraCache.forEach(b=>{
             const p=document.createElement('p');
             const autor = b.cuidapp_usuarios ? b.cuidapp_usuarios.nombre : '';
-            p.textContent = `[${new Date(b.fecha_hora).toLocaleString()}] ${autor ? autor+': ' : ''}${b.texto}`;
+            p.textContent = `[${new Date(b.fecha_hora).toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' })}] ${autor ? autor+': ' : ''}${b.texto}`;
             div.appendChild(p);
         });
     }
