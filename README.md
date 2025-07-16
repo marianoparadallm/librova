@@ -39,10 +39,7 @@ Los archivos EPUB se muestran directamente en la página gracias a [epub.js](htt
 
 ## Video de fondo
 
-La página principal muestra el video `fondo.mp4` como fondo animado. Puedes
-reemplazar el archivo por otro video o eliminar el elemento
-`<video id="background-video">` en `librova.html` si prefieres solo la imagen de
-fondo estática `fondo.jpg`.
+La página de inicio (`index.html`) utiliza el video `fondo.mp4` como fondo animado. Las demás páginas muestran la imagen estática `fondo.jpg` con el logo centrado en la cabecera.
 
 ## Credenciales de Supabase
 
