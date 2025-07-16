@@ -4,7 +4,6 @@
         create:document.getElementById('view-create'),
         dash:document.getElementById('view-dashboard'),
         turnos:document.getElementById('view-turnos'),
-        bitacora:document.getElementById('view-bitacora'),
         info:document.getElementById('view-info')
     };
 
@@ -62,7 +61,6 @@
         const code=Math.random().toString(36).substr(2,6);
         await supabase.from('cuidapp_accesos').insert({paciente_id:pac.id,codigo_acceso:code});
         alert('Código generado: '+code);
-        document.getElementById('login-code').value=code;
         show('login');
         await cargarListaPacientes();
     }
@@ -199,7 +197,7 @@
 
     document.getElementById('btn-login').onclick=async()=>{
         const sel=document.getElementById('login-select');
-        const code=(sel && sel.value) || document.getElementById('login-code').value.trim();
+        const code= sel ? sel.value : '';
         const pac=await getPacientePorCodigo(code);
         if(!pac){alert('Código no encontrado');return;}
         current=pac;
@@ -211,10 +209,9 @@
     };
 
     document.getElementById('btn-logout').onclick=()=>{current=null;show('login');};
-    document.getElementById('goto-turnos').onclick=()=>{renderTurnos();show('turnos');};
-    document.getElementById('goto-bitacora').onclick=()=>{renderBitacora();show('bitacora');};
+    document.getElementById('goto-turnos').onclick=()=>{renderTurnos();renderBitacora();show('turnos');};
     document.getElementById('goto-info').onclick=()=>{updateInfo();show('info');};
-    document.getElementById('btn-volver-dash1').onclick=document.getElementById('btn-volver-dash2').onclick=document.getElementById('btn-volver-dash3').onclick=()=>show('dash');
+    document.getElementById('btn-volver-dash1').onclick=document.getElementById('btn-volver-dash3').onclick=()=>show('dash');
 
     document.getElementById('btn-agregar-bitacora').onclick=async()=>{
         const txt=document.getElementById('bitacora-text').value.trim();
@@ -223,9 +220,5 @@
         await agregarBitacora(txt);
     };
 
-    const sel=document.getElementById('login-select');
-    if(sel){
-        sel.onchange=()=>{ document.getElementById('login-code').value=sel.value; };
-    }
     cargarListaPacientes();
 })();
