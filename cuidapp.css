@@ -13,7 +13,7 @@ header{
 }
 .view{ display:none; padding:20px; max-width:600px; margin:0 auto; }
 .view.active{ display:block; }
-input,textarea,button{
+input,textarea,button,select{
     display:block;
     margin:10px 0;
     padding:8px;
