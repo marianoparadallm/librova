@@ -30,24 +30,37 @@ header {
     padding: 10px 20px;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     position: sticky;
     top: 0;
     z-index: 1000;
     min-height: 60px;
     box-sizing: border-box;
     flex-shrink: 0;
+    position: relative;
 }
 
 #header-actions {
     display: flex;
     align-items: center;
-    margin-left: auto;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
-#logo-container {}
-#logo-img { height: 45px; width: auto; display: block; }
-nav#menu-principal { text-align: right; position: relative; }
+#logo-container {
+    text-align: center;
+    width: 100%;
+}
+#logo-img { height: 80px; width: auto; display: inline-block; }
+nav#menu-principal {
+    text-align: right;
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
 nav#menu-principal button, nav#menu-principal span,
 #btn-notificaciones {
     margin: 5px 0 5px 10px;
@@ -408,6 +421,7 @@ form button[type="button"]:hover {
         flex-direction: column;
         position: absolute;
         right: 20px;
+        left: auto;
         top: 60px;
         background: rgba(45, 55, 72, 0.95);
         padding: 10px;
