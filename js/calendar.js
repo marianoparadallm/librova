@@ -13,6 +13,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     locale: 'es',
     selectable: true,
     editable: true,
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    },
+    dayHeaderFormat: { weekday: 'long', day: 'numeric', month: 'numeric' },
     select: async (info) => {
       const title = prompt('Título del evento:');
       if (title && supabaseCalendarClient) {
