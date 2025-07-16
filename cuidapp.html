@@ -14,7 +14,6 @@
         <section id="view-login" class="view active">
             <h2>Ingresar</h2>
             <select id="login-select"></select>
-            <input type="text" id="login-code" placeholder="Código del paciente">
             <button id="btn-login">Ingresar</button>
             <p>
                 o <a href="#" id="link-create">crear paciente</a>
@@ -35,7 +34,6 @@
             <h2 id="dash-nombre"></h2>
             <div>
                 <button id="goto-turnos">Turnos</button>
-                <button id="goto-bitacora">Bitácora</button>
                 <button id="goto-info">Información</button>
             </div>
             <div id="cover-status"></div>
@@ -47,15 +45,13 @@
             <p id="turnos-ubicacion"></p>
             <h3>Grilla de Turnos</h3>
             <table id="tabla-turnos"></table>
-            <button id="btn-volver-dash1">Volver</button>
-        </section>
 
-        <section id="view-bitacora" class="view">
-            <h2>Bitácora</h2>
+            <h3>Bitácora</h3>
             <div id="lista-bitacora"></div>
             <textarea id="bitacora-text" placeholder="Observación"></textarea>
             <button id="btn-agregar-bitacora">Agregar</button>
-            <button id="btn-volver-dash2">Volver</button>
+
+            <button id="btn-volver-dash1">Volver</button>
         </section>
 
         <section id="view-info" class="view">
