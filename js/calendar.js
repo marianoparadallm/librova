@@ -9,16 +9,30 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   const calendarEl = document.getElementById('calendar');
   const calendar = new FullCalendar.Calendar(calendarEl, {
+    plugins: [ 'interaction', 'dayGrid', 'timeGrid' ],
     initialView: 'timeGridWeek',
     locale: 'es',
     selectable: true,
     editable: true,
+
+    navLinks: true,
+
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
       right: 'dayGridMonth,timeGridWeek,timeGridDay'
     },
-    dayHeaderFormat: { weekday: 'long', day: 'numeric', month: 'numeric' },
+
+    dayHeaderContent: (arg) => {
+      const formatted = new Intl.DateTimeFormat('es', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'numeric'
+      }).format(arg.date);
+      const clean = formatted.replace(',', '');
+      return { html: clean.charAt(0).toUpperCase() + clean.slice(1) };
+    },
+
     select: async (info) => {
       const title = prompt('Título del evento:');
       if (title && supabaseCalendarClient) {
