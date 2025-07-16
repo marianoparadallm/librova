@@ -203,13 +203,12 @@
         document.getElementById('cover-status').textContent=`Cobertura: ${perc}%`;
     }
 
-    document.getElementById('link-create').onclick=e=>{e.preventDefault();show('create');};
+    const selLogin=document.getElementById('login-select');
+    document.getElementById('btn-show-create').onclick=()=>show('create');
     document.getElementById('btn-cancel-create').onclick=()=>show('login');
     document.getElementById('btn-create').onclick=crearPaciente;
 
-    document.getElementById('btn-login').onclick=async()=>{
-        const sel=document.getElementById('login-select');
-        const code= sel ? sel.value : '';
+    async function loginPorCodigo(code){
         const pac=await getPacientePorCodigo(code);
         if(!pac){alert('Código no encontrado');return;}
         current=pac;
@@ -218,6 +217,11 @@
         await cargarBitacora();
         updateInfo();
         show('turnos');
+    }
+
+    selLogin.onchange=async()=>{
+        const code=selLogin.value;
+        if(code) await loginPorCodigo(code);
     };
 
     document.getElementById('btn-logout').onclick=()=>{current=null;show('login');};
