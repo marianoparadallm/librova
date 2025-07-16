@@ -143,6 +143,9 @@
     }
 
     function renderTurnos(){
+        document.getElementById('turnos-nombre').textContent=current?current.nombre:'';
+        document.getElementById('turnos-ubicacion').textContent=current&&current.habitacion?`Habitación: ${current.habitacion}`:'';
+
         const table=document.getElementById('tabla-turnos');
         table.innerHTML='';
         const now=new Date();
@@ -159,8 +162,10 @@
             `<td data-slot="t">${turnosCache[key].t}</td>`+
             `<td data-slot="n">${turnosCache[key].n}</td>`;
             row.querySelectorAll('td[data-slot]').forEach(td=>{
+                const slot=td.getAttribute('data-slot');
+                if(!turnosCache[key][slot]) td.classList.add('libre');
+                else td.classList.remove('libre');
                 td.onclick=async()=>{
-                    const slot=td.getAttribute('data-slot');
                     const name=turnosCache[key][slot];
                     const nuevo=prompt('Nombre del cuidador (vacío para liberar)',name);
                     if(nuevo===null)return;
@@ -199,10 +204,10 @@
         if(!pac){alert('Código no encontrado');return;}
         current=pac;
         document.getElementById('dash-nombre').textContent=current.nombre;
-        show('dash');
         await cargarTurnos();
         await cargarBitacora();
         updateInfo();
+        show('turnos');
     };
 
     document.getElementById('btn-logout').onclick=()=>{current=null;show('login');};
