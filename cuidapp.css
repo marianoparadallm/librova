@@ -26,3 +26,5 @@ th{ background:#f6f8f9; }
 tr:nth-child(even) td{ background:#fafafa; }
 button{ background:#1a73e8; color:white; border:none; cursor:pointer; border-radius:4px; }
 button:hover{ background:#1765c1; }
+
+td.libre{ background:rgba(255,0,0,0.3); }
