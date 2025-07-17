@@ -13,9 +13,11 @@ body.landing header{
 #view-landing{
     display:none;
     flex-direction:column;
-    justify-content:center;
+    justify-content:flex-start;
     align-items:center;
     height:100vh;
+    text-align:center;
+    padding-top:5vh;
 }
 body.landing #view-landing{
     display:flex;
@@ -23,8 +25,16 @@ body.landing #view-landing{
 
 #landing-logo{
     width:80%;
-
+    margin-bottom:20px;
     animation:heartbeat 1.5s infinite;
+}
+
+#welcome-message{
+    max-width:90%;
+    margin:20px auto;
+    line-height:1.4;
+    text-align:justify;
+    text-justify:inter-word;
 }
 
 #btn-ingresar{
