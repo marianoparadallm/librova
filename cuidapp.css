@@ -20,6 +20,7 @@ body.landing header{
 
 #landing-logo{
     width:80%;
+
     animation:heartbeat 1.5s infinite;
 }
 
