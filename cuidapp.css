@@ -32,7 +32,9 @@ header{
     font-weight:bold;
 }
 #cuidador-display {
-    margin-right:4px;
+    margin-bottom:8px;
+    font-weight:bold;
+    text-align:left;
 }
 #btn-cerrar-sesion {
 
@@ -40,6 +42,7 @@ header{
     border:none;
     cursor:pointer;
     font-size:1.2em;
+    color:#000;
 }
 #btn-cerrar-sesion:hover {
     transform:scale(1.1);
