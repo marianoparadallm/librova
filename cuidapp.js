@@ -110,8 +110,8 @@
             .lte('fecha', hasta.toISOString().slice(0,10));
         (data||[]).forEach(t=>{
             const key=t.fecha;
-            if(!turnosCache[key])turnosCache[key]={m:'',t:'',n:''};
-            const map={"mañana":"m","tarde":"t","noche":"n"};
+            if(!turnosCache[key])turnosCache[key]={m:'',d:'',t:'',n:''};
+            const map={"mañana":"m","mediodía":"d","tarde":"t","noche":"n"};
             const slot=map[t.franja];
             if(slot)turnosCache[key][slot]=t.cuidapp_usuarios? t.cuidapp_usuarios.nombre : '';
         });
@@ -139,7 +139,7 @@
     }
 
     async function actualizarTurno(fecha,slot,nombre){
-        const franjaMap={m:'mañana',t:'tarde',n:'noche'};
+        const franjaMap={m:'mañana',d:'mediodía',t:'tarde',n:'noche'};
         const franja=franjaMap[slot];
         if(!franja) return;
         const { data:ex }=await supabase.from('cuidapp_turnos')
@@ -260,17 +260,18 @@
         table.innerHTML='';
         const now=new Date();
         const header=document.createElement('tr');
-        header.innerHTML='<th>Día</th><th>Mañana</th><th>Tarde</th><th>Noche</th>';
+        header.innerHTML='<th>Día</th><th>Mañana</th><th>Mediodía</th><th>Tarde</th><th>Noche</th>';
         table.appendChild(header);
         for(let i=0;i<7;i++){
             const d=new Date(now);d.setDate(now.getDate()+i);
             const key=d.toISOString().slice(0,10);
-            if(!turnosCache[key])turnosCache[key]={m:'',t:'',n:''};
+            if(!turnosCache[key])turnosCache[key]={m:'',d:'',t:'',n:''};
             const diaSemana=new Intl.DateTimeFormat('es', {weekday:'long'}).format(d);
             const display=diaSemana.charAt(0).toUpperCase()+diaSemana.slice(1)+` ${d.getDate()}/${d.getMonth()+1}`;
             const row=document.createElement('tr');
             row.innerHTML=`<td>${display}</td>`+
             `<td data-slot="m">${turnosCache[key].m}</td>`+
+            `<td data-slot="d">${turnosCache[key].d}</td>`+
             `<td data-slot="t">${turnosCache[key].t}</td>`+
             `<td data-slot="n">${turnosCache[key].n}</td>`;
             row.querySelectorAll('td[data-slot]').forEach(td=>{
