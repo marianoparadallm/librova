@@ -44,6 +44,7 @@ header{
     border:none;
     cursor:pointer;
     font-size:1.2em;
+    color:#000;
 }
 #btn-cerrar-sesion:hover {
     transform:scale(1.1);
