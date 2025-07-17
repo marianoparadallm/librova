@@ -6,6 +6,34 @@ body{
     background:#f1f3f4;
 }
 
+body.landing header{
+    display:none;
+}
+
+#view-landing{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+#landing-logo{
+    width:80%;
+    animation:heartbeat 1.5s infinite;
+}
+
+#btn-ingresar{
+    width:auto;
+    padding:10px 20px;
+    margin-top:20px;
+}
+
+@keyframes heartbeat{
+    0%,40%,80%,100%{transform:scale(1);}
+    20%,60%{transform:scale(1.2);}
+}
+
 #background-video {
     position: fixed;
     top: 0;
