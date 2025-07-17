@@ -6,7 +6,7 @@
     <title>CuidApp</title>
     <link rel="stylesheet" href="cuidapp.css">
 </head>
-<body>
+<body class="landing">
     <header>
         <img src="header_cuidar.png" alt="CuidApp" id="logo-cuidapp">
 
@@ -18,7 +18,11 @@
 
     </header>
     <main id="view-container">
-        <section id="view-login" class="view active">
+        <section id="view-landing" class="view active">
+            <img src="header_cuidar.png" alt="CuidApp" id="landing-logo">
+            <button id="btn-ingresar">Ingresar</button>
+        </section>
+        <section id="view-login" class="view">
             <p id="cuidador-display"></p>
             <h2>Seleccione paciente</h2>
             <select id="login-select"></select>
