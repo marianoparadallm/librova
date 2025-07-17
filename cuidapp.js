@@ -4,7 +4,7 @@
         create:document.getElementById('view-create'),
         dash:document.getElementById('view-dashboard'),
         turnos:document.getElementById('view-turnos'),
-        rootLogin:document.getElementById('view-root-login'),
+
         admin:document.getElementById('view-admin')
     };
 
@@ -12,7 +12,7 @@
     let current=null;
     let turnosCache={};
     let bitacoraCache=[];
-    let isRoot=false;
+
     let pacientesAdminCache=[];
 
     const spanNombre = document.getElementById('cuidador-display');
@@ -29,7 +29,13 @@
     }
 
     let nombreCuidador = obtenerNombreCuidador();
-    if(spanNombre) spanNombre.textContent = nombreCuidador ? `👋 Bienvenido ${nombreCuidador}` : '';
+
+    if(spanNombre) spanNombre.textContent = nombreCuidador ? `Bienvenido ${nombreCuidador}` : '';
+    if(nombreCuidador.toLowerCase() === 'root'){
+        listarPacientesAdmin();
+        show('admin');
+    }
+
 
     function cerrarSesion(){
         localStorage.removeItem('cuidadorNombre');
@@ -230,17 +236,7 @@
         }
     }
 
-    function loginRoot(){
-        const u=document.getElementById('root-user').value.trim();
-        const p=document.getElementById('root-pass').value.trim();
-        if(u==='root' && p==='root'){
-            isRoot=true;
-            listarPacientesAdmin();
-            show('admin');
-        }else{
-            alert('Credenciales inválidas');
-        }
-    }
+
 
     function renderTurnos(){
         if(current){
@@ -326,9 +322,7 @@
         await agregarBitacora(txt);
     };
 
-    document.getElementById('btn-root').onclick=()=>show('rootLogin');
-    document.getElementById('btn-root-cancel').onclick=()=>show('login');
-    document.getElementById('btn-root-login').onclick=loginRoot;
+
     document.getElementById('btn-admin-volver').onclick=()=>show('login');
 
     cargarListaPacientes();
