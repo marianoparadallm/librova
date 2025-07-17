@@ -3,13 +3,15 @@
         login:document.getElementById('view-login'),
         create:document.getElementById('view-create'),
         dash:document.getElementById('view-dashboard'),
-        turnos:document.getElementById('view-turnos')
+        turnos:document.getElementById('view-turnos'),
+        admin:document.getElementById('view-admin')
     };
 
     const supabase = window.supabase.createClient(X_SUPABASE_URL, X_SUPABASE_ANON_KEY);
     let current=null;
     let turnosCache={};
     let bitacoraCache=[];
+    let pacientesAdminCache=[];
 
     const spanNombre = document.getElementById('cuidador-display');
     const btnCerrarSesion = document.getElementById('btn-cerrar-sesion');
@@ -26,6 +28,10 @@
 
     let nombreCuidador = obtenerNombreCuidador();
     if(spanNombre) spanNombre.textContent = nombreCuidador ? `Bienvenido ${nombreCuidador}` : '';
+    if(nombreCuidador.toLowerCase() === 'root'){
+        listarPacientesAdmin();
+        show('admin');
+    }
 
     function cerrarSesion(){
         localStorage.removeItem('cuidadorNombre');
@@ -169,6 +175,64 @@
         });
     }
 
+    async function listarPacientesAdmin(){
+        const { data } = await supabase.from('cuidapp_pacientes').select('*').order('nombre');
+        pacientesAdminCache = data || [];
+        const cont = document.getElementById('admin-pacientes');
+        if(!cont) return;
+        cont.innerHTML='';
+        pacientesAdminCache.forEach(p=>{
+            const div=document.createElement('div');
+            div.dataset.id=p.id;
+            div.innerHTML=`<input data-field="nombre" value="${p.nombre||''}">`
+                +`<input data-field="hospital" value="${p.hospital_id||''}">`
+                +`<input data-field="habitacion" value="${p.piso||''}">`
+                +`<input data-field="horario" value="${p.horario_visita||''}">`
+                +`<button data-act="save">Guardar</button>`
+                +`<button data-act="del">Eliminar</button>`
+                +`<button data-act="gest">Turnos</button>`;
+            cont.appendChild(div);
+        });
+        cont.querySelectorAll('button[data-act="save"]').forEach(b=>b.onclick=guardarPacienteAdmin);
+        cont.querySelectorAll('button[data-act="del"]').forEach(b=>b.onclick=eliminarPacienteAdmin);
+        cont.querySelectorAll('button[data-act="gest"]').forEach(b=>b.onclick=gestionarPacienteAdmin);
+    }
+
+    async function guardarPacienteAdmin(e){
+        const div=e.target.parentElement;
+        const id=div.dataset.id;
+        const nombre=div.querySelector('input[data-field="nombre"]').value.trim();
+        const hospital=div.querySelector('input[data-field="hospital"]').value.trim()||null;
+        const hab=div.querySelector('input[data-field="habitacion"]').value.trim();
+        const horario=div.querySelector('input[data-field="horario"]').value.trim();
+        await supabase.from('cuidapp_pacientes').update({nombre,hospital_id:hospital,piso:hab,habitacion:hab,horario_visita:horario}).eq('id',id);
+        await listarPacientesAdmin();
+    }
+
+    async function eliminarPacienteAdmin(e){
+        const div=e.target.parentElement;
+        const id=div.dataset.id;
+        if(!confirm('Eliminar paciente?')) return;
+        await supabase.from('cuidapp_accesos').delete().eq('paciente_id',id);
+        await supabase.from('cuidapp_turnos').delete().eq('paciente_id',id);
+        await supabase.from('cuidapp_bitacora').delete().eq('paciente_id',id);
+        await supabase.from('cuidapp_pacientes').delete().eq('id',id);
+        await listarPacientesAdmin();
+    }
+
+    function gestionarPacienteAdmin(e){
+        const div=e.target.parentElement;
+        const id=parseInt(div.dataset.id,10);
+        const p=pacientesAdminCache.find(x=>x.id===id);
+        if(p){
+            current=p;
+            renderTurnos();
+            renderBitacora();
+            show('turnos');
+        }
+    }
+
+
     function renderTurnos(){
         if(current){
             document.getElementById('turnos-nombre').textContent = `🤒 ${current.nombre}`;
@@ -252,6 +316,8 @@
         document.getElementById('bitacora-text').value='';
         await agregarBitacora(txt);
     };
+
+    document.getElementById('btn-admin-volver').onclick=()=>show('login');
 
     cargarListaPacientes();
 })();
