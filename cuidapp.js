@@ -160,8 +160,11 @@
         if(current){
             document.getElementById('turnos-nombre').textContent = `🤒 ${current.nombre}`;
             const hosp = current.hospital_id ? `🏥 ${current.hospital_id}` : '';
-            const info = current.piso || current.habitacion || current.horario_visita ?
-                `🏢 ${current.piso||current.habitacion||''} (${current.horario_visita||''})` : '';
+            const partes = [];
+            if(current.hospital_id) partes.push(current.hospital_id);
+            if(current.piso || current.habitacion) partes.push(current.piso || current.habitacion);
+            if(current.horario_visita) partes.push(`Visita de ${current.horario_visita}`);
+            const info = partes.length ? `🏢 ${partes.join(' - ')}` : '';
             const hospEl = document.getElementById('turnos-hospital');
             if(hospEl) hospEl.textContent = hosp;
             document.getElementById('turnos-ubicacion').textContent = info;
