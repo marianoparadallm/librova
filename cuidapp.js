@@ -160,7 +160,11 @@
         bitacoraCache.forEach(b=>{
             const p=document.createElement('p');
             const autor = b.cuidapp_usuarios ? b.cuidapp_usuarios.nombre : '';
-            p.textContent = `[${new Date(b.fecha_hora).toLocaleString()}] ${autor ? autor + ': ' : ''}${b.texto}`;
+
+            const fecha = new Date(b.fecha_hora);
+            fecha.setHours(fecha.getHours() - 3);
+            p.textContent = `[${fecha.toLocaleString()}] ${autor ? autor + ': ' : ''}${b.texto}`;
+
             div.appendChild(p);
         });
     }
