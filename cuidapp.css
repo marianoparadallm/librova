@@ -32,7 +32,11 @@ header{
     font-weight:bold;
 }
 #cuidador-display {
-    margin-right:4px;
+    margin-bottom:8px;
+    font-weight:bold;
+
+    text-align:left;
+
 }
 #btn-cerrar-sesion {
 

@@ -4,6 +4,7 @@
         create:document.getElementById('view-create'),
         dash:document.getElementById('view-dashboard'),
         turnos:document.getElementById('view-turnos'),
+
         admin:document.getElementById('view-admin')
     };
 
@@ -11,6 +12,7 @@
     let current=null;
     let turnosCache={};
     let bitacoraCache=[];
+
     let pacientesAdminCache=[];
 
     const spanNombre = document.getElementById('cuidador-display');
@@ -27,11 +29,13 @@
     }
 
     let nombreCuidador = obtenerNombreCuidador();
+
     if(spanNombre) spanNombre.textContent = nombreCuidador ? `Bienvenido ${nombreCuidador}` : '';
     if(nombreCuidador.toLowerCase() === 'root'){
         listarPacientesAdmin();
         show('admin');
     }
+
 
     function cerrarSesion(){
         localStorage.removeItem('cuidadorNombre');
@@ -233,6 +237,7 @@
     }
 
 
+
     function renderTurnos(){
         if(current){
             document.getElementById('turnos-nombre').textContent = `🤒 ${current.nombre}`;
@@ -316,6 +321,7 @@
         document.getElementById('bitacora-text').value='';
         await agregarBitacora(txt);
     };
+
 
     document.getElementById('btn-admin-volver').onclick=()=>show('login');
 
