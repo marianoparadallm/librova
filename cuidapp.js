@@ -25,7 +25,7 @@
     }
 
     let nombreCuidador = obtenerNombreCuidador();
-    if(spanNombre) spanNombre.textContent = nombreCuidador ? `Bienvenido ${nombreCuidador}` : '';
+    if(spanNombre) spanNombre.textContent = nombreCuidador ? `👋 Bienvenido ${nombreCuidador}` : '';
 
     function cerrarSesion(){
         localStorage.removeItem('cuidadorNombre');
