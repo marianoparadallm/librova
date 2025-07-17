@@ -3,8 +3,7 @@
         login:document.getElementById('view-login'),
         create:document.getElementById('view-create'),
         dash:document.getElementById('view-dashboard'),
-        turnos:document.getElementById('view-turnos'),
-        info:document.getElementById('view-info')
+        turnos:document.getElementById('view-turnos')
     };
 
     const supabase = window.supabase.createClient(X_SUPABASE_URL, X_SUPABASE_ANON_KEY);
@@ -205,24 +204,6 @@
             });
             table.appendChild(row);
         }
-        updateCoverStatus();
-    }
-
-    function updateInfo(){
-        const info=document.getElementById('info-detalle');
-        const hosp = current && current.hospital_id ? `🏥 ${current.hospital_id}` : '';
-        const ubic = current ? `🏢 ${current.piso||current.habitacion||''} (${current.horario_visita||''})` : '';
-        info.innerHTML=`<p>${hosp}</p><p>${ubic}</p>`;
-        updateCoverStatus();
-    }
-
-    function updateCoverStatus(){
-        let total=0,ocupados=0;
-        for(const d of Object.values(turnosCache)){
-            ['m','t','n'].forEach(s=>{total++;if(d[s])ocupados++;});
-        }
-        const perc=total?Math.round(ocupados*100/total):0;
-        document.getElementById('cover-status').textContent=`Cobertura: ${perc}%`;
     }
 
     const selLogin=document.getElementById('login-select');
@@ -237,7 +218,6 @@
         document.getElementById('dash-nombre').textContent=current.nombre;
         await cargarTurnos();
         await cargarBitacora();
-        updateInfo();
         show('turnos');
     }
 
@@ -246,10 +226,9 @@
         if(code) await loginPorCodigo(code);
     };
 
-    document.getElementById('btn-logout').onclick=()=>{current=null;show('login');};
+    document.getElementById('btn-volver').onclick=()=>{current=null;show('login');};
     document.getElementById('goto-turnos').onclick=()=>{renderTurnos();renderBitacora();show('turnos');};
-    document.getElementById('goto-info').onclick=()=>{updateInfo();show('info');};
-    document.getElementById('btn-volver-dash1').onclick=document.getElementById('btn-volver-dash3').onclick=()=>show('dash');
+    document.getElementById('btn-volver-dash1').onclick=()=>show('dash');
 
     document.getElementById('btn-agregar-bitacora').onclick=async()=>{
         const txt=document.getElementById('bitacora-text').value.trim();
