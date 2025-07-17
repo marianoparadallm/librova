@@ -142,19 +142,33 @@
         const franjaMap={m:'mañana',d:'mediodía',t:'tarde',n:'noche'};
         const franja=franjaMap[slot];
         if(!franja) return;
+
         const { data:ex }=await supabase.from('cuidapp_turnos')
             .select('id')
             .eq('paciente_id',current.id)
             .eq('fecha',fecha)
             .eq('franja',franja)
             .maybeSingle();
+
+        let result=null;
         if(nombre){
             const uid=await obtenerUsuarioId(nombre);
-            if(ex) await supabase.from('cuidapp_turnos').update({usuario_id:uid}).eq('id',ex.id);
-            else await supabase.from('cuidapp_turnos').insert({paciente_id:current.id,usuario_id:uid,fecha,franja});
+            if(ex) result=await supabase.from('cuidapp_turnos').update({usuario_id:uid}).eq('id',ex.id);
+            else result=await supabase.from('cuidapp_turnos').insert({paciente_id:current.id,usuario_id:uid,fecha,franja});
         }else if(ex){
-            await supabase.from('cuidapp_turnos').delete().eq('id',ex.id);
+            result=await supabase.from('cuidapp_turnos').delete().eq('id',ex.id);
         }
+
+        if(result && result.error){
+            if(result.error.code==='23514'){
+                alert('Necesitas ejecutar sql/add_mediodia_franja.sql en tu base de datos para habilitar el turno Mediodía.');
+            }else{
+                console.error('Error actualizando turno', result.error);
+                alert('No se pudo guardar el turno');
+            }
+            return;
+        }
+
         await cargarTurnos();
     }
 
