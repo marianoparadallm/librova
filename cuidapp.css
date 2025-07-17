@@ -25,9 +25,23 @@ header{
     display:flex;
     align-items:center;
 }
-#cuidador-display {
+#user-info {
     margin-left:auto;
+    display:flex;
+    align-items:center;
     font-weight:bold;
+}
+#cuidador-display {
+    margin-right:4px;
+}
+#btn-cerrar-sesion {
+    background:none;
+    border:none;
+    cursor:pointer;
+    font-size:1.2em;
+}
+#btn-cerrar-sesion:hover {
+    transform:scale(1.1);
 }
 header img{
     height:80px;
