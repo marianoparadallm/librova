@@ -267,8 +267,10 @@
             const d=new Date(now);d.setDate(now.getDate()+i);
             const key=d.toISOString().slice(0,10);
             if(!turnosCache[key])turnosCache[key]={m:'',t:'',n:''};
+            const diaSemana=new Intl.DateTimeFormat('es', {weekday:'long'}).format(d);
+            const display=diaSemana.charAt(0).toUpperCase()+diaSemana.slice(1)+` ${d.getDate()}/${d.getMonth()+1}`;
             const row=document.createElement('tr');
-            row.innerHTML=`<td>${key}</td>`+
+            row.innerHTML=`<td>${display}</td>`+
             `<td data-slot="m">${turnosCache[key].m}</td>`+
             `<td data-slot="t">${turnosCache[key].t}</td>`+
             `<td data-slot="n">${turnosCache[key].n}</td>`;
