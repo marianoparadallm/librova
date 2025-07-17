@@ -64,8 +64,10 @@
         if(error) return;
         (data||[]).forEach(p=>{
             const opt=document.createElement('option');
-            opt.value=p.codigo_acceso;
-            opt.textContent=p.cuidapp_pacientes?.nombre||p.codigo_acceso;
+            opt.value = p.codigo_acceso;
+            opt.textContent = (p.cuidapp_pacientes && p.cuidapp_pacientes.nombre)
+                ? p.cuidapp_pacientes.nombre
+                : p.codigo_acceso;
             sel.appendChild(opt);
         });
     }
