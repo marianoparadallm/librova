@@ -278,14 +278,18 @@
                 const slot=td.getAttribute('data-slot');
                 if(!turnosCache[key][slot]) td.classList.add('libre');
                 else td.classList.remove('libre');
-                td.onclick=async()=>{
-                    const name=turnosCache[key][slot];
-                    if(!name && nombreCuidador){
-                        await actualizarTurno(key,slot,nombreCuidador);
-                    }else{
-                        const nuevo=prompt('Nombre del cuidador (vacío para liberar)', name || nombreCuidador || '');
-                        if(nuevo===null)return;
-                        await actualizarTurno(key,slot,nuevo.trim());
+                td.onclick = async () => {
+                    const name = turnosCache[key][slot];
+                    if (!name && nombreCuidador) {
+                        await actualizarTurno(key, slot, nombreCuidador);
+                    } else if (name === nombreCuidador) {
+                        if (confirm('¿Desea liberar este turno?')) {
+                            await actualizarTurno(key, slot, '');
+                        }
+                    } else {
+                        const nuevo = prompt('Nombre del cuidador (vacío para liberar)', name || nombreCuidador || '');
+                        if (nuevo === null) return;
+                        await actualizarTurno(key, slot, nuevo.trim());
                     }
                 };
             });
