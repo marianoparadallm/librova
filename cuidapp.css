@@ -29,6 +29,16 @@ header{
     margin-left:auto;
     font-weight:bold;
 }
+#btn-cerrar-sesion {
+    margin-left:10px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    font-size:1.2em;
+}
+#btn-cerrar-sesion:hover {
+    transform:scale(1.1);
+}
 header img{
     height:80px;
 

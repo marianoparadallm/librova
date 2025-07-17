@@ -12,6 +12,7 @@
     let bitacoraCache=[];
 
     const spanNombre = document.getElementById('cuidador-display');
+    const btnCerrarSesion = document.getElementById('btn-cerrar-sesion');
 
     function obtenerNombreCuidador(){
         let nc = localStorage.getItem('cuidadorNombre') || '';
@@ -25,6 +26,14 @@
 
     let nombreCuidador = obtenerNombreCuidador();
     if(spanNombre) spanNombre.textContent = nombreCuidador ? `Bienvenido ${nombreCuidador}` : '';
+
+    function cerrarSesion(){
+        localStorage.removeItem('cuidadorNombre');
+        if(spanNombre) spanNombre.textContent='';
+        location.reload();
+    }
+
+    if(btnCerrarSesion) btnCerrarSesion.addEventListener('click', cerrarSesion);
 
     async function cargarListaPacientes(){
         const sel=document.getElementById('login-select');
