@@ -1,5 +1,6 @@
 (function(){
     const views={
+        landing:document.getElementById('view-landing'),
         login:document.getElementById('view-login'),
         create:document.getElementById('view-create'),
         dash:document.getElementById('view-dashboard'),
@@ -7,6 +8,7 @@
 
         admin:document.getElementById('view-admin')
     };
+    const body=document.body;
 
     const supabase = window.supabase.createClient(X_SUPABASE_URL, X_SUPABASE_ANON_KEY);
     let current=null;
@@ -28,12 +30,18 @@
         return nc;
     }
 
-    let nombreCuidador = obtenerNombreCuidador();
+    let nombreCuidador = '';
 
-    if(spanNombre) spanNombre.textContent = nombreCuidador ? `Bienvenido ${nombreCuidador}` : '';
-    if(nombreCuidador.toLowerCase() === 'root'){
-        listarPacientesAdmin();
-        show('admin');
+    function initApp(){
+        nombreCuidador = obtenerNombreCuidador();
+        if(spanNombre) spanNombre.textContent = nombreCuidador ? `Bienvenido ${nombreCuidador}` : '';
+        if(nombreCuidador.toLowerCase() === 'root'){
+            listarPacientesAdmin();
+            show('admin');
+        }else{
+            cargarListaPacientes();
+            show('login');
+        }
     }
 
 
@@ -65,6 +73,8 @@
     function show(v){
         Object.values(views).forEach(el=>el.classList.remove('active'));
         views[v].classList.add('active');
+        if(v==='landing') body.classList.add('landing');
+        else body.classList.remove('landing');
     }
 
     async function getPacientePorCodigo(code){
@@ -344,6 +354,7 @@
 
 
     document.getElementById('btn-admin-volver').onclick=()=>show('login');
+    document.getElementById('btn-ingresar').onclick=initApp;
 
-    cargarListaPacientes();
+    show('landing');
 })();
