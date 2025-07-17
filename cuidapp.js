@@ -306,6 +306,13 @@
                 else td.classList.remove('libre');
                 td.onclick = async () => {
                     const name = turnosCache[key][slot];
+                    const isRoot = nombreCuidador && nombreCuidador.toLowerCase() === 'root';
+                    if (isRoot) {
+                        const nuevo = prompt('Nombre del cuidador (vacío para liberar)', name || '');
+                        if (nuevo === null) return;
+                        await actualizarTurno(key, slot, (nuevo || '').trim());
+                        return;
+                    }
                     if (!name && nombreCuidador) {
                         await actualizarTurno(key, slot, nombreCuidador);
                     } else if (name === nombreCuidador) {
