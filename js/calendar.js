@@ -24,13 +24,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     },
 
     dayHeaderContent: (arg) => {
-      const formatted = new Intl.DateTimeFormat('es', {
-        weekday: 'long',
+      const names = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
+      const dayName = names[arg.date.getDay()];
+      const dayNum = new Intl.DateTimeFormat('es', {
         day: 'numeric',
         month: 'numeric'
       }).format(arg.date);
-      const clean = formatted.replace(',', '');
-      return { html: clean.charAt(0).toUpperCase() + clean.slice(1) };
+      return { html: `${dayName} ${dayNum}` };
     },
 
     select: async (info) => {
