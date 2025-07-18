@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     },
 
     dayHeaderContent: (arg) => {
+
       const names = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
       const dayName = names[arg.date.getDay()];
       const dayNum = new Intl.DateTimeFormat('es', {
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         month: 'numeric'
       }).format(arg.date);
       return { html: `${dayName} ${dayNum}` };
+
     },
 
     select: async (info) => {
