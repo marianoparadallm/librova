@@ -39,8 +39,10 @@
             listarPacientesAdmin();
             show('admin');
         }else{
-            cargarListaPacientes();
-            show('login');
+            const cant = await cargarListaPacientes();
+            if(cant !== 1) {
+                show('login');
+            }
         }
     }
 
@@ -55,13 +57,13 @@
 
     async function cargarListaPacientes(){
         const sel=document.getElementById('login-select');
-        if(!sel) return;
+        if(!sel) return 0;
         sel.innerHTML='<option value="">Seleccione paciente...</option>';
         const { data, error }=await supabase
             .from('cuidapp_accesos')
             .select('codigo_acceso,cuidapp_pacientes(nombre)')
             .order('cuidapp_pacientes(nombre)');
-        if(error) return;
+        if(error) return 0;
         (data||[]).forEach(p=>{
             const opt=document.createElement('option');
             opt.value = p.codigo_acceso;
@@ -74,6 +76,7 @@
             sel.value = data[0].codigo_acceso;
             await loginPorCodigo(data[0].codigo_acceso);
         }
+        return data ? data.length : 0;
     }
 
     function show(v){
