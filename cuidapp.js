@@ -328,9 +328,6 @@
             });
             table.appendChild(row);
         }
-        const toggle=document.getElementById('toggle-noche');
-        if(toggle && !toggle.checked) table.classList.add('ocultar-noche');
-        else table.classList.remove('ocultar-noche');
     }
 
     const selLogin=document.getElementById('login-select');
@@ -363,15 +360,6 @@
         document.getElementById('bitacora-text').value='';
         await agregarBitacora(txt);
     };
-
-    const toggleNoche = document.getElementById('toggle-noche');
-    if(toggleNoche){
-        toggleNoche.onchange = () => {
-            const table = document.getElementById('tabla-turnos');
-            if(!toggleNoche.checked) table.classList.add('ocultar-noche');
-            else table.classList.remove('ocultar-noche');
-        };
-    }
 
 
     document.getElementById('btn-admin-volver').onclick=()=>show('login');
