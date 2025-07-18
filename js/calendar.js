@@ -24,13 +24,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     },
 
     dayHeaderContent: (arg) => {
-      const formatted = new Intl.DateTimeFormat('es', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'numeric'
-      }).format(arg.date);
-      const clean = formatted.replace(',', '');
-      return { html: clean.charAt(0).toUpperCase() + clean.slice(1) };
+      let dayShort = new Intl.DateTimeFormat('es', { weekday: 'short' }).format(arg.date);
+      dayShort = dayShort.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      dayShort = dayShort.charAt(0).toUpperCase() + dayShort.slice(1);
+      const dayNum = new Intl.DateTimeFormat('es', { day: 'numeric', month: 'numeric' }).format(arg.date);
+      return { html: `${dayShort} ${dayNum}` };
     },
 
     select: async (info) => {
