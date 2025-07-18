@@ -70,6 +70,10 @@
                 : p.codigo_acceso;
             sel.appendChild(opt);
         });
+        if(data && data.length === 1){
+            sel.value = data[0].codigo_acceso;
+            await loginPorCodigo(data[0].codigo_acceso);
+        }
     }
 
     function show(v){
