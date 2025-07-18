@@ -24,11 +24,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     },
 
     dayHeaderContent: (arg) => {
-      let dayShort = new Intl.DateTimeFormat('es', { weekday: 'short' }).format(arg.date);
-      dayShort = dayShort.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-      dayShort = dayShort.charAt(0).toUpperCase() + dayShort.slice(1);
-      const dayNum = new Intl.DateTimeFormat('es', { day: 'numeric', month: 'numeric' }).format(arg.date);
-      return { html: `${dayShort} ${dayNum}` };
+
+      const names = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
+      const dayName = names[arg.date.getDay()];
+      const dayNum = new Intl.DateTimeFormat('es', {
+        day: 'numeric',
+        month: 'numeric'
+      }).format(arg.date);
+      return { html: `${dayName} ${dayNum}` };
+
     },
 
     select: async (info) => {
