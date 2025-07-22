@@ -131,3 +131,13 @@ td.libre::before{
     color:#e53935;
     font-size:1.2em;
 }
+
+.share-link a,
+.share-link span{
+    margin-left:8px;
+    cursor:pointer;
+    user-select:none;
+}
+.share-link a:first-child{
+    margin-left:0;
+}
