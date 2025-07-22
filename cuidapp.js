@@ -109,7 +109,9 @@
         if(error){ alert('Error al crear paciente'); return; }
         const code=Math.random().toString(36).substr(2,6);
         await supabase.from('cuidapp_accesos').insert({paciente_id:pac.id,codigo_acceso:code});
-        alert('Código generado: '+code);
+        const base=window.location.href.split('?')[0].split('#')[0];
+        const link=`${base}?code=${encodeURIComponent(code)}`;
+        alert('Código generado: '+code+"\nComparte este enlace:\n"+link);
         show('login');
         await cargarListaPacientes();
     }
@@ -260,9 +262,17 @@
         const p=pacientesAdminCache.find(x=>x.id===id);
         if(p){
             current=p;
-            renderTurnos();
-            renderBitacora();
-            show('turnos');
+            (async()=>{
+                const { data } = await supabase
+                    .from('cuidapp_accesos')
+                    .select('codigo_acceso')
+                    .eq('paciente_id', id)
+                    .maybeSingle();
+                if(data) current.codigo=data.codigo_acceso;
+                renderTurnos();
+                renderBitacora();
+                show('turnos');
+            })();
         }
     }
 
@@ -284,6 +294,26 @@
             const hospEl = document.getElementById('turnos-hospital');
             if(hospEl) hospEl.textContent='';
             document.getElementById('turnos-ubicacion').textContent='';
+        }
+
+        const linkDiv=document.getElementById('turnos-link');
+        if(linkDiv){
+            if(current && (current.codigo || current.codigo_acceso)){
+                const code=current.codigo || current.codigo_acceso;
+                const base=window.location.href.split('?')[0].split('#')[0];
+                const url=`${base}?code=${encodeURIComponent(code)}`;
+                const wa=`https://wa.me/?text=${encodeURIComponent(url)}`;
+                const mail=`mailto:?body=${encodeURIComponent(url)}`;
+                linkDiv.innerHTML=
+                    `<a href="${url}" target="_blank">${url}</a> `+
+                    `<a href="${wa}" target="_blank">💬</a> `+
+                    `<a href="${mail}">✉️</a> `+
+                    `<span id="copy-link" style="cursor:pointer">📋</span>`;
+                const copy=linkDiv.querySelector('#copy-link');
+                if(copy) copy.onclick=()=>{navigator.clipboard.writeText(url);alert('Enlace copiado');};
+            }else{
+                linkDiv.innerHTML='';
+            }
         }
 
         const table=document.getElementById('tabla-turnos');
@@ -370,4 +400,11 @@
     document.getElementById('btn-ingresar').onclick=initApp;
 
     show('landing');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const autoCode = urlParams.get('code');
+    if (autoCode) {
+        initApp();
+        loginPorCodigo(autoCode);
+    }
 })();
